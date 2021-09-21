@@ -1,0 +1,22 @@
+main .infographic {
+    margin: 40px 0;
+}
+
+main .infographic .figure {
+    margin-top: 16px;
+    margin-bottom: 16px;
+    line-height: 0;
+    text-align: center;
+}
+
+@media (min-width: 700px) {
+    main .infographic .figure {
+        margin: 0 auto;
+        max-width: 800px;
+    }
+}
+
+main .infographic .figure img {
+    width: 100%;
+    max-width: 600px;
+}
