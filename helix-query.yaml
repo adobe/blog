@@ -1,7 +1,7 @@
 version: 1
 
 indices:
-  english: &default
+  english:
     # note, the following 2 properties are no longer used with Helix3
     source: html
     fetch: https://{ref}--{repo}--{owner}.hlx.live{path}
@@ -9,7 +9,7 @@ indices:
       - /en/publish/*/*/*/*
     exclude:
       - '**/Document.*'
-    target: https://adobe.sharepoint.com/sites/AlexTest/Shared%20Documents/websites/blog/en/query-index.xlsx
+    target: https://adobe.sharepoint.com/:x:/r/sites/AlexTest/Shared%20Documents/websites/blog/en/query-index.xlsx?d=w0778dd04f952436da03c0c2c2de154f7
     sitemap:
       source: /en/query-index.json
       path: /en/sitemap.xml
