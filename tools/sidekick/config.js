@@ -1,4 +1,4 @@
 window.hlx.initSidekick({
-  project: 'Business',
+  project: 'Blog',
   hlx3: true,
 });

@@ -1,5 +1,6 @@
 .hlx/*
 logs/*
 node_modules/*
-.DS_Store
 
+# OS Files
+.DS_Store

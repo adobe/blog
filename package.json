@@ -1,5 +1,5 @@
 {
-  "name": "@adobe/business-website",
+  "name": "@adobe/blog",
   "private": true,
   "version": "1.0.0",
   "description": "Adobe Experience Cloud Website",
@@ -10,14 +10,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/adobe/business-website.git"
+    "url": "git+https://github.com/adobe/blog.git"
   },
   "author": "Adobe",
   "license": "Apache License 2.0",
   "bugs": {
-    "url": "https://github.com/adobe/business-website/issues"
+    "url": "https://github.com/adobe/blog/issues"
   },
-  "homepage": "https://github.com/adobe/business-website#readme",
+  "homepage": "https://github.com/adobe/blog#readme",
   "devDependencies": {
     "@babel/core": "7.13.10",
     "@babel/eslint-parser": "7.13.10",
