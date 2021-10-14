@@ -641,12 +641,13 @@ export function buildArticleCard(article, type = 'article') {
   const card = document.createElement('a');
   card.className = `${type}-card`;
   card.href = path;
+  // TODO filter category name for URL
   card.innerHTML = `<div class="${type}-card-image">
       ${pictureTag}
     </div>
     <div class="${type}-card-body">
       <p class="${type}-card-category">
-        <a href="${window.location.origin}${getRootPath()}/categories/${category}">${category}</a>
+        <a href="${window.location.origin}${getRootPath()}/topics/${category}">${category}</a>
       </p>
       <h3>${title}</h3>
       <p>${description}</p>
@@ -698,6 +699,15 @@ export function addFavIcon(href) {
 }
 
 /**
+ * Computes the category for the given article
+ */
+ export function getArticleCategory(topics) {
+  // TODO category is the first VISIBLE tag - need to plug the taxonomy here
+  // default to a randomly choosen category
+  return topics && topics.length > 0 ? topics[0] : 'news';
+ }
+
+/**
  * fetches blog article index.
  * @returns {object} index with data and path lookup
  */
@@ -708,6 +718,9 @@ export async function fetchBlogArticleIndex() {
   const byPath = {};
   json.data.forEach((post) => {
     byPath[post.path.split('.')[0]] = post;
+
+    post.topics = post.tags.replace(/[\[\"\]]/gm,'').split(',');
+    post.category = getArticleCategory(post.topics);
   });
   const index = { data: json.data, byPath };
   return (index);
