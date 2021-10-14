@@ -100,10 +100,7 @@ export function getLanguage() {
  */
 export function getRootPath() {
   const loc = getLanguage();
-  if (loc === LANG.EN) {
-    return '/blog';
-  }
-  return `/${loc}/blog`;
+  return `/${loc}`;
 }
 
 /**

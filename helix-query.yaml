@@ -1,25 +1,18 @@
 version: 1
 
 indices:
-  blog:
+  english: &default
     # note, the following 2 properties are no longer used with Helix3
     source: html
     fetch: https://{ref}--{repo}--{owner}.hlx.live{path}
     include:
-      - '/blog/**'
+      - en/publish/*/*/*/*.(md|docx)
     exclude:
-      - '/blog/'
-      - '/blog/index*'
-      - '/blog/gnav*'
-      - '/blog/footer*'
-      - '/blog/authors/**'
-      - '/blog/banners/**'
-      - '/blog/categories/**'
-      - '/blog/tags/**'
-    target: https://adobe.sharepoint.com/sites/BizWeb/Shared%20Documents/website/blog/query-index.xlsx
+      - '**/Document.*'
+    target: https://adobe.sharepoint.com/:f:/r/sites/AlexTest/Shared%20Documents/websites/blog/en/query-index.xlsx
     sitemap:
-      source: /blog/query-index.json
-      path: /blog/sitemap.xml
+      source: /en/query-index.json
+      path: /en/sitemap.xml
       origin: https://blog.adobe.com
     properties:
       author:
@@ -46,12 +39,8 @@ indices:
         select: head > meta[name="description"]
         value: |
           attribute(el, 'content')
-      category:
-        select: head > meta[name="category"]
-        value: |
-          attribute(el, 'content')
-      tags:
-        select: head > meta[property="article:tag"]
+      topics:
+        select: head > meta[name="topics"]
         values: |
           attribute(el, 'content')
       description:
