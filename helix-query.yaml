@@ -9,7 +9,7 @@ indices:
       - /en/publish/*/*/*/*
     exclude:
       - '**/Document.*'
-    target: https://adobe.sharepoint.com/:x:/r/sites/AlexTest/Shared%20Documents/websites/blog/en/query-index.xlsx?d=w0778dd04f952436da03c0c2c2de154f7&csf=1&web=1&e=MrfZUg
+    target: https://adobe.sharepoint.com/sites/AlexTest/Shared%20Documents/websites/blog/en/query-index.xlsx
     sitemap:
       source: /en/query-index.json
       path: /en/sitemap.xml
