@@ -23,7 +23,7 @@ async function decorateRecommendedArticles(recommendedArticlesEl, paths) {
     // eslint-disable-next-line no-await-in-loop
     const article = await getBlogArticle(articlePath);
     if (article) {
-      const card = buildArticleCard(article);
+      const card = await buildArticleCard(article);
       articleCardsContainer.append(card);
       recommendedArticlesEl.append(articleCardsContainer);
     }
@@ -33,9 +33,9 @@ async function decorateRecommendedArticles(recommendedArticlesEl, paths) {
   }
 }
 
-export default function decorate(blockEl) {
+export default async function decorate(blockEl) {
   const anchors = [...blockEl.querySelectorAll('a')];
   blockEl.innerHTML = '';
   const paths = anchors.map((a) => new URL(a.href).pathname);
-  decorateRecommendedArticles(blockEl, paths);
+  return decorateRecommendedArticles(blockEl, paths);
 }

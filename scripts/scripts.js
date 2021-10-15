@@ -76,6 +76,16 @@ const LANG = {
   BR: 'br',
 };
 
+const TYPE = {
+  HOME: 'home',
+  ARTICLE: 'article',
+  AUTHOR: 'author',
+  TOPIC: 'topic',
+  PRODUCT: 'product',
+  PROMOTION: 'promotion',
+  BLANK: 'blank',
+};
+
 let language;
 
 export function getLanguage() {
@@ -384,7 +394,7 @@ function buildAutoBlocks(mainEl) {
       buildArticleHeader(mainEl);
       buildTagsBlock(mainEl);
     }
-    if (window.location.pathname.includes('/categories/') || window.location.pathname.includes('/tags/')) {
+    if (window.location.pathname.includes('/topics/')) {
       buildTagHeader(mainEl);
       buildArticleFeed(mainEl);
     }
@@ -629,7 +639,7 @@ export function createOptimizedPicture(src, alt = '', eager = false, breakpoints
  * @param {Element} article The article data to be placed in card.
  * @returns card Generated card
  */
-export function buildArticleCard(article, type = 'article') {
+export async function buildArticleCard(article, type = 'article') {
   const {
     title, description, image, imageAlt, category,
   } = article;
@@ -761,20 +771,20 @@ export async function fetchPlaceholders() {
  * @param {Element} lcpCandidateElement The LCP candidate element
  * @param {Function} postLCP The callback function
  */
-function setLCPTrigger(lcpCandidateEl, postLCP) {
+async function setLCPTrigger(lcpCandidateEl, postLCP) {
   if (lcpCandidateEl) {
     if (lcpCandidateEl.complete) {
-      postLCP();
+      return postLCP();
     } else {
-      lcpCandidateEl.addEventListener('load', () => {
-        postLCP();
+      lcpCandidateEl.addEventListener('load', async () => {
+        await postLCP();
       });
-      lcpCandidateEl.addEventListener('error', () => {
-        postLCP();
+      lcpCandidateEl.addEventListener('error', async () => {
+        await postLCP();
       });
     }
   } else {
-    postLCP();
+    return postLCP();
   }
 }
 
@@ -784,7 +794,7 @@ function setLCPTrigger(lcpCandidateEl, postLCP) {
  * @param {Function} callback The function called with the LCP candidate element
  */
 
-function getLCPCandidate(callback) {
+async function getLCPCandidate(callback) {
   const usp = new URLSearchParams(window.location.search);
   const lcp = usp.get('lcp');
   const lcpBlocks = ['featured-article', 'article-header'];
@@ -792,10 +802,10 @@ function getLCPCandidate(callback) {
   const block = document.querySelector('.block');
   if (block) {
     if (lcp !== 'simple' && lcpBlocks.includes(block.getAttribute('data-block-name'))) {
-      loadBlock(block, () => {
+      await loadBlock(block, async () => {
         candidate = block.querySelector('img');
         debug('LCP block found', candidate);
-        callback(candidate);
+        await callback(candidate);
       });
     } else {
       // not an LCP block
@@ -838,8 +848,8 @@ async function decoratePage(win = window) {
   const main = doc.querySelector('main');
   if (main) {
     decorateMain(main);
-    getLCPCandidate((lcpCandidateEl) => {
-      setLCPTrigger(lcpCandidateEl, async () => {
+    await getLCPCandidate(async (lcpCandidateEl) => {
+      await setLCPTrigger(lcpCandidateEl, async () => {
         // post LCP actions go here
         sampleRUM('lcp');
 
@@ -848,15 +858,18 @@ async function decoratePage(win = window) {
         const gnavPath = getMetadata('gnav') || `${getRootPath()}/gnav`;
         header.setAttribute('data-block-name', 'gnav');
         header.setAttribute('data-gnav-source', gnavPath);
-        loadBlock(header);
 
         /* load footer */
         const footer = document.querySelector('footer');
         footer.setAttribute('data-block-name', 'footer');
         footer.setAttribute('data-footer-source', `${getRootPath()}/footer`);
-        loadBlock(footer);
+        
+        await Promise.all([
+          loadBlock(header),
+          loadBlock(footer),
+          loadBlocks(main),
+        ]);
 
-        await loadBlocks(main);
         loadCSS('/styles/lazy-styles.css');
         addFavIcon('/styles/favicon.svg');
 
