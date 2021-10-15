@@ -514,9 +514,9 @@ export async function loadBlock(block, callback) {
  * @param {Element} main The container element
  */
 async function loadBlocks(main) {
-  main
-    .querySelectorAll('div.section-wrapper > div > .block')
-    .forEach(async (block) => loadBlock(block));
+  return Promise.all(Array.from(main
+    .querySelectorAll('div.section-wrapper > div > .block'))
+    .map(async (block) => loadBlock(block)));
 }
 
 /**
