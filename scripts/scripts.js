@@ -76,16 +76,6 @@ const LANG = {
   BR: 'br',
 };
 
-const TYPE = {
-  HOME: 'home',
-  ARTICLE: 'article',
-  AUTHOR: 'author',
-  TOPIC: 'topic',
-  PRODUCT: 'product',
-  PROMOTION: 'promotion',
-  BLANK: 'blank',
-};
-
 let language;
 
 export function getLanguage() {
@@ -639,7 +629,7 @@ export function createOptimizedPicture(src, alt = '', eager = false, breakpoints
  * @param {Element} article The article data to be placed in card.
  * @returns card Generated card
  */
-export async function buildArticleCard(article, type = 'article') {
+export function buildArticleCard(article, type = 'article') {
   const {
     title, description, image, imageAlt, category,
   } = article;
@@ -711,17 +701,16 @@ export function addFavIcon(href) {
 /**
  * Computes the category for the given article
  */
- export function getArticleCategory(topics) {
+export function getArticleCategory(topics) {
   // TODO category is the first VISIBLE tag - need to plug the taxonomy here
   // default to a randomly choosen category
   return topics && topics.length > 0 ? topics[0] : 'news';
- }
+}
 
 /**
  * fetches blog article index.
  * @returns {object} index with data and path lookup
  */
-
 export async function fetchBlogArticleIndex() {
   const resp = await fetch(`${getRootPath()}/query-index.json`);
   const json = await resp.json();
@@ -729,7 +718,7 @@ export async function fetchBlogArticleIndex() {
   json.data.forEach((post) => {
     byPath[post.path.split('.')[0]] = post;
 
-    post.topics = post.tags.replace(/[\[\"\]]/gm,'').split(',');
+    post.topics = post.tags.replace(/[["\]]/gm, '').split(',');
     post.category = getArticleCategory(post.topics);
   });
   const index = { data: json.data, byPath };
@@ -774,7 +763,7 @@ export async function fetchPlaceholders() {
 async function setLCPTrigger(lcpCandidateEl, postLCP) {
   if (lcpCandidateEl) {
     if (lcpCandidateEl.complete) {
-      return postLCP();
+      await postLCP();
     } else {
       lcpCandidateEl.addEventListener('load', async () => {
         await postLCP();
@@ -784,7 +773,7 @@ async function setLCPTrigger(lcpCandidateEl, postLCP) {
       });
     }
   } else {
-    return postLCP();
+    await postLCP();
   }
 }
 
@@ -863,7 +852,7 @@ async function decoratePage(win = window) {
         const footer = document.querySelector('footer');
         footer.setAttribute('data-block-name', 'footer');
         footer.setAttribute('data-footer-source', `${getRootPath()}/footer`);
-        
+
         await Promise.all([
           loadBlock(header),
           loadBlock(footer),

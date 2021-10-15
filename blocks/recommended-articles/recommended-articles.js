@@ -23,7 +23,7 @@ async function decorateRecommendedArticles(recommendedArticlesEl, paths) {
     // eslint-disable-next-line no-await-in-loop
     const article = await getBlogArticle(articlePath);
     if (article) {
-      const card = await buildArticleCard(article);
+      const card = buildArticleCard(article);
       articleCardsContainer.append(card);
       recommendedArticlesEl.append(articleCardsContainer);
     }

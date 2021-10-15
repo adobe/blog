@@ -8,7 +8,7 @@ import {
 async function decorateFeaturedArticle(featuredArticleEl, articlePath, callback) {
   const article = await getBlogArticle(articlePath);
   if (article) {
-    const card = await buildArticleCard(article, 'featured-article');
+    const card = buildArticleCard(article, 'featured-article');
     const tagHeader = document.querySelector('.tag-header-container > div');
     if (tagHeader) {
       featuredArticleEl.append(card);
@@ -31,4 +31,5 @@ export default function decorate(block, blockName, document, callback) {
     const path = new URL(a.href).pathname;
     return decorateFeaturedArticle(block, path, callback);
   }
+  return null;
 }
