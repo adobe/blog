@@ -103,6 +103,53 @@ export function getRootPath() {
   return `/${loc}`;
 }
 
+let taxonomy;
+
+async function loadTaxonomy() {
+  const mod = await import('./taxonomy.js');
+  taxonomy = await mod.default(getLanguage());
+}
+
+export function getTaxonomy() {
+  return taxonomy;
+}
+
+/**
+ * Fixes the links which have been created before the taxonomy has been loaded
+ * (pre lcp or in lcp block).
+ */
+function fixTaxonomyLinks() {
+  if (taxonomy) {
+    document.querySelectorAll('[data-category-link]').forEach((a) => {
+      const category = a.dataset.categoryLink;
+      const tax = taxonomy.get(category);
+      if (tax) {
+        a.href = tax.link;
+      } else {
+        console.warn(`Unknow category ${category}`);
+      }
+      delete a.dataset.categoryLink;
+    });
+  }
+}
+
+/**
+ * Returns a link tag with the proper href for the given category.
+ * If the taxonomy is not yet available, the tag is decorated with the categoryLink
+ * data attribute so that the link can be fixed later.
+ * @param {string} category The category name
+ * @returns {string} A link tag as a string
+ */
+export function getCategoryLinkTag(category) {
+  let catLink;
+  if (taxonomy) {
+    const { link } = taxonomy.get(category);
+    catLink = link;
+  }
+
+  return `<a href="${catLink || ''}" ${!catLink ? `data-category-link="${category}"` : ''}>${category}</a>`;
+}
+
 /**
  * Retrieves the content of a metadata tag.
  * @param {string} name The metadata name (or property)
@@ -311,12 +358,14 @@ function buildArticleHeader(mainEl) {
   const div = document.createElement('div');
   const h1 = mainEl.querySelector('h1');
   const picture = mainEl.querySelector('picture');
-  const category = getMetadata('category');
+  const category = document.head.querySelector('meta[property="article:tag"]').content;
   const author = getMetadata('author');
   const publicationDate = getMetadata('publication-date');
 
+  const categoryTag = getCategoryLinkTag(category);
+
   const articleHeaderBlockEl = buildBlock('article-header', [
-    [`<p>${category}</p>`],
+    [`<p>${categoryTag}</p>`],
     [h1],
     [`<p><a href="${getRootPath()}/authors/${toClassName(author)}">${author}</a></p>
       <p>${publicationDate}</p>`],
@@ -349,17 +398,42 @@ function buildArticleFeed(mainEl) {
 }
 
 function buildTagsBlock(mainEl) {
-  const tags = getMetadata('article:tag');
-  if (tags) {
+  const metas = document.querySelectorAll('[property="article:tag"]');
+  if (taxonomy && metas.length > 0) {
+    const allTags = [];
+    const tagsForBlock = [];
+    metas.forEach((meta) => {
+      const tag = meta.content;
+      const tax = taxonomy.get(tag);
+      if (tax) {
+        if (tax.isUFT && allTags.indexOf(tag) === -1) {
+          allTags.push(tag);
+          tagsForBlock.push(getCategoryLinkTag(tag));
+          const parents = taxonomy.getParents(tag);
+          if (parents) {
+            parents.forEach((parent) => {
+              const ptax = taxonomy.get(parent);
+              if (ptax.isUFT && !allTags.indexOf(parent) === -1) {
+                allTags.push(parent);
+                tagsForBlock.push(getCategoryLinkTag(parent));
+              }
+            });
+          }
+        }
+      } else {
+        console.warn(`Unknow tag in meta: ${tag}`);
+      }
+    });
     const tagsBlock = buildBlock('tags', [
-      [`<p>${tags}</p>`],
+      [`<p>${tagsForBlock.join('')}</p>`],
     ]);
-    const recBlock = mainEl.querySelector('.recommended-articles');
+    const recBlock = mainEl.querySelector('.recommended-articles-container');
     if (recBlock) {
-      recBlock.parentNode.insertBefore(tagsBlock, recBlock);
+      recBlock.previousElementSibling.firstChild.append(tagsBlock);
     } else {
       mainEl.lastElementChild.append(tagsBlock);
     }
+    decorateBlock(tagsBlock);
   }
 }
 
@@ -382,9 +456,8 @@ function buildAutoBlocks(mainEl) {
   try {
     if (getMetadata('publication-date') && !mainEl.querySelector('.article-header')) {
       buildArticleHeader(mainEl);
-      buildTagsBlock(mainEl);
     }
-    if (window.location.pathname.includes('/categories/') || window.location.pathname.includes('/tags/')) {
+    if (window.location.pathname.includes('/topics/')) {
       buildTagHeader(mainEl);
       buildArticleFeed(mainEl);
     }
@@ -513,7 +586,7 @@ export async function loadBlock(block, callback) {
  * Loads JS and CSS for all blocks in a container element.
  * @param {Element} main The container element
  */
-async function loadBlocks(main) {
+function loadBlocks(main) {
   main
     .querySelectorAll('div.section-wrapper > div > .block')
     .forEach(async (block) => loadBlock(block));
@@ -641,13 +714,15 @@ export function buildArticleCard(article, type = 'article') {
   const card = document.createElement('a');
   card.className = `${type}-card`;
   card.href = path;
-  // TODO filter category name for URL
+
+  const categoryTag = getCategoryLinkTag(category);
+
   card.innerHTML = `<div class="${type}-card-image">
       ${pictureTag}
     </div>
     <div class="${type}-card-body">
       <p class="${type}-card-category">
-        <a href="${window.location.origin}${getRootPath()}/topics/${category}">${category}</a>
+        ${categoryTag}
       </p>
       <h3>${title}</h3>
       <p>${description}</p>
@@ -701,11 +776,11 @@ export function addFavIcon(href) {
 /**
  * Computes the category for the given article
  */
- export function getArticleCategory(topics) {
+export function getArticleCategory(topics) {
   // TODO category is the first VISIBLE tag - need to plug the taxonomy here
   // default to a randomly choosen category
   return topics && topics.length > 0 ? topics[0] : 'news';
- }
+}
 
 /**
  * fetches blog article index.
@@ -719,7 +794,7 @@ export async function fetchBlogArticleIndex() {
   json.data.forEach((post) => {
     byPath[post.path.split('.')[0]] = post;
 
-    post.topics = post.tags.replace(/[\[\"\]]/gm,'').split(',');
+    post.topics = post.tags.replace(/[["\]]/gm, '').split(',');
     post.category = getArticleCategory(post.topics);
   });
   const index = { data: json.data, byPath };
@@ -856,7 +931,11 @@ async function decoratePage(win = window) {
         footer.setAttribute('data-footer-source', `${getRootPath()}/footer`);
         loadBlock(footer);
 
-        await loadBlocks(main);
+        await loadTaxonomy();
+        fixTaxonomyLinks();
+        buildTagsBlock(main);
+
+        loadBlocks(main);
         loadCSS('/styles/lazy-styles.css');
         addFavIcon('/styles/favicon.svg');
 
