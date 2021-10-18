@@ -340,14 +340,14 @@ function buildTagHeader(mainEl) {
 function buildAuthorHeader(mainEl) {
   const div = mainEl.querySelector('div');
   const heading = mainEl.querySelector('h1, h2, h3');
-  const desc = heading.nextElementSibling;
+  const bio = heading.nextElementSibling;
   const picture = mainEl.querySelector('picture');
   const elArr = [ [heading] ];
   if (picture) {
     elArr.push([{ elems: [picture.closest('p')] }]);
   }
-  if (desc.nodeName === 'P') {
-    elArr.push([desc]);
+  if (bio && bio.nodeName === 'P') {
+    elArr.push([bio]);
   }
   const authorHeaderBlockEl = buildBlock('author-header', elArr);
   div.prepend(authorHeaderBlockEl);
