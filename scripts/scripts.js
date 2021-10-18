@@ -183,9 +183,9 @@ function getTaxonomyFromTopics(topics) {
               }
             });
           }
-        } else {
-          console.warn(`Unknow tag in meta: ${tag}`);
         }
+      } else {
+        console.warn(`Unknow tag in topics list: ${tag}`);
       }
     });
     return {
