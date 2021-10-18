@@ -342,7 +342,7 @@ function buildAuthorHeader(mainEl) {
   const heading = mainEl.querySelector('h1, h2, h3');
   const bio = heading.nextElementSibling;
   const picture = mainEl.querySelector('picture');
-  const elArr = [ [heading] ];
+  const elArr = [[heading]];
   if (picture) {
     elArr.push([{ elems: [picture.closest('p')] }]);
   }
@@ -401,7 +401,7 @@ function buildAutoBlocks(mainEl) {
     }
     if (window.location.pathname.includes('/categories/') || window.location.pathname.includes('/tags/')) {
       buildTagHeader(mainEl);
-      const type = pathname.includes('/tags/') ? 'tags' : 'category';
+      const type = window.location.pathname.includes('/tags/') ? 'tags' : 'category';
       buildArticleFeed(mainEl, type);
     }
     if (window.location.pathname.includes('/authors/')) {
@@ -721,11 +721,11 @@ export function addFavIcon(href) {
 /**
  * Computes the category for the given article
  */
- export function getArticleCategory(topics) {
+export function getArticleCategory(topics) {
   // TODO category is the first VISIBLE tag - need to plug the taxonomy here
   // default to a randomly choosen category
   return topics && topics.length > 0 ? topics[0] : 'news';
- }
+}
 
 /**
  * fetches blog article index.
@@ -739,7 +739,7 @@ export async function fetchBlogArticleIndex() {
   json.data.forEach((post) => {
     byPath[post.path.split('.')[0]] = post;
 
-    post.topics = post.tags.replace(/[\[\"\]]/gm,'').split(',');
+    post.topics = post.tags.replace(/[["\]]/gm, '').split(',');
     post.category = getArticleCategory(post.topics);
   });
   const index = { data: json.data, byPath };
