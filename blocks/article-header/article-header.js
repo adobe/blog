@@ -45,7 +45,6 @@ export default function decorateArticleHeader(blockEl, blockName, document, call
   const author = bylineContainer.firstChild.firstChild;
   const authorURL = author.querySelector('a').href;
   const authorName = author.textContent;
-  author.textContent = authorName;
   author.classList.add('article-author');
   // publication date
   const date = bylineContainer.firstChild.lastChild;

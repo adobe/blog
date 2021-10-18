@@ -122,8 +122,10 @@ main .article-byline p {
   line-height: var(--detail-line-height);
 }
 
-main .article-author {
+main .article-author p,
+main .article-author a {
   font-weight: 600;
+  text-decoration: none;
 }
 
 main .article-date {
