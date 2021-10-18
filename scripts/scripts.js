@@ -701,11 +701,11 @@ export function addFavIcon(href) {
 /**
  * Computes the category for the given article
  */
- export function getArticleCategory(topics) {
+export function getArticleCategory(topics) {
   // TODO category is the first VISIBLE tag - need to plug the taxonomy here
   // default to a randomly choosen category
   return topics && topics.length > 0 ? topics[0] : 'news';
- }
+}
 
 /**
  * fetches blog article index.
@@ -719,7 +719,7 @@ export async function fetchBlogArticleIndex() {
   json.data.forEach((post) => {
     byPath[post.path.split('.')[0]] = post;
 
-    post.topics = post.tags.replace(/[\[\"\]]/gm,'').split(',');
+    post.topics = post.tags.replace(/[["\]]/gm, '').split(',');
     post.category = getArticleCategory(post.topics);
   });
   const index = { data: json.data, byPath };
