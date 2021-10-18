@@ -3,6 +3,7 @@ import {
   buildArticleCard,
   fetchBlogArticleIndex,
   fetchPlaceholders,
+  getArticleTaxonomy,
 } from '../../scripts/scripts.js';
 
 function isCardOnPage(article) {
@@ -22,13 +23,10 @@ async function filterArticles(config) {
   /* filter posts by category, tag and author */
   const filters = {};
   Object.keys(config).forEach((key) => {
-    const filterNames = ['tags', 'author', 'category'];
+    const filterNames = ['tags', 'author', 'category', 'exclude'];
     if (filterNames.includes(key)) {
       const vals = config[key];
-      let v = vals;
-      if (!Array.isArray(vals)) {
-        v = [vals];
-      }
+      const v = vals.split(', ');
       filters[key] = v.map((e) => e.toLowerCase().trim());
     }
   });
@@ -36,6 +34,12 @@ async function filterArticles(config) {
   /* filter and ignore if already in result */
   const feed = index.data.filter((article) => {
     const matchedAll = Object.keys(filters).every((key) => {
+      if (key === 'exclude') {
+        const tax = getArticleTaxonomy(article);
+        const matchedFilter = filters[key].some((val) => (tax.allTopics
+          && tax.allTopics.map((t) => t.toLowerCase()).includes(val)));
+        return !matchedFilter;
+      }
       const matchedFilter = filters[key].some((val) => (article[key]
         && article[key].toLowerCase().includes(val)));
       return matchedFilter;

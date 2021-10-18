@@ -163,22 +163,21 @@ function getTaxonomyFromTopics(topics) {
   // no topics: default to a randomly choosen category
   const category = topics?.length > 0 ? topics[0] : 'news';
 
-  const allTopics = [];
-  const visibleTopics = [];
-
   if (taxonomy) {
+    const allTopics = [];
+    const visibleTopics = [];
     // if taxonomy loaded, we can compute more
     topics.forEach((tag) => {
       const tax = taxonomy.get(tag);
       if (tax) {
-        if (allTopics.indexOf(tag) === -1) {
+        if (!allTopics.includes(tag)) {
           allTopics.push(tag);
           if (tax.isUFT) visibleTopics.push(tag);
           const parents = taxonomy.getParents(tag);
           if (parents) {
             parents.forEach((parent) => {
               const ptax = taxonomy.get(parent);
-              if (!allTopics.indexOf(parent) === -1) {
+              if (!allTopics.includes(parent)) {
                 allTopics.push(parent);
                 if (ptax.isUFT) visibleTopics.push(parent);
               }
@@ -189,9 +188,12 @@ function getTaxonomyFromTopics(topics) {
         }
       }
     });
+    return {
+      category, topics, visibleTopics, allTopics,
+    };
   }
   return {
-    category, topics, visibleTopics, allTopics,
+    category, topics,
   };
 }
 
@@ -200,7 +202,7 @@ function getTaxonomyFromTopics(topics) {
  * @param {Object} article The article to enhance with the taxonomy data
  */
 function loadArticleTaxonomy(article) {
-  if (!article.category) {
+  if (!article.allTopics) {
     // for now, we can only compute the category
     const { tags } = article;
 
@@ -214,10 +216,10 @@ function loadArticleTaxonomy(article) {
     article.topics = topics;
 
     // visibleTopics = visible topics including parents
-    article.visibleTopics = articleTax.allVisibleTags;
+    article.visibleTopics = articleTax.allVisibleTopics;
 
     // allTopics = all topics including parents
-    article.allTopics = articleTax.allTags;
+    article.allTopics = articleTax.allTopics;
   }
 }
 
