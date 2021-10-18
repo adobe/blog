@@ -337,12 +337,27 @@ function buildTagHeader(mainEl) {
   div.append(tagHeaderBlockEl);
 }
 
-function buildArticleFeed(mainEl) {
-  const { pathname } = window.location;
+function buildAuthorHeader(mainEl) {
+  const div = mainEl.querySelector('div');
+  const heading = mainEl.querySelector('h1, h2, h3');
+  const desc = heading.nextElementSibling;
+  const picture = mainEl.querySelector('picture');
+  const elArr = [ [heading] ];
+  if (picture) {
+    elArr.push([{ elems: [picture.closest('p')] }]);
+  }
+  if (desc.nodeName === 'P') {
+    elArr.push([desc]);
+  }
+  const authorHeaderBlockEl = buildBlock('author-header', elArr);
+  div.prepend(authorHeaderBlockEl);
+}
+
+function buildArticleFeed(mainEl, type) {
   const div = document.createElement('div');
-  const title = mainEl.querySelector('h1').textContent.trim();
+  const title = mainEl.querySelector('h1, h2').textContent.trim();
   const articleFeedEl = buildBlock('article-feed', [
-    [`${pathname.includes('/tags/') ? 'tags' : 'category'}`, title],
+    [type, title],
   ]);
   div.append(articleFeedEl);
   mainEl.append(div);
@@ -386,7 +401,12 @@ function buildAutoBlocks(mainEl) {
     }
     if (window.location.pathname.includes('/categories/') || window.location.pathname.includes('/tags/')) {
       buildTagHeader(mainEl);
-      buildArticleFeed(mainEl);
+      const type = pathname.includes('/tags/') ? 'tags' : 'category';
+      buildArticleFeed(mainEl, type);
+    }
+    if (window.location.pathname.includes('/authors/')) {
+      buildAuthorHeader(mainEl);
+      buildArticleFeed(mainEl, 'author');
     }
     buildImageBlocks(mainEl);
   } catch (error) {
