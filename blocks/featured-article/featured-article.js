@@ -16,12 +16,12 @@ async function decorateFeaturedArticle(featuredArticleEl, articlePath, callback)
     } else {
       featuredArticleEl.append(card);
     }
-    if (callback) callback();
   } else {
     const { origin } = new URL(window.location.href);
     // eslint-disable-next-line no-console
     console.warn(`Featured article does not exist or is missing in index: ${origin}${articlePath}`);
   }
+  if (callback) callback();
 }
 
 export default function decorate(block, blockName, document, callback) {
