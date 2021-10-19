@@ -89,7 +89,6 @@ main .recommended-articles-small-container .article-card {
   main .recommended-articles-small-container .article-card {
     max-width: 378px;
     margin-right: 32px;
-    width: calc(100%/3 - 22px);
   }
 
   main .recommended-articles-small-container .article-card:last-child {
