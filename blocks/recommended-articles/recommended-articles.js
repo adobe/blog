@@ -26,6 +26,10 @@ async function decorateRecommendedArticles(recommendedArticlesEl, paths) {
       const card = buildArticleCard(article);
       articleCardsContainer.append(card);
       recommendedArticlesEl.append(articleCardsContainer);
+    } else {
+      const { origin } = new URL(window.location.href);
+      // eslint-disable-next-line no-console
+      console.warn(`Recommended article does not exist or is missing in index: ${origin}${articlePath}`);
     }
   }
   if (!articleCardsContainer.hasChildNodes()) {
