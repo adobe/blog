@@ -105,51 +105,6 @@ export function getRootPath() {
 
 let taxonomy;
 
-async function loadTaxonomy() {
-  const mod = await import('./taxonomy.js');
-  taxonomy = await mod.default(getLanguage());
-}
-
-export function getTaxonomy() {
-  return taxonomy;
-}
-
-/**
- * Fixes the links which have been created before the taxonomy has been loaded
- * (pre lcp or in lcp block).
- */
-function fixTaxonomyLinks() {
-  if (taxonomy) {
-    document.querySelectorAll('[data-topic-link]').forEach((a) => {
-      const category = a.dataset.topicLink;
-      const tax = taxonomy.get(category);
-      if (tax) {
-        a.href = tax.link;
-      } else {
-        console.warn(`Unknow category ${category}`);
-      }
-      delete a.dataset.topicLink;
-    });
-  }
-}
-
-/**
- * Returns a link tag with the proper href for the given topic.
- * If the taxonomy is not yet available, the tag is decorated with the topicLink
- * data attribute so that the link can be fixed later.
- * @param {string} topic The topic name
- * @returns {string} A link tag as a string
- */
-export function getTopicLinkTag(topic) {
-  let catLink;
-  if (taxonomy) {
-    const { link } = taxonomy.get(topic);
-    catLink = link;
-  }
-
-  return `<a href="${catLink || ''}" ${!catLink ? `data-topic-link="${topic}"` : ''}>${topic}</a>`;
-}
-
 /**
  * For the given list of topics, returns the corresponding computed taxonomy:
  * - category: main topic
@@ -159,7 +114,7 @@ export function getTopicLinkTag(topic) {
  * @param {Array} topics List of topics
  * @returns {Object} Taxonomy object
  */
-function getTaxonomyFromTopics(topics) {
+function computeTaxonomyFromTopics(topics) {
   // no topics: default to a randomly choosen category
   const category = topics?.length > 0 ? topics[0] : 'news';
 
@@ -170,7 +125,7 @@ function getTaxonomyFromTopics(topics) {
     topics.forEach((tag) => {
       const tax = taxonomy.get(tag);
       if (tax) {
-        if (!allTopics.includes(tag)) {
+        if (!allTopics.includes(tag) && !tax.skipMeta) {
           allTopics.push(tag);
           if (tax.isUFT) visibleTopics.push(tag);
           const parents = taxonomy.getParents(tag);
@@ -185,7 +140,8 @@ function getTaxonomyFromTopics(topics) {
           }
         }
       } else {
-        console.warn(`Unknow tag in topics list: ${tag}`);
+        // eslint-disable-next-line no-console
+        console.warn(`Unknown tag in topics list: ${tag}`);
       }
     });
     return {
@@ -195,6 +151,83 @@ function getTaxonomyFromTopics(topics) {
   return {
     category, topics,
   };
+}
+
+async function loadTaxonomy() {
+  const mod = await import('./taxonomy.js');
+  taxonomy = await mod.default(getLanguage());
+
+  if (taxonomy) {
+    // taxonomy loaded, post loading adjustements
+
+    // fix the links which have been created before the taxonomy has been loaded
+    // (pre lcp or in lcp block).
+    document.querySelectorAll('[data-topic-link]').forEach((a) => {
+      const topic = a.dataset.topicLink;
+      const tax = taxonomy.get(topic);
+      if (tax) {
+        a.href = tax.link;
+      } else {
+        // eslint-disable-next-line no-console
+        console.warn(`Trying to get a link for an unknown topic: ${topic}`);
+        a.href = '#';
+      }
+      delete a.dataset.topicLink;
+    });
+
+    // adjust meta article:tag
+
+    const metas = document.head.querySelectorAll('meta[property="article:tag"]');
+    const currentTopics = Array.from(metas).map((meta) => meta.content);
+    const articleTax = computeTaxonomyFromTopics(currentTopics);
+
+    const allTopics = articleTax.allTopics || [];
+    allTopics.forEach((topic) => {
+      if (!currentTopics.includes(topic)) {
+        // computed topic (parent...) is not in meta -> add it
+        const newMetaTag = document.createElement('meta');
+        newMetaTag.setAttribute('property', 'article:tag');
+        newMetaTag.setAttribute('content', topic);
+        document.head.append(newMetaTag);
+      }
+    });
+
+    metas.forEach((meta) => {
+      const tag = meta.content;
+      const tax = taxonomy.get(tag);
+      if (tax && tax.skipMeta) {
+        // remove from meta tags flags as "skipMeta"
+        meta.remove();
+      }
+    });
+  }
+}
+
+export function getTaxonomy() {
+  return taxonomy;
+}
+
+/**
+ * Returns a link tag with the proper href for the given topic.
+ * If the taxonomy is not yet available, the tag is decorated with the topicLink
+ * data attribute so that the link can be fixed later.
+ * @param {string} topic The topic name
+ * @returns {string} A link tag as a string
+ */
+export function getLinkForTopic(topic) {
+  let catLink;
+  if (taxonomy) {
+    const tax = taxonomy.get(topic);
+    if (tax) {
+      catLink = tax.link;
+    } else {
+      // eslint-disable-next-line no-console
+      console.warn(`Trying to get a link for an unknown topic: ${topic}`);
+      catLink = '#';
+    }
+  }
+
+  return `<a href="${catLink || ''}" ${!catLink ? `data-topic-link="${topic}"` : ''}>${topic}</a>`;
 }
 
 /**
@@ -208,7 +241,7 @@ function loadArticleTaxonomy(article) {
 
     const topics = tags.replace(/[["\]]/gm, '').split(',');
 
-    const articleTax = getTaxonomyFromTopics(topics);
+    const articleTax = computeTaxonomyFromTopics(topics);
 
     article.category = articleTax.category;
 
@@ -462,7 +495,7 @@ function buildArticleHeader(mainEl) {
   const author = getMetadata('author');
   const publicationDate = getMetadata('publication-date');
 
-  const categoryTag = getTopicLinkTag(category);
+  const categoryTag = getLinkForTopic(category);
 
   const articleHeaderBlockEl = buildBlock('article-header', [
     [`<p>${categoryTag}</p>`],
@@ -516,8 +549,8 @@ function buildTagsBlock(mainEl) {
   const metas = document.querySelectorAll('[property="article:tag"]');
   if (taxonomy && metas.length > 0) {
     const topics = Array.from(metas).map((meta) => meta.content);
-    const articleTax = getTaxonomyFromTopics(topics);
-    const tagsForBlock = articleTax.visibleTopics.map((topic) => getTopicLinkTag(topic));
+    const articleTax = computeTaxonomyFromTopics(topics);
+    const tagsForBlock = articleTax.visibleTopics.map((topic) => getLinkForTopic(topic));
 
     const tagsBlock = buildBlock('tags', [
       [`<p>${tagsForBlock.join('')}</p>`],
@@ -816,7 +849,7 @@ export function buildArticleCard(article, type = 'article') {
   card.href = path;
 
   const articleTax = getArticleTaxonomy(article);
-  const categoryTag = getTopicLinkTag(articleTax.category);
+  const categoryTag = getLinkForTopic(articleTax.category);
 
   card.innerHTML = `<div class="${type}-card-image">
       ${pictureTag}
@@ -1023,11 +1056,11 @@ async function decoratePage(win = window) {
         loadBlock(footer);
 
         await loadTaxonomy();
-        /* taxonomy dependent */
-        fixTaxonomyLinks();
-        buildTagsBlock(main);
 
+        /* taxonomy dependent */
+        buildTagsBlock(main);
         loadBlocks(main);
+
         loadCSS('/styles/lazy-styles.css');
         addFavIcon('/styles/favicon.svg');
 
