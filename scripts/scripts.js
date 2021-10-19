@@ -196,8 +196,13 @@ async function loadTaxonomy() {
       const tag = meta.content;
       const tax = taxonomy.get(tag);
       if (tax && tax.skipMeta) {
-        // remove from meta tags flags as "skipMeta"
+        // if skipMeta, remove from meta "article:tag"
         meta.remove();
+        // but add as meta with name
+        const newMetaTag = document.createElement('meta');
+        newMetaTag.setAttribute('name', tag);
+        newMetaTag.setAttribute('content', 'true');
+        document.head.append(newMetaTag);
       }
     });
   }
