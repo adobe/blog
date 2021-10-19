@@ -592,8 +592,7 @@ function buildAutoBlocks(mainEl) {
     }
     if (window.location.pathname.includes('/topics/')) {
       buildTagHeader(mainEl);
-      const type = window.location.pathname.includes('/tags/') ? 'tags' : 'category';
-      buildArticleFeed(mainEl, type);
+      buildArticleFeed(mainEl, 'tags');
     }
     if (window.location.pathname.includes('/authors/')) {
       buildAuthorHeader(mainEl);
