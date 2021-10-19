@@ -432,7 +432,7 @@
       }
 
       var copybuffer = document.getElementById('copybuffer');
-      copybuffer.value = `---\r\n\r\nTopics: ${topics}\r\nProducts: ${products}\r\n\r\n`
+      copybuffer.value = `${topics}${products}`;
 
       document.querySelectorAll('#results>.category>span').forEach((e) => {
         const target = e.getAttribute('data-target');
@@ -668,8 +668,8 @@
 
       const checkLinks = params.get('checkLinks') || false;
 
-      const { getTaxonomy } = await import('/scripts/taxonomy.js');
-      const taxonomy = await getTaxonomy(lang);
+      const mod = await import('/scripts/taxonomy.js');
+      const taxonomy = await mod.default(lang);
 
       initTaxonomy(taxonomy);
       initCategories();
