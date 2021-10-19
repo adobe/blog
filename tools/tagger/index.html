@@ -349,7 +349,7 @@
     function remove(e) {
       const target = e.getAttribute('data-target');
       const cat = e.getAttribute('data-category');
-      selected.splice(selected.findIndex(s => s.name === target && s.category === cat), 1);
+      selected.splice(selected.findIndex(s => s.name === target && (!s.category || s.category === cat)), 1);
       displaySelected();
     }
 
@@ -368,7 +368,7 @@
       if (item) {
         selected.push({
           name: item.name, 
-          category: cat 
+          category: cat || _taxonomy.CATEGORIES
         });
         displaySelected();
       }
@@ -412,7 +412,23 @@
         });
 
         tags = [tags[0]].concat(toSort);
+
+        // make sure the first element (=category) is a visible
+        // find the first uft element and move it first
+        const index = tags.findIndex((t) => !t.nuft);
+        if (index > 0) {
+          const t = tags[index];
+          tags.splice(index,1);
+          tags.unshift(t);
+        }
       }
+
+      selected = tags.map(t => {
+        return { 
+          name: t.tag,
+          category: t.category,
+        };
+      });
 
       tags.forEach((tagInfo) => {
         html += `<span data-target="${tagInfo.tag}" data-category="${tagInfo.category}" onclick="remove(this)" class="path">${tagInfo.path}<span class="tag cat-${CATEGORIES.indexOf(tagInfo.category)}${tagInfo.nuft ? ' nuft' : ''}">${tagInfo.label}</span></span> `;
