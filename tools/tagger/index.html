@@ -504,6 +504,11 @@
           products = r[1].split(/\,\s*/);
         }
 
+        if (topics.length === 0 && products.length === 0) {
+          // new format
+          topics = paste.split(', ');
+        }
+
         topics.forEach((t) => addByName(t));
         products.forEach((p) => addByName(p, PRODUCTS));
       }
