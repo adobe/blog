@@ -191,13 +191,12 @@ async function loadTaxonomy() {
 
     // adjust meta article:tag
 
-    const metas = getMetadata('article:tag', true);
-    const currentTopics = Array.from(metas).map((meta) => meta.content);
-    const articleTax = computeTaxonomyFromTopics(currentTopics);
+    const currentTags = getMetadata('article:tag', true);
+    const articleTax = computeTaxonomyFromTopics(currentTags);
 
     const allTopics = articleTax.allTopics || [];
     allTopics.forEach((topic) => {
-      if (!currentTopics.includes(topic)) {
+      if (!currentTags.includes(topic)) {
         // computed topic (parent...) is not in meta -> add it
         const newMetaTag = document.createElement('meta');
         newMetaTag.setAttribute('property', 'article:tag');
@@ -206,12 +205,14 @@ async function loadTaxonomy() {
       }
     });
 
-    metas.forEach((meta) => {
-      const tag = meta.content;
+    currentTags.forEach((tag) => {
       const tax = taxonomy.get(tag);
       if (tax && tax.skipMeta) {
         // if skipMeta, remove from meta "article:tag"
-        meta.remove();
+        const meta = document.querySelector(`[property="article:tag"][content="${tag}"]`);
+        if (meta) {
+          meta.remove();
+        }
         // but add as meta with name
         const newMetaTag = document.createElement('meta');
         newMetaTag.setAttribute('name', tag);
@@ -555,9 +556,8 @@ function buildArticleFeed(mainEl, type) {
 }
 
 function buildTagsBlock(mainEl) {
-  const metas = getMetadata('article:tag', true);
-  if (taxonomy && metas.length > 0) {
-    const topics = Array.from(metas).map((meta) => meta.content);
+  const topics = getMetadata('article:tag', true);
+  if (taxonomy && topics.length > 0) {
     const articleTax = computeTaxonomyFromTopics(topics);
     const tagsForBlock = articleTax.visibleTopics.map((topic) => getLinkForTopic(topic));
 
