@@ -170,7 +170,6 @@ function computeTaxonomyFromTopics(topics) {
 async function loadTaxonomy() {
   const mod = await import('./taxonomy.js');
   taxonomy = await mod.default(getLanguage());
-
   if (taxonomy) {
     // taxonomy loaded, post loading adjustements
 
@@ -596,7 +595,9 @@ function buildAutoBlocks(mainEl) {
     }
     if (window.location.pathname.includes('/topics/')) {
       buildTagHeader(mainEl);
-      buildArticleFeed(mainEl, 'tags');
+      if (!mainEl.querySelector('.article-feed')) {
+        buildArticleFeed(mainEl, 'tags');
+      }
     }
     if (window.location.pathname.includes('/authors/')) {
       buildAuthorHeader(mainEl);
