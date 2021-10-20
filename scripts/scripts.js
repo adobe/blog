@@ -103,6 +103,18 @@ export function getRootPath() {
   return `/${loc}`;
 }
 
+/**
+ * Retrieves the content of a metadata tag.
+ * @param {string} name The metadata name (or property)
+ * @returns {string} The metadata value
+ */
+export function getMetadata(name, asArray = false) {
+  const attr = name && name.includes(':') ? 'property' : 'name';
+  const meta = [...document.head.querySelectorAll(`meta[${attr}="${name}"]`)].map((el) => el.content);
+
+  return asArray ? meta : meta.join(', ');
+}
+
 let taxonomy;
 
 /**
@@ -177,7 +189,7 @@ async function loadTaxonomy() {
 
     // adjust meta article:tag
 
-    const metas = document.head.querySelectorAll('meta[property="article:tag"]');
+    const metas = getMetadata('article:tag', true);
     const currentTopics = Array.from(metas).map((meta) => meta.content);
     const articleTax = computeTaxonomyFromTopics(currentTopics);
 
@@ -286,17 +298,6 @@ export function getArticleTaxonomy(article) {
   return {
     category, topics, visibleTopics, allTopics,
   };
-}
-
-/**
- * Retrieves the content of a metadata tag.
- * @param {string} name The metadata name (or property)
- * @returns {string} The metadata value
- */
-export function getMetadata(name) {
-  const attr = name && name.includes(':') ? 'property' : 'name';
-  const meta = [...document.head.querySelectorAll(`meta[${attr}="${name}"]`)].map((el) => el.content).join(', ');
-  return meta;
 }
 
 /**
@@ -496,7 +497,8 @@ function buildArticleHeader(mainEl) {
   const div = document.createElement('div');
   const h1 = mainEl.querySelector('h1');
   const picture = mainEl.querySelector('picture');
-  const category = document.head.querySelector('meta[property="article:tag"]').content;
+  const tags = getMetadata('article:tag', true);
+  const category = tags.length > 0 ? tags[0] : '';
   const author = getMetadata('author');
   const publicationDate = getMetadata('publication-date');
 
@@ -551,7 +553,7 @@ function buildArticleFeed(mainEl, type) {
 }
 
 function buildTagsBlock(mainEl) {
-  const metas = document.querySelectorAll('[property="article:tag"]');
+  const metas = getMetadata('article:tag', true);
   if (taxonomy && metas.length > 0) {
     const topics = Array.from(metas).map((meta) => meta.content);
     const articleTax = computeTaxonomyFromTopics(topics);
