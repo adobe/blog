@@ -64,7 +64,7 @@ if (window.hlx.rum.isSelected) {
 
 // no-interlinks is a special "tag" to skip interlink via content
 if (document.querySelector('.article-header')
-  && document.querySelector('[data-origin]')
+  && !document.querySelector('[data-origin]')
   && !document.querySelector('[name="no-interlinks"]')) {
   loadScript('/blocks/interlinks/interlinks.js', null, 'module');
 }
