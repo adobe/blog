@@ -1,7 +1,7 @@
 version: 1
 
 indices:
-  english:
+  english: &default
     # note, the following 2 properties are no longer used with Helix3
     source: html
     fetch: https://{ref}--{repo}--{owner}.hlx.live{path}
@@ -55,3 +55,13 @@ indices:
         select: none
         value: |
           parseTimestamp(headers['last-modified'], 'ddd, DD MMM YYYY hh:mm:ss GMT')
+  france:
+    <<: *default
+    include:
+      - /fr/publish/*/*/*/*
+    target: https://adobe.sharepoint.com/sites/AlexTest/Shared%20Documents/websites/blog/fr/query-index.xlsx
+  japan:
+    <<: *default
+    include:
+      - /jp/publish/*/*/*/*
+    target: https://adobe.sharepoint.com/sites/AlexTest/Shared%20Documents/websites/blog/jp/query-index.xlsx

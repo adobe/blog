@@ -14,6 +14,7 @@ async function populateAuthorImg(imgContainer, url, name) {
       const src = new URL(placeholderImg.getAttribute('src'), new URL(url));
       const picture = createOptimizedPicture(src, name, false, [{ width: 200 }]);
       imgContainer.append(picture);
+      imgContainer.style.backgroundImage = 'none';
       picture.querySelector('img').onerror = (e) => {
         // removing 404 img will reveal fallback background img
         e.srcElement.remove();
