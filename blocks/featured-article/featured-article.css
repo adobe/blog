@@ -190,3 +190,7 @@ main .tag-header-container .featured-article-card-body p:not(:first-child) {
     font-size: var(--body-font-size-m);
   }
 }
+
+main .featured-article-card-body p:last-of-type {
+  font-weight: 500;
+}

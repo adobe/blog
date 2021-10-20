@@ -197,3 +197,7 @@ main a.article-card:any-link {
     min-height: 2.6rem;
   }
 }
+
+main .article-card .article-card-body p:last-of-type {
+  font-weight: 500;
+}

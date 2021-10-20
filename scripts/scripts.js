@@ -94,6 +94,24 @@ export function getLanguage() {
   return language;
 }
 
+function getDateLocale() {
+  let dateLocale = language;
+  if (dateLocale === LANG.EN) {
+    dateLocale = 'en-US'; // default to US date format
+  }
+  if (dateLocale === LANG.BR) {
+    dateLocale = 'pt-BR';
+  }
+  if (dateLocale === LANG.JP) {
+    dateLocale = 'ja-JP';
+  }
+  const pageName = window.location.pathname.split('/').pop().split('.')[0];
+  if (pageName === 'uk' || pageName === 'apac') {
+    dateLocale = 'en-UK'; // special handling for UK and APAC landing pages
+  }
+  return dateLocale;
+}
+
 /**
  * Returns the language dependent root path
  * @returns {string} The computed root path
@@ -645,13 +663,40 @@ export function createOptimizedPicture(src, alt = '', eager = false, breakpoints
 }
 
 /**
+ * Formats the article date for the card using the date locale
+ * matching the content displayed.
+ * @param {number} date The date to format (Excel date)
+ * @returns {string} The formatted card date
+ */
+export function formatLocalCardDate(date) {
+  // 1/1/1900 is day 1 in Excel, so:
+  // - add this
+  // - add days between 1/1/1900 and 1/1/1970
+  // - add one more day for Excel's leap year bug
+  const jsDate = new Date(Math.round((date - (1 + 25567 + 1)) * 86400 * 1000));
+  const dateLocale = getDateLocale();
+
+  let dateString = new Date(jsDate).toLocaleDateString(dateLocale, {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    timeZone: 'UTC',
+  });
+  if (dateLocale === 'en-US') {
+    // stylize US date format with dashes instead of slashes
+    dateString = dateString.replace(/\//g, '-');
+  }
+  return dateString;
+}
+
+/**
  * Build article card
  * @param {Element} article The article data to be placed in card.
  * @returns card Generated card
  */
 export function buildArticleCard(article, type = 'article') {
   const {
-    title, description, image, imageAlt, category,
+    title, description, image, imageAlt, category, date,
   } = article;
 
   const path = article.path.split('.')[0];
@@ -671,6 +716,7 @@ export function buildArticleCard(article, type = 'article') {
       </p>
       <h3>${title}</h3>
       <p>${description}</p>
+      <p>${formatLocalCardDate(date)}
     </div>`;
   return card;
 }
