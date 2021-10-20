@@ -150,7 +150,8 @@ main a.article-card:any-link {
 }
 
 .article-card-body p.article-card-category,
-.article-card-body p.article-card-category a {
+.article-card-body p.article-card-category a,
+.article-card-body p.article-card-date {
   font-weight: var(--detail-font-weight);
   color: var(--detail-color);
   font-size: var(--detail-font-size-s);
@@ -181,7 +182,7 @@ main a.article-card:any-link {
   }
 }
 
-.article-card .article-card-body p:not(:first-child) {
+.article-card .article-card-body .article-card-description {
   color: var(--color-gray-700);
   font-size: var(--body-font-size-xs);
   display: none;
@@ -192,12 +193,8 @@ main a.article-card:any-link {
 }
 
 @media (min-width: 600px) {
-  .article-card .article-card-body p:not(:first-child) {
+  .article-card .article-card-body .article-card-description {
     display: -webkit-box;
     min-height: 2.6rem;
   }
-}
-
-main .article-card .article-card-body p:last-of-type {
-  font-weight: 500;
 }

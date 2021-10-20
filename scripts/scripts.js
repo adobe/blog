@@ -715,8 +715,8 @@ export function buildArticleCard(article, type = 'article') {
         <a href="${window.location.origin}${getRootPath()}/topics/${category}">${category}</a>
       </p>
       <h3>${title}</h3>
-      <p>${description}</p>
-      <p>${formatLocalCardDate(date)}
+      <p class="${type}-card-description">${description}</p>
+      <p class="${type}-card-date">${formatLocalCardDate(date)}
     </div>`;
   return card;
 }
