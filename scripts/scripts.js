@@ -104,9 +104,11 @@ export function getRootPath() {
 }
 
 /**
- * Retrieves the content of a metadata tag.
+ * Retrieves the content of a metadata tag. Multivalued metadata are returned
+ * as a comma-separated list (or as an array of string if asArray is true).
  * @param {string} name The metadata name (or property)
- * @returns {string} The metadata value
+ * @param {boolean} asArray Return an array instead of a comma-separated string
+ * @returns {string|Array} The metadata value
  */
 export function getMetadata(name, asArray = false) {
   const attr = name && name.includes(':') ? 'property' : 'name';
