@@ -146,7 +146,7 @@ let taxonomy;
  * @param {Array} topics List of topics
  * @returns {Object} Taxonomy object
  */
-function computeTaxonomyFromTopics(topics) {
+function computeTaxonomyFromTopics(topics, path) {
   // no topics: default to a randomly choosen category
   const category = topics?.length > 0 ? topics[0] : 'news';
 
@@ -173,7 +173,7 @@ function computeTaxonomyFromTopics(topics) {
         }
       } else {
         // eslint-disable-next-line no-console
-        console.warn(`Unknown tag in topics list: ${tag}`);
+        console.warn(`Unknown topic in tags list: ${tag} ${path ? `on page ${path}` : '(current page)'}`);
       }
     });
     return {
@@ -201,7 +201,7 @@ async function loadTaxonomy() {
         a.href = tax.link;
       } else {
         // eslint-disable-next-line no-console
-        console.warn(`Trying to get a link for an unknown topic: ${topic}`);
+        console.warn(`Trying to get a link for an unknown topic: ${topic} (current page)`);
         a.href = '#';
       }
       delete a.dataset.topicLink;
@@ -252,7 +252,7 @@ export function getTaxonomy() {
  * @param {string} topic The topic name
  * @returns {string} A link tag as a string
  */
-export function getLinkForTopic(topic) {
+export function getLinkForTopic(topic, path) {
   let catLink;
   if (taxonomy) {
     const tax = taxonomy.get(topic);
@@ -260,7 +260,7 @@ export function getLinkForTopic(topic) {
       catLink = tax.link;
     } else {
       // eslint-disable-next-line no-console
-      console.warn(`Trying to get a link for an unknown topic: ${topic}`);
+      console.warn(`Trying to get a link for an unknown topic: ${topic} ${path ? `on page ${path}` : '(current page)'}`);
       catLink = '#';
     }
   }
@@ -275,11 +275,11 @@ export function getLinkForTopic(topic) {
 function loadArticleTaxonomy(article) {
   if (!article.allTopics) {
     // for now, we can only compute the category
-    const { tags } = article;
+    const { tags, path } = article;
 
     const topics = tags.replace(/[["\]]/gm, '').split(',');
 
-    const articleTax = computeTaxonomyFromTopics(topics);
+    const articleTax = computeTaxonomyFromTopics(topics, path);
 
     article.category = articleTax.category;
 
@@ -902,7 +902,7 @@ export function buildArticleCard(article, type = 'article') {
   card.href = path;
 
   const articleTax = getArticleTaxonomy(article);
-  const categoryTag = getLinkForTopic(articleTax.category);
+  const categoryTag = getLinkForTopic(articleTax.category, path);
 
   card.innerHTML = `<div class="${type}-card-image">
       ${pictureTag}
