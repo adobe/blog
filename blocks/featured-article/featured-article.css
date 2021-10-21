@@ -95,7 +95,8 @@ main .featured-article-card-body h3 {
 }
 
 main p.featured-article-card-category,
-main p.featured-article-card-category a {
+main p.featured-article-card-category a,
+main p.featured-article-card-date {
   font-weight: var(--detail-font-weight);
   color: var(--detail-color);
   font-size: var(--detail-font-size-s);
@@ -123,14 +124,14 @@ main .featured-article-card-body h3 {
   }
 }
 
-main .featured-article-card-body p:not(:first-child) {
+main .featured-article-card-body .featured-article-card-description {
   color: var(--color-gray-700);
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
 @media (min-width: 600px) {
-  main .featured-article-card-body p:not(:first-child) {
+  main .featured-article-card-body .featured-article-card-description {
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
