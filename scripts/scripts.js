@@ -94,6 +94,24 @@ export function getLanguage() {
   return language;
 }
 
+function getDateLocale() {
+  let dateLocale = language;
+  if (dateLocale === LANG.EN) {
+    dateLocale = 'en-US'; // default to US date format
+  }
+  if (dateLocale === LANG.BR) {
+    dateLocale = 'pt-BR';
+  }
+  if (dateLocale === LANG.JP) {
+    dateLocale = 'ja-JP';
+  }
+  const pageName = window.location.pathname.split('/').pop().split('.')[0];
+  if (pageName === 'uk' || pageName === 'apac') {
+    dateLocale = 'en-UK'; // special handling for UK and APAC landing pages
+  }
+  return dateLocale;
+}
+
 /**
  * Returns the language dependent root path
  * @returns {string} The computed root path
@@ -128,7 +146,7 @@ let taxonomy;
  * @param {Array} topics List of topics
  * @returns {Object} Taxonomy object
  */
-function computeTaxonomyFromTopics(topics) {
+function computeTaxonomyFromTopics(topics, path) {
   // no topics: default to a randomly choosen category
   const category = topics?.length > 0 ? topics[0] : 'news';
 
@@ -155,7 +173,7 @@ function computeTaxonomyFromTopics(topics) {
         }
       } else {
         // eslint-disable-next-line no-console
-        console.warn(`Unknown tag in topics list: ${tag}`);
+        console.warn(`Unknown topic in tags list: ${tag} ${path ? `on page ${path}` : '(current page)'}`);
       }
     });
     return {
@@ -181,7 +199,7 @@ async function loadTaxonomy() {
         a.href = tax.link;
       } else {
         // eslint-disable-next-line no-console
-        console.warn(`Trying to get a link for an unknown topic: ${topic}`);
+        console.warn(`Trying to get a link for an unknown topic: ${topic} (current page)`);
         a.href = '#';
       }
       delete a.dataset.topicLink;
@@ -232,7 +250,7 @@ export function getTaxonomy() {
  * @param {string} topic The topic name
  * @returns {string} A link tag as a string
  */
-export function getLinkForTopic(topic) {
+export function getLinkForTopic(topic, path) {
   let catLink;
   if (taxonomy) {
     const tax = taxonomy.get(topic);
@@ -240,7 +258,7 @@ export function getLinkForTopic(topic) {
       catLink = tax.link;
     } else {
       // eslint-disable-next-line no-console
-      console.warn(`Trying to get a link for an unknown topic: ${topic}`);
+      console.warn(`Trying to get a link for an unknown topic: ${topic} ${path ? `on page ${path}` : '(current page)'}`);
       catLink = '#';
     }
   }
@@ -255,11 +273,11 @@ export function getLinkForTopic(topic) {
 function loadArticleTaxonomy(article) {
   if (!article.allTopics) {
     // for now, we can only compute the category
-    const { tags } = article;
+    const { tags, path } = article;
 
     const topics = tags.replace(/[["\]]/gm, '').split(',');
 
-    const articleTax = computeTaxonomyFromTopics(topics);
+    const articleTax = computeTaxonomyFromTopics(topics, path);
 
     article.category = articleTax.category;
 
@@ -839,13 +857,40 @@ export function createOptimizedPicture(src, alt = '', eager = false, breakpoints
 }
 
 /**
+ * Formats the article date for the card using the date locale
+ * matching the content displayed.
+ * @param {number} date The date to format (Excel date)
+ * @returns {string} The formatted card date
+ */
+export function formatLocalCardDate(date) {
+  // 1/1/1900 is day 1 in Excel, so:
+  // - add this
+  // - add days between 1/1/1900 and 1/1/1970
+  // - add one more day for Excel's leap year bug
+  const jsDate = new Date(Math.round((date - (1 + 25567 + 1)) * 86400 * 1000));
+  const dateLocale = getDateLocale();
+
+  let dateString = new Date(jsDate).toLocaleDateString(dateLocale, {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    timeZone: 'UTC',
+  });
+  if (dateLocale === 'en-US') {
+    // stylize US date format with dashes instead of slashes
+    dateString = dateString.replace(/\//g, '-');
+  }
+  return dateString;
+}
+
+/**
  * Build article card
  * @param {Element} article The article data to be placed in card.
  * @returns card Generated card
  */
 export function buildArticleCard(article, type = 'article') {
   const {
-    title, description, image, imageAlt,
+    title, description, image, imageAlt, date,
   } = article;
 
   const path = article.path.split('.')[0];
@@ -857,7 +902,7 @@ export function buildArticleCard(article, type = 'article') {
   card.href = path;
 
   const articleTax = getArticleTaxonomy(article);
-  const categoryTag = getLinkForTopic(articleTax.category);
+  const categoryTag = getLinkForTopic(articleTax.category, path);
 
   card.innerHTML = `<div class="${type}-card-image">
       ${pictureTag}
@@ -867,7 +912,8 @@ export function buildArticleCard(article, type = 'article') {
         ${categoryTag}
       </p>
       <h3>${title}</h3>
-      <p>${description}</p>
+      <p class="${type}-card-description">${description}</p>
+      <p class="${type}-card-date">${formatLocalCardDate(date)}
     </div>`;
   return card;
 }
