@@ -171,8 +171,7 @@ async function loadTaxonomy() {
   const mod = await import('./taxonomy.js');
   taxonomy = await mod.default(getLanguage());
   if (taxonomy) {
-    // taxonomy loaded, post loading adjustements
-
+    // taxonomy loaded, post loading adjustments
     // fix the links which have been created before the taxonomy has been loaded
     // (pre lcp or in lcp block).
     document.querySelectorAll('[data-topic-link]').forEach((a) => {
