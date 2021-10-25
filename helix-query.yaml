@@ -55,13 +55,45 @@ indices:
         select: none
         value: |
           parseTimestamp(headers['last-modified'], 'ddd, DD MMM YYYY hh:mm:ss GMT')
-  france:
+
+  brazilian:
+    <<: *default
+    include:
+      - /br/publish/*/*/*/*
+    target: https://adobe.sharepoint.com/sites/AlexTest/Shared%20Documents/websites/blog/br/query-index.xlsx
+  
+  german:
+    <<: *default
+    include:
+      - /de/publish/*/*/*/*
+    target: https://adobe.sharepoint.com/sites/AlexTest/Shared%20Documents/websites/blog/de/query-index.xlsx
+  
+  spanish:
+    <<: *default
+    include:
+      - /es/publish/*/*/*/*
+    target: https://adobe.sharepoint.com/sites/AlexTest/Shared%20Documents/websites/blog/es/query-index.xlsx
+  
+  french:
     <<: *default
     include:
       - /fr/publish/*/*/*/*
     target: https://adobe.sharepoint.com/sites/AlexTest/Shared%20Documents/websites/blog/fr/query-index.xlsx
-  japan:
+
+  italian:
+    <<: *default
+    include:
+      - /it/publish/*/*/*/*
+    target: https://adobe.sharepoint.com/sites/AlexTest/Shared%20Documents/websites/blog/it/query-index.xlsx
+
+  japanese:
     <<: *default
     include:
       - /jp/publish/*/*/*/*
     target: https://adobe.sharepoint.com/sites/AlexTest/Shared%20Documents/websites/blog/jp/query-index.xlsx
+
+  korean:
+    <<: *default
+    include:
+      - /ko/publish/*/*/*/*
+    target: https://adobe.sharepoint.com/sites/AlexTest/Shared%20Documents/websites/blog/ko/query-index.xlsx
