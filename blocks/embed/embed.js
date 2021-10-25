@@ -200,7 +200,7 @@ const intersectHandler = (entries) => {
 };
 
 export default function decorate(block) {
-  window.addEventListener('load', () => {
+  const run = () => {
     const options = {
       root: null,
       rootMargin: '0px',
@@ -209,5 +209,11 @@ export default function decorate(block) {
 
     const observer = new IntersectionObserver(intersectHandler, options);
     observer.observe(block);
-  });
+  };
+
+  if (document.readyState === 'complete') {
+    run();
+  } else {
+    window.addEventListener('load', run);
+  }
 }
