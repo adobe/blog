@@ -4,6 +4,7 @@ import {
   fetchBlogArticleIndex,
   fetchPlaceholders,
   getArticleTaxonomy,
+  getLanguage,
 } from '../../scripts/scripts.js';
 
 function isCardOnPage(article) {
@@ -12,7 +13,222 @@ function isCardOnPage(article) {
   return !!document.querySelector(`.featured-article a.featured-article-card[href="${path}"], .recommended-articles a.article-card[href="${path}"]`);
 }
 
+async function loadTaxonomy() {
+  const mod = await import('../../scripts/taxonomy.js');
+  const taxonomy = await mod.default(getLanguage());
+  return taxonomy;
+}
+
+function closeOnDocClick(e) {
+  const target = e.target;
+  const curtain = document.querySelector('.filter-curtain');
+  console.log(target);
+  console.log(curtain);
+  if (target === curtain) {
+    const open = document.querySelector('.filter-button[aria-expanded=true]');
+    closeMenu(open);
+    curtain.classList.add('hide');
+  }
+}
+
+function toggleMenu(e) {
+  const button = e.target.closest('[role=button]');
+  const expanded = button.getAttribute('aria-expanded');
+  if (expanded === 'true') {
+    closeMenu(button);
+    closeCurtain();
+    
+  } else {
+    openMenu(button);
+    openCurtain();
+  }
+}
+
+function closeMenu(el) {
+  el.setAttribute('aria-expanded', false);
+}
+
+function openMenu(el) {
+  const expandedMenu = document.querySelector('.filter-button[aria-expanded=true]');
+  if (expandedMenu) { closeMenu(expandedMenu); }
+  el.setAttribute('aria-expanded', true);
+}
+
+function closeCurtain() {
+  const curtain = document.querySelector('.filter-curtain');
+  curtain.classList.add('hide');
+  window.removeEventListener('click', closeOnDocClick);
+}
+
+function openCurtain() {
+  const curtain = document.querySelector('.filter-curtain');
+  curtain.classList.remove('hide');
+  window.addEventListener('click', closeOnDocClick);
+}
+
+function applyCurrentFilters(block, config, close) {
+  const filters = {};
+  document.querySelectorAll('.filter-options').forEach((filter) => {
+    const type = filter.getAttribute('data-type');
+    const subfilters = [];
+    filter.querySelectorAll('input[type=checkbox]').forEach((box) => {
+      if (box.checked) { 
+        subfilters.push(box.name); 
+        if (config.selectedTopics) {
+          config.selectedTopics += `, ${box.name}`;
+        } else {
+          config.selectedTopics = box.name;
+        }
+      }
+    });
+    if (subfilters.length) { 
+      filters[type] = subfilters;
+    }
+    if (close) { 
+      const id = filter.parentElement.getAttribute('aria-labelledby');
+      const dropdown = document.getElementById(id);
+      closeMenu(dropdown); 
+    }
+  });
+  const selectedContainer = document.querySelector('.selected-container');
+  const selectedFilters = selectedContainer.querySelector('.selected-filters');
+  selectedFilters.innerHTML = '';
+
+  if (Object.keys(filters).length > 0) {
+    Object.keys(filters).forEach((filter) => {
+      filters[filter].forEach((f) => {
+        const selectedFilter = buildSelectedFilter(f); 
+        selectedFilter.addEventListener('click', (e) => {
+          clearFilter(e, block, config);
+        });
+        selectedFilters.append(selectedFilter);
+      });
+    });
+    selectedContainer.classList.remove('hide');
+  } else {
+    selectedContainer.classList.add('hide');
+  }
+  if (block) {
+    block.innerHTML = '';
+    decorateArticleFeed(block, config);
+  }
+}
+
+function clearFilter(e, block, config) {
+  const target = e.target;
+  const checked = document
+    .querySelector(`input[name='${target.textContent}']`);
+  if (checked) { checked.checked = false; }
+  delete config.selectedTopics;
+  applyCurrentFilters(block, config);
+}
+
+function clearFilters(e, block, config) {
+  const type = e.target.classList[e.target.classList.length - 1];
+  let target = document;
+  // remove selected checked tags
+  if (type === 'reset') { 
+    target = e.target.parentNode.parentNode; 
+  } else if (type === 'clear') {
+    delete config.selectedTopics;
+  }
+  const dropdowns = target.querySelectorAll('.filter-options');
+  dropdowns.forEach((dropdown) => {
+    const checked = dropdown.querySelectorAll('input:checked');
+    checked.forEach((box) => { box.checked = false; });
+  });
+  delete config.selectedTopics;
+  applyCurrentFilters(block, config);
+}
+
+function buildSelectedFilter(name) {
+  const a = document.createElement('a');
+  a.classList.add('selected-filter');
+  a.setAttribute('tabindex', 0);
+  a.textContent = name;
+  return a;
+}
+
+function buildFilter(type, tax, ph, block, config) {
+  const container = document.createElement('div');
+  container.classList.add('filter');
+
+  const button = document.createElement('a');
+  button.classList.add('filter-button');
+  button.id = `${type}-filter-button`;
+  button.setAttribute('aria-haspopup', true);
+  button.setAttribute('aria-expanded', false);
+  button.setAttribute('role', 'button');
+  button.textContent = tax.getCategoryTitle(type);
+  button.addEventListener('click', toggleMenu);
+
+  const dropdown = document.createElement('div');
+  dropdown.classList.add('filter-dropdown');
+  dropdown.setAttribute('aria-labelledby', `${type}-filter-button`);
+  dropdown.setAttribute('role', 'menu');
+
+  const options = document.createElement('ul');
+  options.classList.add('filter-options');
+  options.setAttribute('data-type', type);
+  const category = tax.getCategory(tax[`${type.toUpperCase()}`]);
+  category.forEach((topic) => {
+    const item = tax.get(topic, tax[`${type.toUpperCase()}`]);
+    if (item.level === 1) {
+      const option = buildFilterOption(item.name, 'primary');
+      options.append(option);
+      item.children.forEach((child) => {
+        const option = buildFilterOption(child, 'nested');
+        options.append(option);
+      });
+    }
+  });
+
+  const footer = document.createElement('div');
+  footer.classList.add('filter-dropdown-footer');
+
+  const resetBtn = document.createElement('a');
+  resetBtn.classList.add('button', 'small', 'reset');
+  resetBtn.textContent = ph['reset'];
+  resetBtn.addEventListener('click', clearFilters);
+
+  const applyBtn = document.createElement('a');
+  applyBtn.classList.add('button', 'small', 'apply');
+  applyBtn.textContent = ph['apply'];
+  applyBtn.addEventListener('click', () => {
+    delete config.selectedTopics;
+    closeCurtain();
+    applyCurrentFilters(block, config, 'close')
+  });
+
+  footer.append(resetBtn, applyBtn);
+
+  dropdown.append(options, footer);
+  container.append(button, dropdown);
+  return container;
+}
+
+function buildFilterOption(itemName, type) {
+  const name = itemName.replace(/\*/gm, '');
+
+  const option = document.createElement('li');
+  option.classList
+    .add('filter-option', `filter-option-${type}`);
+
+  const checkbox = document.createElement('input');
+  checkbox.id = name;
+  checkbox.setAttribute('name', name);
+  checkbox.setAttribute('type', 'checkbox');
+
+  const label = document.createElement('label');
+  label.setAttribute('for', name);
+  label.textContent = name;
+
+  option.append(checkbox, label);
+  return option;
+}
+
 async function filterArticles(config) {
+  console.log('filterArticles config:', config);
   if (!window.blogIndex) {
     window.blogIndex = await fetchBlogArticleIndex();
   }
@@ -23,25 +239,32 @@ async function filterArticles(config) {
   /* filter posts by category, tag and author */
   const filters = {};
   Object.keys(config).forEach((key) => {
-    const filterNames = ['tags', 'author', 'category', 'exclude'];
+    const filterNames = ['tags', 'topics', 'selectedTopics', 'author', 'category', 'exclude'];
     if (filterNames.includes(key)) {
       const vals = config[key];
-      const v = vals.split(', ');
+      const v = vals.split(',');
       filters[key] = v.map((e) => e.toLowerCase().trim());
-    }
+    } 
   });
 
   /* filter and ignore if already in result */
   const feed = index.data.filter((article) => {
     const matchedAll = Object.keys(filters).every((key) => {
-      if (key === 'exclude' || key === 'tags') {
+      if (key === 'exclude' || key === 'tags' || key === 'topics') {
         const tax = getArticleTaxonomy(article);
         const matchedFilter = filters[key].some((val) => (tax.allTopics
           && tax.allTopics.map((t) => t.toLowerCase()).includes(val)));
         return key === 'exclude' ? !matchedFilter : matchedFilter;
       }
-      const matchedFilter = filters[key].some((val) => (article[key]
-        && article[key].toLowerCase().includes(val)));
+      if (key === 'selectedTopics') {
+        const tax = getArticleTaxonomy(article);
+        const matchedFilter = filters[key].some((val) => (tax.allTopics
+          && tax.allTopics.map((t) => t.toLowerCase()).includes(val)));
+        return matchedFilter;
+      }
+      const matchedFilter = filters[key].some((val) => {
+        (article[key] && article[key].toLowerCase().includes(val))
+      });
       return matchedFilter;
     });
     return (matchedAll && !result.includes(article) && !isCardOnPage(article));
@@ -83,8 +306,62 @@ async function decorateArticleFeed(articleFeedEl, config, offset = 0) {
   articleFeedEl.classList.add('appear');
 }
 
+async function decorateFeedFilter(articleFeedEl, config) {
+  const placeholders = await fetchPlaceholders();
+  const taxonomy = await loadTaxonomy();
+  const parent = document.querySelector('.article-feed-container');
+
+  const curtain = document.createElement('div');
+  curtain.classList.add('filter-curtain', 'hide');
+  document.querySelector('main').append(curtain);
+
+  // FILTER CONTAINER
+  const filterContainer = document.createElement('div');
+  filterContainer.classList.add('filter-container');
+  const filterWrapper = document.createElement('div');
+
+  const filterText = document.createElement('p');
+  filterText.classList.add('filter-text');
+  filterText.textContent = placeholders['filters'];
+
+  const productsDropdown = 
+    buildFilter('products', taxonomy, placeholders, articleFeedEl, config);
+  const industriesDropdown = 
+    buildFilter('industries', taxonomy, placeholders, articleFeedEl, config);
+
+  filterWrapper.append(filterText, productsDropdown, industriesDropdown);
+  filterContainer.append(filterWrapper);
+
+  parent.parentElement.insertBefore(filterContainer, parent);
+  
+  // SELECTED CONTAINER
+  const selectedContainer = document.createElement('div');
+  selectedContainer.classList.add('selected-container', 'hide');
+  const selectedWrapper = document.createElement('div');
+
+  const selectedText = document.createElement('p');
+  selectedText.classList.add('selected-text');
+  selectedText.textContent = placeholders['showing-articles-for'];
+
+  const selectedCategories = document.createElement('span');
+  selectedCategories.classList.add('selected-filters');
+  
+  const clearBtn = document.createElement('a');
+  clearBtn.classList.add('button', 'small', 'clear');
+  clearBtn.textContent = placeholders['clear-all'];
+  clearBtn.addEventListener('click', 
+    (e) => clearFilters(e, articleFeedEl, config));
+
+  selectedWrapper.append(selectedText, selectedCategories, clearBtn);
+  selectedContainer.append(selectedWrapper);
+  parent.parentElement.insertBefore(selectedContainer, parent);
+}
+
 export default function decorate(block) {
   const config = readBlockConfig(block);
   block.innerHTML = '';
+  if (config.filter) {
+    decorateFeedFilter(block, config);
+  }
   decorateArticleFeed(block, config);
 }
