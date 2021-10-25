@@ -57,7 +57,6 @@ function toggleMenu(e) {
   if (expanded === 'true') {
     closeMenu(button);
     closeCurtain();
-    
   } else {
     openMenu(button);
     openCurtain();
@@ -70,8 +69,8 @@ function applyCurrentFilters(block, config, close) {
     const type = filter.getAttribute('data-type');
     const subfilters = [];
     filter.querySelectorAll('input[type=checkbox]').forEach((box) => {
-      if (box.checked) { 
-        subfilters.push(box.name); 
+      if (box.checked) {
+        subfilters.push(box.name);
         if (config.selectedTopics) {
           config.selectedTopics += `, ${box.name}`;
         } else {
@@ -79,13 +78,13 @@ function applyCurrentFilters(block, config, close) {
         }
       }
     });
-    if (subfilters.length) { 
+    if (subfilters.length) {
       filters[type] = subfilters;
     }
-    if (close) { 
+    if (close) {
       const id = filter.parentElement.getAttribute('aria-labelledby');
       const dropdown = document.getElementById(id);
-      closeMenu(dropdown); 
+      closeMenu(dropdown);
     }
   });
   const selectedContainer = document.querySelector('.selected-container');
@@ -95,7 +94,7 @@ function applyCurrentFilters(block, config, close) {
   if (Object.keys(filters).length > 0) {
     Object.keys(filters).forEach((filter) => {
       filters[filter].forEach((f) => {
-        const selectedFilter = buildSelectedFilter(f); 
+        const selectedFilter = buildSelectedFilter(f);
         selectedFilter.addEventListener('click', (e) => {
           clearFilter(e, block, config);
         });
@@ -113,7 +112,7 @@ function applyCurrentFilters(block, config, close) {
 }
 
 function clearFilter(e, block, config) {
-  const target = e.target;
+  const { target } = e;
   const checked = document
     .querySelector(`input[name='${target.textContent}']`);
   if (checked) { checked.checked = false; }
@@ -125,8 +124,8 @@ function clearFilters(e, block, config) {
   const type = e.target.classList[e.target.classList.length - 1];
   let target = document;
   // remove selected checked tags
-  if (type === 'reset') { 
-    target = e.target.parentNode.parentNode; 
+  if (type === 'reset') {
+    target = e.target.parentNode.parentNode;
   } else if (type === 'clear') {
     delete config.selectedTopics;
   }
@@ -175,8 +174,8 @@ function buildFilter(type, tax, ph, block, config) {
       const option = buildFilterOption(item.name, 'primary');
       options.append(option);
       item.children.forEach((child) => {
-        const option = buildFilterOption(child, 'nested');
-        options.append(option);
+        const nestedOption = buildFilterOption(child, 'nested');
+        options.append(nestedOption);
       });
     }
   });
@@ -186,16 +185,16 @@ function buildFilter(type, tax, ph, block, config) {
 
   const resetBtn = document.createElement('a');
   resetBtn.classList.add('button', 'small', 'reset');
-  resetBtn.textContent = ph['reset'];
+  resetBtn.textContent = ph.reset;
   resetBtn.addEventListener('click', clearFilters);
 
   const applyBtn = document.createElement('a');
   applyBtn.classList.add('button', 'small', 'apply');
-  applyBtn.textContent = ph['apply'];
+  applyBtn.textContent = ph.apply;
   applyBtn.addEventListener('click', () => {
     delete config.selectedTopics;
     closeCurtain();
-    applyCurrentFilters(block, config, 'close')
+    applyCurrentFilters(block, config, 'close');
   });
 
   footer.append(resetBtn, applyBtn);
@@ -226,7 +225,6 @@ function buildFilterOption(itemName, type) {
 }
 
 async function filterArticles(config) {
-  console.log('filterArticles config:', config);
   if (!window.blogIndex) {
     window.blogIndex = await fetchBlogArticleIndex();
   }
@@ -242,7 +240,7 @@ async function filterArticles(config) {
       const vals = config[key];
       const v = vals.split(',');
       filters[key] = v.map((e) => e.toLowerCase().trim());
-    } 
+    }
   });
 
   /* filter and ignore if already in result */
@@ -260,9 +258,7 @@ async function filterArticles(config) {
           && tax.allTopics.map((t) => t.toLowerCase()).includes(val)));
         return matchedFilter;
       }
-      const matchedFilter = filters[key].some((val) => {
-        (article[key] && article[key].toLowerCase().includes(val))
-      });
+      const matchedFilter = filters[key].some((val) => (article[key] && article[key].toLowerCase().includes(val)));
       return matchedFilter;
     });
     return (matchedAll && !result.includes(article) && !isCardOnPage(article));
