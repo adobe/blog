@@ -261,6 +261,7 @@ function computeTaxonomyFromTopics(topics, path) {
   };
 }
 
+// eslint-disable-next-line no-unused-vars
 async function loadTaxonomy() {
   const mod = await import('./taxonomy.js');
   taxonomy = await mod.default(getLanguage());
@@ -1114,7 +1115,7 @@ async function loadLazy() {
   footer.setAttribute('data-footer-source', `${getRootPath()}/footer`);
   loadBlock(footer);
 
-  await loadTaxonomy();
+  // await loadTaxonomy();
 
   /* taxonomy dependent */
   buildTagsBlock(main);
