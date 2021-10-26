@@ -63,6 +63,24 @@ function toggleMenu(e) {
   }
 }
 
+function buildSelectedFilter(name) {
+  const a = document.createElement('a');
+  a.classList.add('selected-filter');
+  a.setAttribute('tabindex', 0);
+  a.textContent = name;
+  return a;
+}
+
+function clearFilter(e, block, config) {
+  const { target } = e;
+  const checked = document
+    .querySelector(`input[name='${target.textContent}']`);
+  if (checked) { checked.checked = false; }
+  delete config.selectedTopics;
+  // eslint-disable-next-line no-use-before-define
+  applyCurrentFilters(block, config);
+}
+
 function applyCurrentFilters(block, config, close) {
   const filters = {};
   document.querySelectorAll('.filter-options').forEach((filter) => {
@@ -107,23 +125,14 @@ function applyCurrentFilters(block, config, close) {
   }
   if (block) {
     block.innerHTML = '';
+    // eslint-disable-next-line no-use-before-define
     decorateArticleFeed(block, config);
   }
-}
-
-function clearFilter(e, block, config) {
-  const { target } = e;
-  const checked = document
-    .querySelector(`input[name='${target.textContent}']`);
-  if (checked) { checked.checked = false; }
-  delete config.selectedTopics;
-  applyCurrentFilters(block, config);
 }
 
 function clearFilters(e, block, config) {
   const type = e.target.classList[e.target.classList.length - 1];
   let target = document;
-  // remove selected checked tags
   if (type === 'reset') {
     target = e.target.parentNode.parentNode;
   } else if (type === 'clear') {
@@ -138,12 +147,24 @@ function clearFilters(e, block, config) {
   applyCurrentFilters(block, config);
 }
 
-function buildSelectedFilter(name) {
-  const a = document.createElement('a');
-  a.classList.add('selected-filter');
-  a.setAttribute('tabindex', 0);
-  a.textContent = name;
-  return a;
+function buildFilterOption(itemName, type) {
+  const name = itemName.replace(/\*/gm, '');
+
+  const option = document.createElement('li');
+  option.classList
+    .add('filter-option', `filter-option-${type}`);
+
+  const checkbox = document.createElement('input');
+  checkbox.id = name;
+  checkbox.setAttribute('name', name);
+  checkbox.setAttribute('type', 'checkbox');
+
+  const label = document.createElement('label');
+  label.setAttribute('for', name);
+  label.textContent = name;
+
+  option.append(checkbox, label);
+  return option;
 }
 
 function buildFilter(type, tax, ph, block, config) {
@@ -204,26 +225,6 @@ function buildFilter(type, tax, ph, block, config) {
   return container;
 }
 
-function buildFilterOption(itemName, type) {
-  const name = itemName.replace(/\*/gm, '');
-
-  const option = document.createElement('li');
-  option.classList
-    .add('filter-option', `filter-option-${type}`);
-
-  const checkbox = document.createElement('input');
-  checkbox.id = name;
-  checkbox.setAttribute('name', name);
-  checkbox.setAttribute('type', 'checkbox');
-
-  const label = document.createElement('label');
-  label.setAttribute('for', name);
-  label.textContent = name;
-
-  option.append(checkbox, label);
-  return option;
-}
-
 async function filterArticles(config) {
   if (!window.blogIndex) {
     window.blogIndex = await fetchBlogArticleIndex();
@@ -258,7 +259,8 @@ async function filterArticles(config) {
           && tax.allTopics.map((t) => t.toLowerCase()).includes(val)));
         return matchedFilter;
       }
-      const matchedFilter = filters[key].some((val) => (article[key] && article[key].toLowerCase().includes(val)));
+      const matchedFilter = filters[key].some((val) => (article[key]
+        && article[key].toLowerCase().includes(val)));
       return matchedFilter;
     });
     return (matchedAll && !result.includes(article) && !isCardOnPage(article));
@@ -294,6 +296,7 @@ async function decorateArticleFeed(articleFeedEl, config, offset = 0) {
     loadMore.addEventListener('click', (event) => {
       event.preventDefault();
       loadMore.remove();
+      // eslint-disable-next-line no-use-before-define
       decorateArticleFeed(articleFeedEl, config, pageEnd);
     });
   }
@@ -316,18 +319,16 @@ async function decorateFeedFilter(articleFeedEl, config) {
 
   const filterText = document.createElement('p');
   filterText.classList.add('filter-text');
-  filterText.textContent = placeholders['filters'];
+  filterText.textContent = placeholders.filters;
 
-  const productsDropdown = 
-    buildFilter('products', taxonomy, placeholders, articleFeedEl, config);
-  const industriesDropdown = 
-    buildFilter('industries', taxonomy, placeholders, articleFeedEl, config);
+  const productsDropdown = buildFilter('products', taxonomy, placeholders, articleFeedEl, config);
+  const industriesDropdown = buildFilter('industries', taxonomy, placeholders, articleFeedEl, config);
 
   filterWrapper.append(filterText, productsDropdown, industriesDropdown);
   filterContainer.append(filterWrapper);
 
   parent.parentElement.insertBefore(filterContainer, parent);
-  
+
   // SELECTED CONTAINER
   const selectedContainer = document.createElement('div');
   selectedContainer.classList.add('selected-container', 'hide');
@@ -339,11 +340,11 @@ async function decorateFeedFilter(articleFeedEl, config) {
 
   const selectedCategories = document.createElement('span');
   selectedCategories.classList.add('selected-filters');
-  
+
   const clearBtn = document.createElement('a');
   clearBtn.classList.add('button', 'small', 'clear');
   clearBtn.textContent = placeholders['clear-all'];
-  clearBtn.addEventListener('click', 
+  clearBtn.addEventListener('click',
     (e) => clearFilters(e, articleFeedEl, config));
 
   selectedWrapper.append(selectedText, selectedCategories, clearBtn);
