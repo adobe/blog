@@ -135,6 +135,57 @@ export function getMetadata(name, asArray = false) {
   return asArray ? meta : meta.join(', ');
 }
 
+/**
+ * Get the current Helix environment
+ * @returns {Object} the env object
+ */
+export function getHelixEnv() {
+  let envName = sessionStorage.getItem('helix-env');
+  if (!envName) envName = 'prod';
+  const envs = {
+    stage: {
+      ims: 'stg1',
+      adobeIO: 'cc-collab-stage.adobe.io',
+      adminconsole: 'stage.adminconsole.adobe.com',
+      account: 'stage.account.adobe.com',
+      target: false,
+    },
+    prod: {
+      ims: 'prod',
+      adobeIO: 'cc-collab.adobe.io',
+      adminconsole: 'adminconsole.adobe.com',
+      account: 'account.adobe.com',
+      target: true,
+    },
+  };
+  const env = envs[envName];
+
+  const overrideItem = sessionStorage.getItem('helix-env-overrides');
+  if (overrideItem) {
+    const overrides = JSON.parse(overrideItem);
+    const keys = Object.keys(overrides);
+    env.overrides = keys;
+
+    keys.forEach((value) => {
+      env[value] = overrides[value];
+    });
+  }
+
+  if (env) {
+    env.name = envName;
+  }
+  return env;
+}
+
+export function debug(message) {
+  const { hostname } = window.location;
+  const env = getHelixEnv();
+  if (env.name !== 'prod' || hostname === 'localhost') {
+    // eslint-disable-next-line no-console
+    console.log(message);
+  }
+}
+
 let taxonomy;
 
 /**
@@ -172,8 +223,7 @@ function computeTaxonomyFromTopics(topics, path) {
           }
         }
       } else {
-        // eslint-disable-next-line no-console
-        console.warn(`Unknown topic in tags list: ${tag} ${path ? `on page ${path}` : '(current page)'}`);
+        debug(`Unknown topic in tags list: ${tag} ${path ? `on page ${path}` : '(current page)'}`);
       }
     });
     return {
@@ -201,7 +251,7 @@ async function loadTaxonomy() {
         a.href = tax.link;
       } else {
         // eslint-disable-next-line no-console
-        console.warn(`Trying to get a link for an unknown topic: ${topic} (current page)`);
+        debug(`Trying to get a link for an unknown topic: ${topic} (current page)`);
         a.href = '#';
       }
       delete a.dataset.topicLink;
@@ -260,7 +310,7 @@ export function getLinkForTopic(topic, path) {
       catLink = tax.link;
     } else {
       // eslint-disable-next-line no-console
-      console.warn(`Trying to get a link for an unknown topic: ${topic} ${path ? `on page ${path}` : '(current page)'}`);
+      debug(`Trying to get a link for an unknown topic: ${topic} ${path ? `on page ${path}` : '(current page)'}`);
       catLink = '#';
     }
   }
@@ -319,57 +369,6 @@ export function getArticleTaxonomy(article) {
   return {
     category, topics, visibleTopics, allTopics,
   };
-}
-
-/**
- * Get the current Helix environment
- * @returns {Object} the env object
- */
-export function getHelixEnv() {
-  let envName = sessionStorage.getItem('helix-env');
-  if (!envName) envName = 'prod';
-  const envs = {
-    stage: {
-      ims: 'stg1',
-      adobeIO: 'cc-collab-stage.adobe.io',
-      adminconsole: 'stage.adminconsole.adobe.com',
-      account: 'stage.account.adobe.com',
-      target: false,
-    },
-    prod: {
-      ims: 'prod',
-      adobeIO: 'cc-collab.adobe.io',
-      adminconsole: 'adminconsole.adobe.com',
-      account: 'account.adobe.com',
-      target: true,
-    },
-  };
-  const env = envs[envName];
-
-  const overrideItem = sessionStorage.getItem('helix-env-overrides');
-  if (overrideItem) {
-    const overrides = JSON.parse(overrideItem);
-    const keys = Object.keys(overrides);
-    env.overrides = keys;
-
-    keys.forEach((value) => {
-      env[value] = overrides[value];
-    });
-  }
-
-  if (env) {
-    env.name = envName;
-  }
-  return env;
-}
-
-export function debug(message) {
-  const { hostname } = window.location;
-  const env = getHelixEnv();
-  if (env.name !== 'prod' || hostname === 'localhost') {
-    // eslint-disable-next-line no-console
-    console.log(message);
-  }
 }
 
 /**
