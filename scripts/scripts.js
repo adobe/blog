@@ -95,7 +95,7 @@ export function getLanguage() {
 }
 
 function getDateLocale() {
-  let dateLocale = language;
+  let dateLocale = getLanguage();
   if (dateLocale === LANG.EN) {
     dateLocale = 'en-US'; // default to US date format
   }
@@ -184,6 +184,32 @@ export function debug(message) {
     // eslint-disable-next-line no-console
     console.log(message);
   }
+}
+
+/**
+ * forward looking *.metadata.json experiment
+ * fetches metadata.json of page
+ * @param {path} path to *.metadata.json
+ * @returns {Object} containing sanitized meta data
+ */
+async function getMetadataJson(path) {
+  const resp = await fetch(path.split('.')[0]);
+  const text = await resp.text();
+  const headStr = text.split('<head>')[1].split('</head>')[0];
+  const head = document.createElement('head');
+  head.innerHTML = headStr;
+  const metaTags = head.querySelectorAll(':scope > meta');
+  const meta = {};
+  metaTags.forEach((metaTag) => {
+    const name = metaTag.getAttribute('name') || metaTag.getAttribute('property');
+    const value = metaTag.getAttribute('content');
+    if (meta[name]) {
+      meta[name] += `, ${value}`;
+    } else {
+      meta[name] = value;
+    }
+  });
+  return (JSON.stringify(meta));
 }
 
 let taxonomy;
@@ -858,15 +884,19 @@ export function createOptimizedPicture(src, alt = '', eager = false, breakpoints
 /**
  * Formats the article date for the card using the date locale
  * matching the content displayed.
- * @param {number} date The date to format (Excel date)
+ * @param {number} date The date to format
  * @returns {string} The formatted card date
  */
 export function formatLocalCardDate(date) {
-  // 1/1/1900 is day 1 in Excel, so:
-  // - add this
-  // - add days between 1/1/1900 and 1/1/1970
-  // - add one more day for Excel's leap year bug
-  const jsDate = new Date(Math.round((date - (1 + 25567 + 1)) * 86400 * 1000));
+  let jsDate = date;
+  if (!date.includes('-')) {
+    // number case, coming from Excel
+    // 1/1/1900 is day 1 in Excel, so:
+    // - add this
+    // - add days between 1/1/1900 and 1/1/1970
+    // - add one more day for Excel's leap year bug
+    jsDate = new Date(Math.round((date - (1 + 25567 + 1)) * 86400 * 1000));
+  }
   const dateLocale = getDateLocale();
 
   let dateString = new Date(jsDate).toLocaleDateString(dateLocale, {
@@ -985,11 +1015,19 @@ export async function fetchBlogArticleIndex() {
  */
 
 export async function getBlogArticle(path) {
-  if (!window.blogIndex) {
-    window.blogIndex = await fetchBlogArticleIndex();
-  }
-  const index = window.blogIndex;
-  return (index.byPath[path]);
+  const json = await getMetadataJson(`${path}.metadata.json`);
+  const meta = JSON.parse(json);
+  const articleMeta = {
+    description: meta.description,
+    title: meta['og:title'],
+    image: meta['og:image'],
+    imageAlt: meta['og:image:alt'],
+    date: meta['publication-date'],
+    path,
+    tags: meta['article:tag'],
+  };
+  loadArticleTaxonomy(articleMeta);
+  return (articleMeta);
 }
 
 /**
