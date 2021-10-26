@@ -995,8 +995,12 @@ export function addFavIcon(href) {
  * fetches blog article index.
  * @returns {object} index with data and path lookup
  */
+let queryIndex;
 
 export async function fetchBlogArticleIndex() {
+  if (queryIndex) {
+    return queryIndex;
+  }
   const resp = await fetch(`${getRootPath()}/query-index.json`);
   const json = await resp.json();
   const byPath = {};
@@ -1005,8 +1009,8 @@ export async function fetchBlogArticleIndex() {
 
     loadArticleTaxonomy(post);
   });
-  const index = { data: json.data, byPath };
-  return (index);
+  queryIndex = { data: json.data, byPath };
+  return queryIndex;
 }
 
 /**

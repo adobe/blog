@@ -12,11 +12,8 @@ function isCardOnPage(article) {
   return !!document.querySelector(`.featured-article a.featured-article-card[href="${path}"], .recommended-articles a.article-card[href="${path}"]`);
 }
 
-async function filterArticles(config) {
-  if (!window.blogIndex) {
-    window.blogIndex = await fetchBlogArticleIndex();
-  }
-  const index = window.blogIndex;
+async function filterArticles(config, offset) {
+  const index = await fetchBlogArticleIndex();
 
   const result = [];
 
@@ -31,8 +28,11 @@ async function filterArticles(config) {
     }
   });
 
-  /* filter and ignore if already in result */
-  const feed = index.data.filter((article) => {
+  const size = 12;
+  let end = offset;
+  const articles = [];
+  while (articles.length < size && end < index.data.length) {
+    const article = index.data[end];
     const matchedAll = Object.keys(filters).every((key) => {
       if (key === 'exclude' || key === 'tags') {
         const tax = getArticleTaxonomy(article);
@@ -44,13 +44,24 @@ async function filterArticles(config) {
         && article[key].toLowerCase().includes(val)));
       return matchedFilter;
     });
-    return (matchedAll && !result.includes(article) && !isCardOnPage(article));
-  });
-  return (feed);
+
+    if (matchedAll && !result.includes(article) && !isCardOnPage(article)) {
+      articles.push(article);
+    }
+    end += 1;
+  }
+  const page = {
+    articles,
+    size,
+    end,
+    totalArticles: index.data.length,
+  };
+
+  return page;
 }
 
 async function decorateArticleFeed(articleFeedEl, config, offset = 0) {
-  const articles = await filterArticles(config);
+  const page = await filterArticles(config, offset);
 
   let articleCards = articleFeedEl.querySelector('.article-cards');
   if (!articleCards) {
@@ -58,16 +69,13 @@ async function decorateArticleFeed(articleFeedEl, config, offset = 0) {
     articleCards.className = 'article-cards';
     articleFeedEl.appendChild(articleCards);
   }
-  const limit = 12;
-  const pageEnd = offset + limit;
-  const max = pageEnd > articles.length ? articles.length : pageEnd;
-  for (let i = offset; i < max; i += 1) {
-    const article = articles[i];
-    const card = buildArticleCard(article);
 
+  page.articles.forEach((article) => {
+    const card = buildArticleCard(article);
     articleCards.append(card);
-  }
-  if (articles.length > pageEnd) {
+  });
+
+  if (page.totalArticles > page.end) {
     const loadMore = document.createElement('a');
     loadMore.className = 'load-more button small primary light';
     loadMore.href = '#';
@@ -77,7 +85,7 @@ async function decorateArticleFeed(articleFeedEl, config, offset = 0) {
     loadMore.addEventListener('click', (event) => {
       event.preventDefault();
       loadMore.remove();
-      decorateArticleFeed(articleFeedEl, config, pageEnd);
+      decorateArticleFeed(articleFeedEl, config, page.end);
     });
   }
   articleFeedEl.classList.add('appear');
