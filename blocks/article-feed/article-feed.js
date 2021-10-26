@@ -29,12 +29,43 @@ function openMenu(el) {
   el.setAttribute('aria-expanded', true);
 }
 
+function filterSearch(e) {
+  const { target } = e;
+  const { value } = target;
+  const parent = target.parentElement.parentElement;
+  parent.querySelectorAll('.filter-option').forEach((option) => {
+    if (!value.length || option.textContent.toLowerCase().includes(value)) {
+      option.classList.remove('hide');
+    } else {
+      option.classList.add('hide');
+    }
+  });
+}
+
+function enableSearch(id) {
+  const menu = document.querySelector(`[aria-labelledby='${id}']`);
+  const input = menu.querySelector('input');
+  input.addEventListener('keyup', filterSearch);
+}
+
+function disableSearch(id) {
+  const menu = document.querySelector(`[aria-labelledby='${id}']`);
+  const input = menu.querySelector('input');
+  input.value = '';
+  const parent = input.parentElement.parentElement;
+  parent.querySelectorAll('.filter-option').forEach((option) => {
+    option.classList.remove('hide');
+  });
+  input.removeEventListener('keyup', filterSearch);
+}
+
 function closeOnDocClick(e) {
   const { target } = e;
   const curtain = document.querySelector('.filter-curtain');
   if (target === curtain) {
     const open = document.querySelector('.filter-button[aria-expanded=true]');
     closeMenu(open);
+    disableSearch(open.id);
     curtain.classList.add('hide');
   }
 }
@@ -56,9 +87,11 @@ function toggleMenu(e) {
   const expanded = button.getAttribute('aria-expanded');
   if (expanded === 'true') {
     closeMenu(button);
+    disableSearch(button.id);
     closeCurtain();
   } else {
     openMenu(button);
+    enableSearch(button.id);
     openCurtain();
   }
 }
@@ -185,6 +218,18 @@ function buildFilter(type, tax, ph, block, config) {
   dropdown.setAttribute('aria-labelledby', `${type}-filter-button`);
   dropdown.setAttribute('role', 'menu');
 
+  const SEARCH_ICON = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" focusable="false">
+    <path d="M14 2A8 8 0 0 0 7.4 14.5L2.4 19.4a1.5 1.5 0 0 0 2.1 2.1L9.5 16.6A8 8 0 1 0 14 2Zm0 14.1A6.1 6.1 0 1 1 20.1 10 6.1 6.1 0 0 1 14 16.1Z"></path>
+  </svg>`;
+  const searchBar = document.createElement('div');
+  searchBar.classList.add('filter-search');
+  searchBar.insertAdjacentHTML('afterbegin', SEARCH_ICON);
+  const searchField = document.createElement('input');
+  searchField.setAttribute('id', `${type}-filter-search`);
+  searchField.setAttribute('aria-label', ph.search);
+  searchField.setAttribute('placeholder', ph.search);
+  searchBar.append(searchField);
+
   const options = document.createElement('ul');
   options.classList.add('filter-options');
   options.setAttribute('data-type', type);
@@ -220,7 +265,7 @@ function buildFilter(type, tax, ph, block, config) {
 
   footer.append(resetBtn, applyBtn);
 
-  dropdown.append(options, footer);
+  dropdown.append(searchBar, options, footer);
   container.append(button, dropdown);
   return container;
 }
