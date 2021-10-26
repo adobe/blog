@@ -1003,11 +1003,7 @@ export async function fetchBlogArticleIndex() {
   }
   const resp = await fetch(`${getRootPath()}/query-index.json`);
   const json = await resp.json();
-  const byPath = {};
-  json.data.forEach((post) => {
-    byPath[post.path.split('.')[0]] = post;
-  });
-  queryIndex = { data: json.data, byPath };
+  queryIndex = { data: json.data };
   return queryIndex;
 }
 
