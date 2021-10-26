@@ -1006,8 +1006,6 @@ export async function fetchBlogArticleIndex() {
   const byPath = {};
   json.data.forEach((post) => {
     byPath[post.path.split('.')[0]] = post;
-
-    loadArticleTaxonomy(post);
   });
   queryIndex = { data: json.data, byPath };
   return queryIndex;
@@ -1119,7 +1117,7 @@ async function loadLazy() {
   footer.setAttribute('data-footer-source', `${getRootPath()}/footer`);
   loadBlock(footer);
 
-  // await loadTaxonomy();
+  await loadTaxonomy();
 
   /* taxonomy dependent */
   buildTagsBlock(main);
