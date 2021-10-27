@@ -611,8 +611,9 @@ function buildTagsBlock(mainEl) {
     const recBlock = mainEl.querySelector('.recommended-articles-container');
     if (recBlock) {
       recBlock.previousElementSibling.firstChild.append(tagsBlock);
-    } else {
-      mainEl.lastElementChild.append(tagsBlock);
+    } else if (mainEl.lastElementChild.firstChild) {
+      // insert in div of the last element
+      mainEl.lastElementChild.firstChild.append(tagsBlock);
     }
     decorateBlock(tagsBlock);
   }
