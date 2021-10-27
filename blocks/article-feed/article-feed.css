@@ -15,6 +15,7 @@ main .article-feed .article-cards {
   padding: 2rem;
   padding-bottom: 0;
   justify-content: center;
+  min-height: 250px;
   max-width: 1200px;
 }
 
@@ -309,6 +310,25 @@ main .article-feed .load-more {
   color: var(--color-info-accent);
   font-weight: 600;
   cursor: pointer;
+}
+
+main .article-feed .article-cards-empty {
+  padding-top: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.article-cards-empty div p {
+  margin: 0;
+}
+
+.article-cards-empty .article-cards-no-results {
+  font-weight: bold;
+}
+
+.article-cards-empty .article-cards-help {
+  font-size: var(--body-font-size-s);
 }
 
 /* CURTAIN */
