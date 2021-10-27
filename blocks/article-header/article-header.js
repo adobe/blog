@@ -3,7 +3,7 @@ import {
   createOptimizedPicture,
 } from '../../scripts/scripts.js';
 
-async function populateAuthorImg(imgContainer, url, name) {
+async function populateAuthorImg(imgContainer, url, name, eager = false) {
   const resp = await fetch(`${url}.plain.html`);
   const text = await resp.text();
   if (resp.status === 200) {
@@ -12,18 +12,29 @@ async function populateAuthorImg(imgContainer, url, name) {
     const placeholderImg = placeholder.querySelector('img');
     if (placeholderImg) {
       const src = new URL(placeholderImg.getAttribute('src'), new URL(url));
-      const picture = createOptimizedPicture(src, name, false, [{ width: 200 }]);
+      const picture = createOptimizedPicture(src, name, eager, [{ width: 200 }]);
       imgContainer.append(picture);
-      imgContainer.style.backgroundImage = 'none';
-      picture.querySelector('img').onerror = (e) => {
-        // removing 404 img will reveal fallback background img
-        e.srcElement.remove();
-      };
+
+      const img = picture.querySelector('img');
+      if (!img.complete) {
+        img.addEventListener('load', () => {
+          // remove default background image to avoid halo
+          imgContainer.style.backgroundImage = 'none';
+        });
+
+        img.addEventListener('error', () => {
+          // removing 404 img will reveal fallback background img
+          img.remove();
+        });
+      } else {
+        // remove default background image to avoid halo
+        imgContainer.style.backgroundImage = 'none';
+      }
     }
   }
 }
 
-export default function decorateArticleHeader(blockEl, blockName, document, callback) {
+export default async function decorateArticleHeader(blockEl, blockName, document, eager) {
   const childrenEls = Array.from(blockEl.children);
   // category
   const categoryContainer = childrenEls[0];
@@ -48,7 +59,7 @@ export default function decorateArticleHeader(blockEl, blockName, document, call
   authorImg.classList = 'article-author-image';
   authorImg.style.backgroundImage = 'url(/blocks/article-header/adobe-logo.svg)';
   bylineContainer.prepend(authorImg);
-  populateAuthorImg(authorImg, authorURL, authorName);
+  populateAuthorImg(authorImg, authorURL, authorName, eager);
   // feature img
   const featureImgContainer = childrenEls[3];
   featureImgContainer.classList.add('article-feature-image');
@@ -56,5 +67,4 @@ export default function decorateArticleHeader(blockEl, blockName, document, call
   featureFigEl.classList.add('figure-feature');
   featureImgContainer.prepend(featureFigEl);
   featureImgContainer.lastChild.remove();
-  if (callback) callback();
 }

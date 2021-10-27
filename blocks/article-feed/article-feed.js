@@ -261,8 +261,8 @@ function buildFilter(type, tax, ph, block, config) {
   applyBtn.addEventListener('click', () => {
     delete config.selectedproducts;
     delete config.selectedindustries;
-    disableSearch(`${type}-filter-button`);
     closeCurtain();
+    disableSearch(`${type}-filter-button`);
     applyCurrentFilters(block, config, 'close');
   });
 
