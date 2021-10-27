@@ -18,6 +18,7 @@ async function populateAuthorImg(imgContainer, url, name, eager = false) {
       const img = picture.querySelector('img');
       if (!img.complete) {
         img.addEventListener('load', () => {
+          // remove default background image to avoid halo
           imgContainer.style.backgroundImage = 'none';
         });
 
@@ -26,6 +27,7 @@ async function populateAuthorImg(imgContainer, url, name, eager = false) {
           img.remove();
         });
       } else {
+        // remove default background image to avoid halo
         imgContainer.style.backgroundImage = 'none';
       }
     }
