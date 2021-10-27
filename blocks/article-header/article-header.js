@@ -14,11 +14,20 @@ async function populateAuthorImg(imgContainer, url, name, eager = false) {
       const src = new URL(placeholderImg.getAttribute('src'), new URL(url));
       const picture = createOptimizedPicture(src, name, eager, [{ width: 200 }]);
       imgContainer.append(picture);
-      imgContainer.style.backgroundImage = 'none';
-      picture.querySelector('img').onerror = (e) => {
-        // removing 404 img will reveal fallback background img
-        e.srcElement.remove();
-      };
+
+      const img = picture.querySelector('img');
+      if (!img.complete) {
+        img.addEventListener('load', () => {
+          imgContainer.style.backgroundImage = 'none';
+        });
+
+        img.addEventListener('error', () => {
+          // removing 404 img will reveal fallback background img
+          img.remove();
+        });
+      } else {
+        imgContainer.style.backgroundImage = 'none';
+      }
     }
   }
 }
