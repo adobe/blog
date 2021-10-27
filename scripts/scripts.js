@@ -547,6 +547,7 @@ function buildArticleHeader(mainEl) {
   const tags = getMetadata('article:tag', true);
   const category = tags.length > 0 ? tags[0] : '';
   const author = getMetadata('author');
+  const authorURL = getMetadata('author-url') || `${getRootPath()}/authors/${toClassName(author)}`;
   const publicationDate = getMetadata('publication-date');
 
   const categoryTag = getLinkForTopic(category);
@@ -554,7 +555,7 @@ function buildArticleHeader(mainEl) {
   const articleHeaderBlockEl = buildBlock('article-header', [
     [`<p>${categoryTag}</p>`],
     [h1],
-    [`<p><a href="${getRootPath()}/authors/${toClassName(author)}">${author}</a></p>
+    [`<p><a href="${authorURL}">${author}</a></p>
       <p>${publicationDate}</p>`],
     [{ elems: [picture.closest('p'), getImageCaption(picture)] }],
   ]);
