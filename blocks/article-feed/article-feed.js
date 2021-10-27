@@ -109,7 +109,8 @@ function clearFilter(e, block, config) {
   const checked = document
     .querySelector(`input[name='${target.textContent}']`);
   if (checked) { checked.checked = false; }
-  delete config.selectedTopics;
+  delete config.selectedproducts;
+  delete config.selectedindustries;
   // eslint-disable-next-line no-use-before-define
   applyCurrentFilters(block, config);
 }
@@ -121,11 +122,12 @@ function applyCurrentFilters(block, config, close) {
     const subfilters = [];
     filter.querySelectorAll('input[type=checkbox]').forEach((box) => {
       if (box.checked) {
+        const boxType = box.parentElement.parentElement.getAttribute('data-type');
         subfilters.push(box.name);
-        if (config.selectedTopics) {
-          config.selectedTopics += `, ${box.name}`;
+        if (config[`selected${boxType}`]) {
+          config[`selected${boxType}`] += `, ${box.name}`;
         } else {
-          config.selectedTopics = box.name;
+          config[`selected${boxType}`] = box.name;
         }
       }
     });
@@ -168,15 +170,14 @@ function clearFilters(e, block, config) {
   let target = document;
   if (type === 'reset') {
     target = e.target.parentNode.parentNode;
-  } else if (type === 'clear') {
-    delete config.selectedTopics;
   }
   const dropdowns = target.querySelectorAll('.filter-options');
   dropdowns.forEach((dropdown) => {
     const checked = dropdown.querySelectorAll('input:checked');
     checked.forEach((box) => { box.checked = false; });
   });
-  delete config.selectedTopics;
+  delete config.selectedproducts;
+  delete config.selectedindustries;
   applyCurrentFilters(block, config);
 }
 
@@ -258,7 +259,9 @@ function buildFilter(type, tax, ph, block, config) {
   applyBtn.classList.add('button', 'small', 'apply');
   applyBtn.textContent = ph.apply;
   applyBtn.addEventListener('click', () => {
-    delete config.selectedTopics;
+    delete config.selectedproducts;
+    delete config.selectedindustries;
+    disableSearch(`${type}-filter-button`);
     closeCurtain();
     applyCurrentFilters(block, config, 'close');
   });
@@ -281,7 +284,7 @@ async function filterArticles(config) {
   /* filter posts by category, tag and author */
   const filters = {};
   Object.keys(config).forEach((key) => {
-    const filterNames = ['tags', 'topics', 'selectedTopics', 'author', 'category', 'exclude'];
+    const filterNames = ['tags', 'topics', 'selectedproducts', 'selectedindustries', 'author', 'category', 'exclude'];
     if (filterNames.includes(key)) {
       const vals = config[key];
       const v = vals.split(',');
@@ -298,8 +301,16 @@ async function filterArticles(config) {
           && tax.allTopics.map((t) => t.toLowerCase()).includes(val)));
         return key === 'exclude' ? !matchedFilter : matchedFilter;
       }
-      if (key === 'selectedTopics') {
+      if (key === 'selectedproducts' || key === 'selectedindustries') {
         const tax = getArticleTaxonomy(article);
+        if (filters.selectedproducts && filters.selectedindustries) {
+          // match product && industry
+          const matchProduct = filters.selectedproducts.some((val) => (tax.allTopics
+            && tax.allTopics.map((t) => t.toLowerCase()).includes(val)));
+          const matchIndustry = filters.selectedindustries.some((val) => (tax.allTopics
+            && tax.allTopics.map((t) => t.toLowerCase()).includes(val)));
+          return matchProduct && matchIndustry;
+        }
         const matchedFilter = filters[key].some((val) => (tax.allTopics
           && tax.allTopics.map((t) => t.toLowerCase()).includes(val)));
         return matchedFilter;
@@ -325,13 +336,26 @@ async function decorateArticleFeed(articleFeedEl, config, offset = 0) {
   const limit = 12;
   const pageEnd = offset + limit;
   const max = pageEnd > articles.length ? articles.length : pageEnd;
+
   for (let i = offset; i < max; i += 1) {
     const article = articles[i];
     const card = buildArticleCard(article);
 
     articleCards.append(card);
   }
-  if (articles.length > pageEnd) {
+  if (max <= 0) {
+    const placeholders = await fetchPlaceholders();
+    const emptyResults = document.createElement('div');
+    const noResults = document.createElement('p');
+    noResults.classList.add('article-cards-no-results');
+    noResults.textContent = placeholders['no-results'];
+    const userHelp = document.createElement('p');
+    userHelp.classList.add('article-cards-help');
+    userHelp.textContent = placeholders['user-help'];
+    emptyResults.append(noResults, userHelp);
+    articleCards.classList.add('article-cards-empty');
+    articleCards.append(emptyResults);
+  } else if (articles.length > pageEnd) {
     const loadMore = document.createElement('a');
     loadMore.className = 'load-more button small primary light';
     loadMore.href = '#';
@@ -400,7 +424,7 @@ async function decorateFeedFilter(articleFeedEl, config) {
 export default function decorate(block) {
   const config = readBlockConfig(block);
   block.innerHTML = '';
-  if (config.filter) {
+  if (config.filters) {
     decorateFeedFilter(block, config);
   }
   decorateArticleFeed(block, config);
