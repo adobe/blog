@@ -5,10 +5,10 @@ import {
   getBlogArticle,
 } from '../../scripts/scripts.js';
 
-async function decorateFeaturedArticle(featuredArticleEl, articlePath, callback) {
+async function decorateFeaturedArticle(featuredArticleEl, articlePath, eager = false) {
   const article = await getBlogArticle(articlePath);
   if (article) {
-    const card = buildArticleCard(article, 'featured-article');
+    const card = buildArticleCard(article, 'featured-article', eager);
     const tagHeader = document.querySelector('.tag-header-container > div');
     if (tagHeader) {
       featuredArticleEl.append(card);
@@ -21,14 +21,13 @@ async function decorateFeaturedArticle(featuredArticleEl, articlePath, callback)
     // eslint-disable-next-line no-console
     console.warn(`Featured article does not exist or is missing in index: ${origin}${articlePath}`);
   }
-  if (callback) callback();
 }
 
-export default function decorate(block, blockName, document, callback) {
+export default async function decorate(block, blockName, document, eager) {
   const a = block.querySelector('a');
   block.innerHTML = '';
   if (a && a.href) {
     const path = new URL(a.href).pathname;
-    decorateFeaturedArticle(block, path, callback);
+    await decorateFeaturedArticle(block, path, eager);
   }
 }

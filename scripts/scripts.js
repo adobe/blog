@@ -95,7 +95,7 @@ export function getLanguage() {
 }
 
 function getDateLocale() {
-  let dateLocale = language;
+  let dateLocale = getLanguage();
   if (dateLocale === LANG.EN) {
     dateLocale = 'en-US'; // default to US date format
   }
@@ -135,6 +135,83 @@ export function getMetadata(name, asArray = false) {
   return asArray ? meta : meta.join(', ');
 }
 
+/**
+ * Get the current Helix environment
+ * @returns {Object} the env object
+ */
+export function getHelixEnv() {
+  let envName = sessionStorage.getItem('helix-env');
+  if (!envName) envName = 'prod';
+  const envs = {
+    stage: {
+      ims: 'stg1',
+      adobeIO: 'cc-collab-stage.adobe.io',
+      adminconsole: 'stage.adminconsole.adobe.com',
+      account: 'stage.account.adobe.com',
+      target: false,
+    },
+    prod: {
+      ims: 'prod',
+      adobeIO: 'cc-collab.adobe.io',
+      adminconsole: 'adminconsole.adobe.com',
+      account: 'account.adobe.com',
+      target: true,
+    },
+  };
+  const env = envs[envName];
+
+  const overrideItem = sessionStorage.getItem('helix-env-overrides');
+  if (overrideItem) {
+    const overrides = JSON.parse(overrideItem);
+    const keys = Object.keys(overrides);
+    env.overrides = keys;
+
+    keys.forEach((value) => {
+      env[value] = overrides[value];
+    });
+  }
+
+  if (env) {
+    env.name = envName;
+  }
+  return env;
+}
+
+export function debug(message) {
+  const { hostname } = window.location;
+  const env = getHelixEnv();
+  if (env.name !== 'prod' || hostname === 'localhost') {
+    // eslint-disable-next-line no-console
+    console.log(message);
+  }
+}
+
+/**
+ * forward looking *.metadata.json experiment
+ * fetches metadata.json of page
+ * @param {path} path to *.metadata.json
+ * @returns {Object} containing sanitized meta data
+ */
+async function getMetadataJson(path) {
+  const resp = await fetch(path.split('.')[0]);
+  const text = await resp.text();
+  const headStr = text.split('<head>')[1].split('</head>')[0];
+  const head = document.createElement('head');
+  head.innerHTML = headStr;
+  const metaTags = head.querySelectorAll(':scope > meta');
+  const meta = {};
+  metaTags.forEach((metaTag) => {
+    const name = metaTag.getAttribute('name') || metaTag.getAttribute('property');
+    const value = metaTag.getAttribute('content');
+    if (meta[name]) {
+      meta[name] += `, ${value}`;
+    } else {
+      meta[name] = value;
+    }
+  });
+  return (JSON.stringify(meta));
+}
+
 let taxonomy;
 
 /**
@@ -172,8 +249,7 @@ function computeTaxonomyFromTopics(topics, path) {
           }
         }
       } else {
-        // eslint-disable-next-line no-console
-        console.warn(`Unknown topic in tags list: ${tag} ${path ? `on page ${path}` : '(current page)'}`);
+        debug(`Unknown topic in tags list: ${tag} ${path ? `on page ${path}` : '(current page)'}`);
       }
     });
     return {
@@ -185,6 +261,7 @@ function computeTaxonomyFromTopics(topics, path) {
   };
 }
 
+// eslint-disable-next-line no-unused-vars
 async function loadTaxonomy() {
   const mod = await import('./taxonomy.js');
   taxonomy = await mod.default(getLanguage());
@@ -201,7 +278,7 @@ async function loadTaxonomy() {
         a.href = tax.link;
       } else {
         // eslint-disable-next-line no-console
-        console.warn(`Trying to get a link for an unknown topic: ${topic} (current page)`);
+        debug(`Trying to get a link for an unknown topic: ${topic} (current page)`);
         a.href = '#';
       }
       delete a.dataset.topicLink;
@@ -260,7 +337,7 @@ export function getLinkForTopic(topic, path) {
       catLink = tax.link;
     } else {
       // eslint-disable-next-line no-console
-      console.warn(`Trying to get a link for an unknown topic: ${topic} ${path ? `on page ${path}` : '(current page)'}`);
+      debug(`Trying to get a link for an unknown topic: ${topic} ${path ? `on page ${path}` : '(current page)'}`);
       catLink = '#';
     }
   }
@@ -319,57 +396,6 @@ export function getArticleTaxonomy(article) {
   return {
     category, topics, visibleTopics, allTopics,
   };
-}
-
-/**
- * Get the current Helix environment
- * @returns {Object} the env object
- */
-export function getHelixEnv() {
-  let envName = sessionStorage.getItem('helix-env');
-  if (!envName) envName = 'prod';
-  const envs = {
-    stage: {
-      ims: 'stg1',
-      adobeIO: 'cc-collab-stage.adobe.io',
-      adminconsole: 'stage.adminconsole.adobe.com',
-      account: 'stage.account.adobe.com',
-      target: false,
-    },
-    prod: {
-      ims: 'prod',
-      adobeIO: 'cc-collab.adobe.io',
-      adminconsole: 'adminconsole.adobe.com',
-      account: 'account.adobe.com',
-      target: true,
-    },
-  };
-  const env = envs[envName];
-
-  const overrideItem = sessionStorage.getItem('helix-env-overrides');
-  if (overrideItem) {
-    const overrides = JSON.parse(overrideItem);
-    const keys = Object.keys(overrides);
-    env.overrides = keys;
-
-    keys.forEach((value) => {
-      env[value] = overrides[value];
-    });
-  }
-
-  if (env) {
-    env.name = envName;
-  }
-  return env;
-}
-
-export function debug(message) {
-  const { hostname } = window.location;
-  const env = getHelixEnv();
-  if (env.name !== 'prod' || hostname === 'localhost') {
-    // eslint-disable-next-line no-console
-    console.log(message);
-  }
 }
 
 /**
@@ -725,7 +751,7 @@ export function buildFigure(blockEl) {
  * Loads JS and CSS for a block.
  * @param {Element} block The block element
  */
-export async function loadBlock(block, callback) {
+export async function loadBlock(block, eager = false) {
   if (!block.getAttribute('data-block-loaded')) {
     block.setAttribute('data-block-loaded', true);
     const blockName = block.getAttribute('data-block-name');
@@ -733,7 +759,7 @@ export async function loadBlock(block, callback) {
       loadCSS(`/blocks/${blockName}/${blockName}.css`);
       const mod = await import(`/blocks/${blockName}/${blockName}.js`);
       if (mod.default) {
-        await mod.default(block, blockName, document, callback);
+        await mod.default(block, blockName, document, eager);
       }
     } catch (err) {
       debug(`failed to load module for ${blockName}`, err);
@@ -859,15 +885,19 @@ export function createOptimizedPicture(src, alt = '', eager = false, breakpoints
 /**
  * Formats the article date for the card using the date locale
  * matching the content displayed.
- * @param {number} date The date to format (Excel date)
+ * @param {number} date The date to format
  * @returns {string} The formatted card date
  */
 export function formatLocalCardDate(date) {
-  // 1/1/1900 is day 1 in Excel, so:
-  // - add this
-  // - add days between 1/1/1900 and 1/1/1970
-  // - add one more day for Excel's leap year bug
-  const jsDate = new Date(Math.round((date - (1 + 25567 + 1)) * 86400 * 1000));
+  let jsDate = date;
+  if (!date.includes('-')) {
+    // number case, coming from Excel
+    // 1/1/1900 is day 1 in Excel, so:
+    // - add this
+    // - add days between 1/1/1900 and 1/1/1970
+    // - add one more day for Excel's leap year bug
+    jsDate = new Date(Math.round((date - (1 + 25567 + 1)) * 86400 * 1000));
+  }
   const dateLocale = getDateLocale();
 
   let dateString = new Date(jsDate).toLocaleDateString(dateLocale, {
@@ -888,14 +918,14 @@ export function formatLocalCardDate(date) {
  * @param {Element} article The article data to be placed in card.
  * @returns card Generated card
  */
-export function buildArticleCard(article, type = 'article') {
+export function buildArticleCard(article, type = 'article', eager = false) {
   const {
     title, description, image, imageAlt, date,
   } = article;
 
   const path = article.path.split('.')[0];
 
-  const picture = createOptimizedPicture(image, imageAlt || title, false, [{ width: '750' }]);
+  const picture = createOptimizedPicture(image, imageAlt || title, eager, [{ width: '750' }]);
   const pictureTag = picture.outerHTML;
   const card = document.createElement('a');
   card.className = `${type}-card`;
@@ -986,11 +1016,19 @@ export async function fetchBlogArticleIndex() {
  */
 
 export async function getBlogArticle(path) {
-  if (!window.blogIndex) {
-    window.blogIndex = await fetchBlogArticleIndex();
-  }
-  const index = window.blogIndex;
-  return (index.byPath[path]);
+  const json = await getMetadataJson(`${path}.metadata.json`);
+  const meta = JSON.parse(json);
+  const articleMeta = {
+    description: meta.description,
+    title: meta['og:title'],
+    image: meta['og:image'],
+    imageAlt: meta['og:image:alt'],
+    date: meta['publication-date'],
+    path,
+    tags: meta['article:tag'],
+  };
+  loadArticleTaxonomy(articleMeta);
+  return (articleMeta);
 }
 
 /**
@@ -1006,60 +1044,6 @@ export async function fetchPlaceholders() {
     placeholders[placeholder.Key] = placeholder.Text;
   });
   return (placeholders);
-}
-
-/**
- * Sets the trigger for the LCP (Largest Contentful Paint) event.
- * @see https://web.dev/lcp/
- * @param {Element} lcpCandidateElement The LCP candidate element
- * @param {Function} postLCP The callback function
- */
-function setLCPTrigger(lcpCandidateEl, postLCP) {
-  if (lcpCandidateEl) {
-    if (lcpCandidateEl.complete) {
-      postLCP();
-    } else {
-      lcpCandidateEl.addEventListener('load', () => {
-        postLCP();
-      });
-      lcpCandidateEl.addEventListener('error', () => {
-        postLCP();
-      });
-    }
-  } else {
-    postLCP();
-  }
-}
-
-/**
- * Gets the LCP (Largest Contentful Paint) candidate element.
- * @see https://web.dev/lcp/
- * @param {Function} callback The function called with the LCP candidate element
- */
-
-function getLCPCandidate(callback) {
-  const usp = new URLSearchParams(window.location.search);
-  const lcp = usp.get('lcp');
-  const lcpBlocks = ['featured-article', 'article-header'];
-  let candidate = document.querySelector('main img');
-  const block = document.querySelector('.block');
-  if (block) {
-    if (lcp !== 'simple' && lcpBlocks.includes(block.getAttribute('data-block-name'))) {
-      loadBlock(block, () => {
-        candidate = block.querySelector('img');
-        debug('LCP block found', candidate);
-        callback(candidate);
-      });
-    } else {
-      // not an LCP block
-      debug('first block is not LCP block', candidate);
-      callback(candidate);
-    }
-  } else {
-    // no blocks found
-    debug('no blocks found', candidate);
-    callback(candidate);
-  }
 }
 
 /**
@@ -1083,58 +1067,91 @@ export function loadScript(url, callback, type) {
 }
 
 /**
- * Decorates the page.
- * @param {Window} win The window
+ * Loads everything needed to get to LCP.
  */
-async function decoratePage(win = window) {
-  const doc = win.document;
-  const main = doc.querySelector('main');
+async function loadEager() {
+  const main = document.querySelector('main');
   if (main) {
     decorateMain(main);
-    getLCPCandidate((lcpCandidateEl) => {
-      setLCPTrigger(lcpCandidateEl, async () => {
-        // post LCP actions go here
-        sampleRUM('lcp');
-
-        /* load gnav */
-        const header = document.querySelector('header');
-        const gnavPath = getMetadata('gnav') || `${getRootPath()}/gnav`;
-        header.setAttribute('data-block-name', 'gnav');
-        header.setAttribute('data-gnav-source', gnavPath);
-        loadBlock(header);
-
-        /* load footer */
-        const footer = document.querySelector('footer');
-        footer.setAttribute('data-block-name', 'footer');
-        footer.setAttribute('data-footer-source', `${getRootPath()}/footer`);
-        loadBlock(footer);
-
-        await loadTaxonomy();
-
-        /* taxonomy dependent */
-        buildTagsBlock(main);
-        loadBlocks(main);
-
-        loadCSS('/styles/lazy-styles.css');
-        addFavIcon('/styles/favicon.svg');
-
-        /* trigger delayed.js load */
-        const delayedScript = '/scripts/delayed.js';
-        const usp = new URLSearchParams(window.location.search);
-        const delayed = usp.get('delayed');
-
-        if (!(delayed === 'off' || document.querySelector(`head script[src="${delayedScript}"]`))) {
-          let ms = 3500;
-          const delay = usp.get('delay');
-          if (delay) ms = +delay;
-          setTimeout(() => {
-            loadScript(delayedScript, null, 'module');
-          }, ms);
-        }
-      });
-    });
     document.querySelector('body').classList.add('appear');
+    const lcpBlocks = ['featured-article', 'article-header'];
+    const block = document.querySelector('.block');
+    const hasLCPBlock = (block && lcpBlocks.includes(block.getAttribute('data-block-name')));
+    if (hasLCPBlock) await loadBlock(block, true);
+    const lcpCandidate = document.querySelector('main img');
+    const loaded = {
+      then: (resolve) => {
+        if (lcpCandidate && !lcpCandidate.complete) {
+          lcpCandidate.addEventListener('load', () => resolve());
+          lcpCandidate.addEventListener('error', () => resolve());
+        } else {
+          resolve();
+        }
+      },
+    };
+    await loaded;
   }
+}
+
+/**
+ * loads everything that doesn't need to be delayed.
+ */
+async function loadLazy() {
+  const main = document.querySelector('main');
+
+  // post LCP actions go here
+  sampleRUM('lcp');
+
+  /* load gnav */
+  const header = document.querySelector('header');
+  const gnavPath = getMetadata('gnav') || `${getRootPath()}/gnav`;
+  header.setAttribute('data-block-name', 'gnav');
+  header.setAttribute('data-gnav-source', gnavPath);
+  loadBlock(header);
+
+  /* load footer */
+  const footer = document.querySelector('footer');
+  footer.setAttribute('data-block-name', 'footer');
+  footer.setAttribute('data-footer-source', `${getRootPath()}/footer`);
+  loadBlock(footer);
+
+  // await loadTaxonomy();
+
+  /* taxonomy dependent */
+  buildTagsBlock(main);
+
+  loadBlocks(main);
+  loadCSS('/styles/lazy-styles.css');
+  addFavIcon('/styles/favicon.svg');
+}
+
+/**
+ * loads everything that happens a lot later, without impacting
+ * the user experience.
+ */
+function loadDelayed() {
+  /* trigger delayed.js load */
+  const delayedScript = '/scripts/delayed.js';
+  const usp = new URLSearchParams(window.location.search);
+  const delayed = usp.get('delayed');
+
+  if (!(delayed === 'off' || document.querySelector(`head script[src="${delayedScript}"]`))) {
+    let ms = 3500;
+    const delay = usp.get('delay');
+    if (delay) ms = +delay;
+    setTimeout(() => {
+      loadScript(delayedScript, null, 'module');
+    }, ms);
+  }
+}
+
+/**
+ * Decorates the page.
+ */
+async function decoratePage() {
+  await loadEager();
+  loadLazy();
+  loadDelayed();
 }
 
 decoratePage(window);
