@@ -180,8 +180,15 @@ const loadEmbed = (block) => {
       a.outerHTML = getDefaultEmbed(url);
       block.classList = `block embed embed-${simpleDomain}`;
     }
-    block.innerHTML = figure.outerHTML;
+    block.firstChild.replaceWith(figure);
     block.classList.add('is-loaded');
+  }
+
+  const figcaption = block.querySelector('figcaption');
+  if (figcaption) {
+    // figcaption may have been added by caption block.
+    // move it into picture tag
+    figure.append(figcaption);
   }
 };
 

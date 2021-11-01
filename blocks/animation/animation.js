@@ -1,7 +1,8 @@
 import { buildFigure } from '../../scripts/scripts.js';
 
-export default function decorateAnimation(blockEl) {
-  const a = blockEl.querySelector('a');
+export default function decorateAnimation(block) {
+  const firstDiv = block.firstChild;
+  const a = block.querySelector('a');
   const parentEl = a.parentNode;
   const href = a.getAttribute('href');
   const url = new URL(href);
@@ -27,7 +28,16 @@ export default function decorateAnimation(blockEl) {
     parentEl.innerHTML = picEl;
   }
 
-  const figEl = buildFigure(blockEl.firstChild.firstChild);
-  blockEl.prepend(figEl);
-  blockEl.lastChild.remove();
+  const figEl = buildFigure(block.firstChild.firstChild);
+  block.prepend(figEl);
+
+  const figcaption = block.querySelector('figcaption');
+  if (figcaption) {
+    // figcaption may have been added by caption block.
+    // move it into picture tag
+    const figure = block.querySelector('figure');
+    figure.append(figcaption);
+  }
+
+  firstDiv.remove();
 }

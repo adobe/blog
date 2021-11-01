@@ -1,5 +1,3 @@
-import { buildFigure } from '../../scripts/scripts.js';
-
 export default function decorate(block) {
   if (block.classList.contains('is-loaded')) {
     return;
@@ -20,13 +18,20 @@ export default function decorate(block) {
   }
 
   const video = document.createElement('div');
-  const figure = buildFigure(block.firstChild.firstChild);
   video.classList.add('video-wrapper');
   video.innerHTML = `<video controls preload="none" ${poster}>
     <source src=".${pathname}" type="video/mp4">
   </video>`;
   block.innerHTML = '<figure class="figure"></figure>';
   block.firstChild.prepend(video);
-  block.firstChild.append(figure.querySelector('figcaption'));
+
+  const figcaption = block.querySelector('figcaption');
+  if (figcaption) {
+    // figcaption may have been added by caption block.
+    // move it into picture tag
+    const figure = block.querySelector('figure');
+    figure.append(figcaption);
+  }
+
   block.classList.add('is-loaded');
 }
