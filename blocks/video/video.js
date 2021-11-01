@@ -22,7 +22,7 @@ export default function decorate(block) {
   const video = document.createElement('div');
   const figure = buildFigure(block.firstChild.firstChild);
   video.classList.add('video-wrapper');
-  video.innerHTML = `<video controls preload="none" ${poster}>
+  video.innerHTML = `<video controls ${poster}>
     <source src=".${pathname}" type="video/mp4">
   </video>`;
   block.innerHTML = '<figure class="figure"></figure>';
