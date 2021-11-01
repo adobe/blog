@@ -194,22 +194,25 @@ export function debug(message) {
  */
 async function getMetadataJson(path) {
   const resp = await fetch(path.split('.')[0]);
-  const text = await resp.text();
-  const headStr = text.split('<head>')[1].split('</head>')[0];
-  const head = document.createElement('head');
-  head.innerHTML = headStr;
-  const metaTags = head.querySelectorAll(':scope > meta');
-  const meta = {};
-  metaTags.forEach((metaTag) => {
-    const name = metaTag.getAttribute('name') || metaTag.getAttribute('property');
-    const value = metaTag.getAttribute('content');
-    if (meta[name]) {
-      meta[name] += `, ${value}`;
-    } else {
-      meta[name] = value;
-    }
-  });
-  return (JSON.stringify(meta));
+  if (resp.ok) {
+    const text = await resp.text();
+    const headStr = text.split('<head>')[1].split('</head>')[0];
+    const head = document.createElement('head');
+    head.innerHTML = headStr;
+    const metaTags = head.querySelectorAll(':scope > meta');
+    const meta = {};
+    metaTags.forEach((metaTag) => {
+      const name = metaTag.getAttribute('name') || metaTag.getAttribute('property');
+      const value = metaTag.getAttribute('content');
+      if (meta[name]) {
+        meta[name] += `, ${value}`;
+      } else {
+        meta[name] = value;
+      }
+    });
+    return (JSON.stringify(meta));
+  }
+  return null;
 }
 
 let taxonomy;
@@ -1012,23 +1015,25 @@ export async function fetchBlogArticleIndex() {
 /**
  * gets a blog article index information by path.
  * @param {string} path indentifies article
- * @returns {object} article object
+ * @returns {object} article object (or null if article does not exist)
  */
 
 export async function getBlogArticle(path) {
-  const json = await getMetadataJson(`${path}.metadata.json`);
-  const meta = JSON.parse(json);
-  const articleMeta = {
-    description: meta.description,
-    title: meta['og:title'],
-    image: meta['og:image'],
-    imageAlt: meta['og:image:alt'],
-    date: meta['publication-date'],
-    path,
-    tags: meta['article:tag'],
-  };
-  loadArticleTaxonomy(articleMeta);
-  return (articleMeta);
+  const meta = await getMetadataJson(`${path}.metadata.json`);
+  if (meta) {
+    const articleMeta = {
+      description: meta.description,
+      title: meta['og:title'],
+      image: meta['og:image'],
+      imageAlt: meta['og:image:alt'],
+      date: meta['publication-date'],
+      path,
+      tags: meta['article:tag'],
+    };
+    loadArticleTaxonomy(articleMeta);
+    return (articleMeta);
+  }
+  return null;
 }
 
 /**
