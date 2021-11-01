@@ -1,0 +1,46 @@
+version: 1
+
+sitemaps:
+  blog:
+    origin: https://blog.adobe.com
+    languages:
+      en:
+        source: /en/query-index.json
+        destination: /en/sitemap.xml
+        hreflang: en
+        alternate: /en/{path}
+      ko:
+        source: /en/query-index.json
+        destination: /ko/sitemap.xml
+        hreflang: ko
+        alternate: /ko/{path}
+      jp:
+        source: /jp/query-index.json
+        destination: /jp/sitemap.xml
+        hreflang: ja
+        alternate: /jp/{path}
+      it:
+        source: /it/query-index.json
+        destination: /it/sitemap.xml
+        hreflang: it
+        alternate: /it/{path}
+      fr:
+        source: /fr/query-index.json
+        destination: /fr/sitemap.xml
+        hreflang: fr
+        alternate: /fr/{path}
+      es:
+        source: /es/query-index.json
+        destination: /es/sitemap.xml
+        hreflang: es
+        alternate: /es/{path}
+      de:
+        source: /de/query-index.json
+        destination: /de/sitemap.xml
+        hreflang: de
+        alternate: /de/{path}
+      br:
+        source: /br/query-index.json
+        destination: /br/sitemap.xml
+        hreflang: pt
+        alternate: /br/{path}

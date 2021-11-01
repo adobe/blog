@@ -10,10 +10,6 @@ indices:
     exclude:
       - '**/Document.*'
     target: https://adobe.sharepoint.com/sites/AlexTest/Shared%20Documents/websites/blog/en/query-index.xlsx
-    sitemap:
-      source: /en/query-index.json
-      path: /en/sitemap.xml
-      origin: https://blog.adobe.com
     properties:
       author:
         select: head > meta[name="author"]
@@ -61,19 +57,19 @@ indices:
     include:
       - /br/publish/*/*/*/*
     target: https://adobe.sharepoint.com/sites/AlexTest/Shared%20Documents/websites/blog/br/query-index.xlsx
-  
+
   german:
     <<: *default
     include:
       - /de/publish/*/*/*/*
     target: https://adobe.sharepoint.com/sites/AlexTest/Shared%20Documents/websites/blog/de/query-index.xlsx
-  
+
   spanish:
     <<: *default
     include:
       - /es/publish/*/*/*/*
     target: https://adobe.sharepoint.com/sites/AlexTest/Shared%20Documents/websites/blog/es/query-index.xlsx
-  
+
   french:
     <<: *default
     include:
