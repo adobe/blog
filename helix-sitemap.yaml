@@ -10,7 +10,7 @@ sitemaps:
         hreflang: en
         alternate: /en/{path}
       ko:
-        source: /en/query-index.json
+        source: /ko/query-index.json
         destination: /ko/sitemap.xml
         hreflang: ko
         alternate: /ko/{path}
