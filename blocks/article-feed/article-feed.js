@@ -4,19 +4,13 @@ import {
   fetchBlogArticleIndex,
   fetchPlaceholders,
   getArticleTaxonomy,
-  getLanguage,
+  getTaxonomy,
 } from '../../scripts/scripts.js';
 
 function isCardOnPage(article) {
   const path = article.path.split('.')[0];
   /* using recommended and featured articles */
   return !!document.querySelector(`.featured-article a.featured-article-card[href="${path}"], .recommended-articles a.article-card[href="${path}"]`);
-}
-
-async function loadTaxonomy() {
-  const mod = await import('../../scripts/taxonomy.js');
-  const taxonomy = await mod.default(getLanguage());
-  return taxonomy;
 }
 
 function closeMenu(el) {
@@ -374,7 +368,7 @@ async function decorateArticleFeed(articleFeedEl, config, offset = 0) {
 
 async function decorateFeedFilter(articleFeedEl, config) {
   const placeholders = await fetchPlaceholders();
-  const taxonomy = await loadTaxonomy();
+  const taxonomy = getTaxonomy();
   const parent = document.querySelector('.article-feed-container');
 
   const curtain = document.createElement('div');
