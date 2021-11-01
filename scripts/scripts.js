@@ -1024,6 +1024,7 @@ export async function getBlogArticle(path) {
     const articleMeta = {
       description: meta.description,
       title: meta['og:title'],
+      author: meta.author,
       image: meta['og:image'],
       imageAlt: meta['og:image:alt'],
       date: meta['publication-date'],
