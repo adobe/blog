@@ -210,7 +210,7 @@ async function getMetadataJson(path) {
         meta[name] = value;
       }
     });
-    return (JSON.stringify(meta));
+    return meta;
   }
   return null;
 }
@@ -1031,7 +1031,7 @@ export async function getBlogArticle(path) {
       tags: meta['article:tag'],
     };
     loadArticleTaxonomy(articleMeta);
-    return (articleMeta);
+    return articleMeta;
   }
   return null;
 }
