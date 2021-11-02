@@ -152,8 +152,15 @@ export default async (lang, url) => {
       }
 
       const findItem = (topic, cat) => {
-        let t = data.products[topic];
-        if (!isProduct(cat) && !t) {
+        let t;
+        if (!cat) {
+          t = data.products[topic];
+          if (!isProduct(cat) && !t) {
+            t = data.topics[topic];
+          }
+        } else if (isProduct(cat)) {
+          t = data.products[topic];
+        } else {
           t = data.topics[topic];
         }
         return t;

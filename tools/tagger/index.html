@@ -430,10 +430,12 @@
         };
       });
 
+      const toCopyBuffer = new Set();
       tags.forEach((tagInfo) => {
         html += `<span data-target="${tagInfo.tag}" data-category="${tagInfo.category}" onclick="remove(this)" class="path">${tagInfo.path}<span class="tag cat-${CATEGORIES.indexOf(tagInfo.category)}${tagInfo.nuft ? ' nuft' : ''}">${tagInfo.label}</span></span> `;
         if (1 === CATEGORIES.indexOf(tagInfo.category)) products += tagInfo.tag + ', ';
         else topics += tagInfo.tag + ', ';
+        toCopyBuffer.add(tagInfo.tag);
       });
 
       var selEl = document.getElementById('selected');
@@ -448,7 +450,7 @@
       }
 
       var copybuffer = document.getElementById('copybuffer');
-      copybuffer.value = `${topics}${products}`;
+      copybuffer.value = Array.from(toCopyBuffer).join(', ');
 
       document.querySelectorAll('#results>.category>span').forEach((e) => {
         const target = e.getAttribute('data-target');
@@ -494,7 +496,7 @@
               term = label.substr(offset, searchTerm.length);
               after = label.substr(offset + searchTerm.length);
 
-              html += `<span data-target="${name}" data-category="${cat}" onclick="add(this)" class="path">${tagInfo.path}<span class="tag cat-${CATEGORIES.indexOf(tagInfo.category)}${tagInfo.nuft ? ' nuft' : ''}">${before}<span class="highlight">${term}</span>${after}</span></span> `;
+              html += `<span data-target="${name}" data-category="${cat}" onclick="add(this)" class="path">${tagInfo.path}<span class="tag cat-${CATEGORIES.indexOf(cat)}${tagInfo.nuft ? ' nuft' : ''}">${before}<span class="highlight">${term}</span>${after}</span></span> `;
             }
           }
         })
