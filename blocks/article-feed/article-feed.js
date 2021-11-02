@@ -268,10 +268,7 @@ function buildFilter(type, tax, ph, block, config) {
 }
 
 async function filterArticles(config, offset) {
-  if (!window.blogIndex) {
-    window.blogIndex = await fetchBlogArticleIndex();
-  }
-  const index = window.blogIndex;
+  const index = await fetchBlogArticleIndex();
 
   const result = [];
 
@@ -317,6 +314,7 @@ async function filterArticles(config, offset) {
         && article[key].toLowerCase().includes(val)));
       return matchedFilter;
     });
+
     if (matchedAll && !result.includes(article) && !isCardOnPage(article)) {
       articles.push(article);
     }
