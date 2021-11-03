@@ -1,4 +1,9 @@
-import { loadScript, getHelixEnv, debug } from '../../scripts/scripts.js';
+import {
+  loadScript,
+  getHelixEnv,
+  debug,
+  adjustLinks,
+} from '../../scripts/scripts.js';
 import createTag from './gnav-utils.js';
 
 const BRAND_IMG = '<img loading="lazy" alt="Adobe" src="/blocks/gnav/adobe-logo.svg">';
@@ -47,6 +52,8 @@ class Gnav {
     if (logo) {
       nav.append(logo);
     }
+
+    adjustLinks(nav);
 
     const wrapper = createTag('div', { class: 'gnav-wrapper' }, nav);
     this.el.append(this.curtain, wrapper);

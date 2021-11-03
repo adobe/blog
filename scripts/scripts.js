@@ -65,6 +65,26 @@ export function loadCSS(href) {
   }
 }
 
+/**
+ * Adjust all links inside the container to point to current
+ * host and not to blog.adobe.com (useful on localhost and authoring host)
+ * @param {Element} container The element in which links will be adusted
+ */
+export function adjustLinks(container) {
+  if (container && window.location.host !== 'blog.adobe.com') {
+    container.querySelectorAll('a').forEach((a) => {
+      try {
+        if (a.href) {
+          const u = new URL(a.href);
+          a.href = `${window.location.origin}${u.pathname}`;
+        }
+      } catch (e) {
+        // ignore
+      }
+    });
+  }
+}
+
 const LANG = {
   EN: 'en',
   DE: 'de',
