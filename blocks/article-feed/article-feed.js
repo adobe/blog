@@ -103,8 +103,8 @@ function clearFilter(e, block, config) {
   const checked = document
     .querySelector(`input[name='${target.textContent}']`);
   if (checked) { checked.checked = false; }
-  delete config.selectedproducts;
-  delete config.selectedindustries;
+  delete config.selectedProducts;
+  delete config.selectedIndustries;
   // eslint-disable-next-line no-use-before-define
   applyCurrentFilters(block, config);
 }
@@ -117,11 +117,12 @@ function applyCurrentFilters(block, config, close) {
     filter.querySelectorAll('input[type=checkbox]').forEach((box) => {
       if (box.checked) {
         const boxType = box.parentElement.parentElement.getAttribute('data-type');
+        const capBoxType = boxType.charAt(0).toUpperCase() + boxType.slice(1);
         subfilters.push(box.name);
-        if (config[`selected${boxType}`]) {
-          config[`selected${boxType}`] += `, ${box.name}`;
+        if (config[`selected${capBoxType}`]) {
+          config[`selected${capBoxType}`] += `, ${box.name}`;
         } else {
-          config[`selected${boxType}`] = box.name;
+          config[`selected${capBoxType}`] = box.name;
         }
       }
     });
@@ -170,8 +171,8 @@ function clearFilters(e, block, config) {
     const checked = dropdown.querySelectorAll('input:checked');
     checked.forEach((box) => { box.checked = false; });
   });
-  delete config.selectedproducts;
-  delete config.selectedindustries;
+  delete config.selectedProducts;
+  delete config.selectedIndustries;
   applyCurrentFilters(block, config);
 }
 
@@ -253,8 +254,8 @@ function buildFilter(type, tax, ph, block, config) {
   applyBtn.classList.add('button', 'small', 'apply');
   applyBtn.textContent = ph.apply;
   applyBtn.addEventListener('click', () => {
-    delete config.selectedproducts;
-    delete config.selectedindustries;
+    delete config.selectedProducts;
+    delete config.selectedIndustries;
     closeCurtain();
     disableSearch(`${type}-filter-button`);
     applyCurrentFilters(block, config, 'close');
@@ -275,7 +276,7 @@ async function filterArticles(config, offset) {
   /* filter posts by category, tag and author */
   const filters = {};
   Object.keys(config).forEach((key) => {
-    const filterNames = ['tags', 'topics', 'selectedproducts', 'selectedindustries', 'author', 'category', 'exclude'];
+    const filterNames = ['tags', 'topics', 'selectedProducts', 'selectedIndustries', 'author', 'category', 'exclude'];
     if (filterNames.includes(key)) {
       const vals = config[key];
       const v = vals.split(',');
@@ -296,13 +297,13 @@ async function filterArticles(config, offset) {
           && tax.allTopics.map((t) => t.toLowerCase()).includes(val)));
         return key === 'exclude' ? !matchedFilter : matchedFilter;
       }
-      if (key === 'selectedproducts' || key === 'selectedindustries') {
+      if (key === 'selectedProducts' || key === 'selectedIndustries') {
         const tax = getArticleTaxonomy(article);
-        if (filters.selectedproducts && filters.selectedindustries) {
+        if (filters.selectedProducts && filters.selectedIndustries) {
           // match product && industry
-          const matchProduct = filters.selectedproducts.some((val) => (tax.allTopics
+          const matchProduct = filters.selectedProducts.some((val) => (tax.allTopics
             && tax.allTopics.map((t) => t.toLowerCase()).includes(val)));
-          const matchIndustry = filters.selectedindustries.some((val) => (tax.allTopics
+          const matchIndustry = filters.selectedIndustries.some((val) => (tax.allTopics
             && tax.allTopics.map((t) => t.toLowerCase()).includes(val)));
           return matchProduct && matchIndustry;
         }
