@@ -369,6 +369,7 @@ main .recommended-articles,
 main .featured-article,
 main .article-feed,
 main .article-header,
+main .author-header-container,
 main .tag-header-container,
 main .recommended-articles-small-container {
   visibility: hidden;
