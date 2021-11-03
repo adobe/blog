@@ -1,4 +1,4 @@
-main .tag-header-container {
+main div.section-wrapper.tag-header-container {
   visibility: unset;
   display: flex;
   margin-top: 0;
@@ -25,7 +25,7 @@ main .tag-header {
   margin: 40px 0 16px;
 }
 
-main .tag-header h1 {
+main .tag-header div h1 {
   margin: 0;
   padding: 16px 2rem;
   color: var(--color-white);
