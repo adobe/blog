@@ -1,4 +1,4 @@
-main .tag-header-container {
+main .tag-header-container:first-child {
   visibility: unset;
   display: flex;
   margin-top: 0;
@@ -6,6 +6,10 @@ main .tag-header-container {
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
+}
+
+main .tag-header-container + div {
+  margin-top: 0;
 }
 
 main .tag-header-container > div {
