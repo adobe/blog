@@ -1,0 +1,56 @@
+version: 2.1
+executors:
+  node12:
+    docker:
+    - image: circleci/node:14
+      environment:
+        NPM_CONFIG_PREFIX: "~/.npm-global"
+        working_directory: ~/repo
+
+orbs:
+  helix-post-deploy: adobe/helix-post-deploy@3.0.0
+
+jobs:
+  operations:
+    executor: node12
+    steps:
+      - attach_workspace:
+          at: /home/circleci
+      - helix-post-deploy/monitoring:
+          newrelic_name: Adobe Blog - Uptime (prod)
+          newrelic_url: https://blog.adobe.com
+          newrelic_script: ./monitoring/health-check.js
+          newrelic_group_policy: Customer Sites
+          newrelic_locations: AWS_US_WEST_1
+          newrelic_frequency: 1
+
+      - helix-post-deploy/monitoring:
+          newrelic_name: Adobe Blog - Content (prod)
+          newrelic_url: https://blog.adobe.com
+          newrelic_type: browser
+          newrelic_script: ./monitoring/content-check.js
+          newrelic_group_policy: Customer Sites
+
+      - helix-post-deploy/monitoring:
+          newrelic_name: Adobe Blog - Content (live)
+          newrelic_url: https://theblog--adobe.hlx.live
+          newrelic_type: browser
+          newrelic_script: ./monitoring/content-check.js
+          newrelic_group_policy: Customer Sites
+      
+      - helix-post-deploy/monitoring:
+          newrelic_name: Adobe Blog - Content (preview)
+          newrelic_url: https://main--blog--adobe.hlx3.page
+          newrelic_type: browser
+          newrelic_script: ./monitoring/content-check.js
+          newrelic_group_policy: Customer Sites
+
+workflows:
+  version: 2
+  build:
+    jobs:
+      - operations:
+          context: Project Helix
+          filters:
+            branches:
+              only: monitoring
