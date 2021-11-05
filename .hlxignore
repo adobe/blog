@@ -1,0 +1,8 @@
+.*
+*.md
+*.json
+karma.config.js
+LICENSE
+monitoring/*
+package*.json
+test/*
