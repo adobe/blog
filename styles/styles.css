@@ -328,7 +328,6 @@ main .section-wrapper p.button-container {
 /* gnav placeholder */
 
 header {
-  border-bottom: 1px solid #EAEAEA;
   display: flex;
   position: fixed;
   top: 0;
