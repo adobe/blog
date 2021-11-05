@@ -3,7 +3,7 @@ import createTag from './gnav-utils.js';
 
 function decorateCard(hit) {
   const {
-    title, description, image, category,
+    title, description, image, tags,
   } = hit;
   const path = hit.path.split('.')[0];
   const picture = createOptimizedPicture(image, title, false, [{ width: '750' }]);
@@ -11,7 +11,7 @@ function decorateCard(hit) {
   const html = `
   <div class="article-card-image">${pictureTag}</div>
   <div class="article-card-body">
-    <p class="article-card-category">${category}</p>
+    <p class="article-card-category">${JSON.parse(tags)[0]}</p>
     <h3>${title}</h3>
     <p>${description}</p>
   </div>`;
@@ -71,7 +71,6 @@ async function populateSearchResults(searchTerms, resultsContainer) {
         hits.push(e);
       }
     }
-
     hits.forEach((hit) => {
       const card = decorateCard(hit);
       resultsContainer.appendChild(card);
