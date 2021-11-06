@@ -546,18 +546,21 @@ function getImageCaption(picture) {
  */
 function buildImageBlocks(mainEl) {
   // select all non-featured, default (non-images block) images
-  const parentEls = [];
   const imgEls = [...mainEl.querySelectorAll(':scope > div > p > picture')];
+  let lastImagesBlock;
   imgEls.forEach((imgEl) => {
     const parentEl = imgEl.parentNode;
     const imagesBlockEl = buildBlock('images', {
       elems: [imgEl.cloneNode(true), getImageCaption(imgEl)],
     });
-    parentEl.parentNode.insertBefore(imagesBlockEl, parentEl);
-    parentEls.push(parentEl);
+    if (parentEl.parentNode) {
+      parentEl.replaceWith(imagesBlockEl);
+      lastImagesBlock = imagesBlockEl;
+    } else {
+      // same parent, add image to last images block
+      lastImagesBlock.firstChild.append(imagesBlockEl.firstChild.firstChild);
+    }
   });
-  // remove old parent elems
-  parentEls.forEach((parentEl) => parentEl.remove());
 }
 
 /**
