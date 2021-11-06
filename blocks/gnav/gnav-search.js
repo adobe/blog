@@ -1,17 +1,24 @@
-import { fetchBlogArticleIndex, createOptimizedPicture } from '../../scripts/scripts.js';
+import { fetchBlogArticleIndex, createOptimizedPicture, getArticleTaxonomy } from '../../scripts/scripts.js';
 import createTag from './gnav-utils.js';
 
 function decorateCard(hit) {
   const {
     title, description, image, tags,
   } = hit;
+
+  const tax = getArticleTaxonomy(hit);
+  let category = tax?.category;
+  if (!category) {
+    // eslint-disable-next-line prefer-destructuring
+    category = JSON.parse(tags)[0];
+  }
   const path = hit.path.split('.')[0];
   const picture = createOptimizedPicture(image, title, false, [{ width: '750' }]);
   const pictureTag = picture.outerHTML;
   const html = `
   <div class="article-card-image">${pictureTag}</div>
   <div class="article-card-body">
-    <p class="article-card-category">${JSON.parse(tags)[0]}</p>
+    <p class="article-card-category">${category}</p>
     <h3>${title}</h3>
     <p>${description}</p>
   </div>`;
