@@ -592,18 +592,18 @@ function buildArticleHeader(mainEl) {
 
 function buildTagHeader(mainEl) {
   const div = mainEl.querySelector('div');
-  const h1 = mainEl.querySelector('h1');
+  const heading = mainEl.querySelector('h1, h2');
   const picture = mainEl.querySelector('picture');
   const tagHeaderBlockEl = buildBlock('tag-header', [
-    [h1],
+    [heading],
     [{ elems: [picture.closest('p')] }],
   ]);
-  div.append(tagHeaderBlockEl);
+  div.prepend(tagHeaderBlockEl);
 }
 
 function buildAuthorHeader(mainEl) {
   const div = mainEl.querySelector('div');
-  const heading = mainEl.querySelector('h1, h2, h3');
+  const heading = mainEl.querySelector('h1, h2');
   const bio = heading.nextElementSibling;
   const picture = mainEl.querySelector('picture');
   const elArr = [[heading]];
@@ -675,7 +675,9 @@ function buildAutoBlocks(mainEl) {
     }
     if (window.location.pathname.includes('/authors/')) {
       buildAuthorHeader(mainEl);
-      buildArticleFeed(mainEl, 'author');
+      if (!document.querySelector('.article-feed')) {
+        buildArticleFeed(mainEl, 'author');
+      }
     }
     buildImageBlocks(mainEl);
   } catch (error) {
@@ -714,7 +716,7 @@ function unwrapBlock(block) {
 
 function splitSections() {
   document.querySelectorAll('main > div > div').forEach((block) => {
-    const blocksToSplit = ['article-header', 'recommended-articles'];
+    const blocksToSplit = ['article-header', 'article-feed', 'recommended-articles'];
     if (blocksToSplit.includes(block.className)) {
       unwrapBlock(block);
     }
