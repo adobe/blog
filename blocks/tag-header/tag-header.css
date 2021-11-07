@@ -8,6 +8,10 @@ main div.section-wrapper.tag-header-container {
   background-size: cover;
 }
 
+main .tag-header-container + div {
+  margin-top: 0;
+}
+
 main .tag-header-container > div {
   padding: 0;
   width: 100%;

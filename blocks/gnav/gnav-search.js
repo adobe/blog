@@ -1,10 +1,17 @@
-import { fetchBlogArticleIndex, createOptimizedPicture } from '../../scripts/scripts.js';
+import { fetchBlogArticleIndex, createOptimizedPicture, getArticleTaxonomy } from '../../scripts/scripts.js';
 import createTag from './gnav-utils.js';
 
 function decorateCard(hit) {
   const {
-    title, description, image, category,
+    title, description, image, tags,
   } = hit;
+
+  const tax = getArticleTaxonomy(hit);
+  let category = tax?.category;
+  if (!category) {
+    // eslint-disable-next-line prefer-destructuring
+    category = JSON.parse(tags)[0];
+  }
   const path = hit.path.split('.')[0];
   const picture = createOptimizedPicture(image, title, false, [{ width: '750' }]);
   const pictureTag = picture.outerHTML;
@@ -71,7 +78,6 @@ async function populateSearchResults(searchTerms, resultsContainer) {
         hits.push(e);
       }
     }
-
     hits.forEach((hit) => {
       const card = decorateCard(hit);
       resultsContainer.appendChild(card);

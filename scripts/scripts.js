@@ -288,10 +288,8 @@ function computeTaxonomyFromTopics(topics, path) {
 async function loadTaxonomy() {
   const mod = await import('./taxonomy.js');
   taxonomy = await mod.default(getLanguage());
-
   if (taxonomy) {
-    // taxonomy loaded, post loading adjustements
-
+    // taxonomy loaded, post loading adjustments
     // fix the links which have been created before the taxonomy has been loaded
     // (pre lcp or in lcp block).
     document.querySelectorAll('[data-topic-link]').forEach((a) => {
@@ -549,13 +547,19 @@ function getImageCaption(picture) {
 function buildImageBlocks(mainEl) {
   // select all non-featured, default (non-images block) images
   const imgEls = [...mainEl.querySelectorAll(':scope > div > p > picture')];
+  let lastImagesBlock;
   imgEls.forEach((imgEl) => {
     const parentEl = imgEl.parentNode;
     const imagesBlockEl = buildBlock('images', {
-      elems: [parentEl.cloneNode(true), getImageCaption(imgEl)],
+      elems: [imgEl.cloneNode(true), getImageCaption(imgEl)],
     });
-    parentEl.parentNode.insertBefore(imagesBlockEl, parentEl);
-    parentEl.remove();
+    if (parentEl.parentNode) {
+      parentEl.replaceWith(imagesBlockEl);
+      lastImagesBlock = imagesBlockEl;
+    } else {
+      // same parent, add image to last images block
+      lastImagesBlock.firstChild.append(imagesBlockEl.firstChild.firstChild);
+    }
   });
 }
 
@@ -665,7 +669,7 @@ function buildAutoBlocks(mainEl) {
     }
     if (window.location.pathname.includes('/topics/')) {
       buildTagHeader(mainEl);
-      if (!document.querySelector('.article-feed')) {
+      if (!mainEl.querySelector('.article-feed')) {
         buildArticleFeed(mainEl, 'tags');
       }
     }
