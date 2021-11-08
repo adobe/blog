@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-/* globals webVitals digitalData _satellite */
+/* globals digitalData _satellite */
 /* eslint-disable no-underscore-dangle */
 
 import {
@@ -128,12 +128,6 @@ launchScriptEl.setAttribute('data-seed-adobelaunch', 'true');
 
 sampleRUM('cwv');
 
-function storeCWV(measurement) {
-  const rum = { cwv: { } };
-  rum.cwv[measurement.name] = measurement.value;
-  sampleRUM('cwv', rum);
-}
-
 function updateExternalLinks() {
   document.querySelectorAll('main a').forEach((a) => {
     const { origin } = new URL(a);
@@ -142,19 +136,6 @@ function updateExternalLinks() {
       a.setAttribute('target', '_blank');
     }
   });
-}
-
-if (window.hlx.rum.isSelected) {
-  const script = document.createElement('script');
-  script.src = 'https://unpkg.com/web-vitals';
-  script.onload = () => {
-    // When loading `web-vitals` using a classic script, all the public
-    // methods can be found on the `webVitals` global namespace.
-    webVitals.getCLS(storeCWV);
-    webVitals.getFID(storeCWV);
-    webVitals.getLCP(storeCWV);
-  };
-  document.head.appendChild(script);
 }
 
 // no-interlinks is a special "tag" to skip interlink via content
