@@ -6,6 +6,7 @@ import {
   getArticleTaxonomy,
   getTaxonomy,
   stamp,
+  sampleRUM,
 } from '../../scripts/scripts.js';
 
 function isCardOnPage(article) {
@@ -255,6 +256,7 @@ function buildFilter(type, tax, ph, block, config) {
   applyBtn.classList.add('button', 'small', 'apply');
   applyBtn.textContent = ph.apply;
   applyBtn.addEventListener('click', () => {
+    sampleRUM('apply-topic-filter');
     delete config.selectedProducts;
     delete config.selectedIndustries;
     closeCurtain();
