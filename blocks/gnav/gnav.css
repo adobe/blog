@@ -376,11 +376,10 @@ button.gnav-toggle:after {
 
 
 @media (min-width: 1200px) {
-
   .gnav-search-results .article-card:nth-of-type(2n) {
     margin-right: unset;
   }
-
+}
 
 
 .gnav-search-highlight {
