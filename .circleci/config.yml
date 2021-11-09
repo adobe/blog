@@ -11,8 +11,23 @@ orbs:
   helix-post-deploy: adobe/helix-post-deploy@3.0.0
 
 jobs:
+  build:
+    executor: node14
+    steps:
+      - checkout
+      - run:
+          name: install latest npm
+          command: sudo npm -g install npm
+      - run:
+          name: Installing Dependencies
+          command: npm install
+      - run: mkdir junit
+      - persist_to_workspace:
+          root: /home/circleci
+          paths:
+            - project
   operations:
-    executor: node12
+    executor: node14
     steps:
       - attach_workspace:
           at: /home/circleci
@@ -50,6 +65,8 @@ workflows:
   build:
     jobs:
       - operations:
+          requires:
+            - build
           context: Project Helix
           filters:
             branches:
