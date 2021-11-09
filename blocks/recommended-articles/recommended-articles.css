@@ -5,6 +5,11 @@ main .section-wrapper.recommended-articles-small-container {
   padding-bottom: 1rem;
 }
 
+main .recommended-articles-container .recommended-articles,
+main .recommended-articles-small-container .recommended-articles {
+  visibility: unset;
+}
+
 main .section-wrapper.recommended-articles-container > div {
   max-width: 100%;
   text-align: center;
