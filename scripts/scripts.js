@@ -391,20 +391,27 @@ function loadArticleTaxonomy(article) {
     // for now, we can only compute the category
     const { tags, path } = article;
 
-    const topics = tags.replace(/[["\]]/gm, '').split(',');
+    if (tags) {
+      const topics = tags.replace(/[["\]]/gm, '').split(',');
 
-    const articleTax = computeTaxonomyFromTopics(topics, path);
+      const articleTax = computeTaxonomyFromTopics(topics, path);
 
-    article.category = articleTax.category;
+      article.category = articleTax.category;
 
-    // topics = tags as an array
-    article.topics = topics;
+      // topics = tags as an array
+      article.topics = topics;
 
-    // visibleTopics = visible topics including parents
-    article.visibleTopics = articleTax.allVisibleTopics;
+      // visibleTopics = visible topics including parents
+      article.visibleTopics = articleTax.allVisibleTopics;
 
-    // allTopics = all topics including parents
-    article.allTopics = articleTax.allTopics;
+      // allTopics = all topics including parents
+      article.allTopics = articleTax.allTopics;
+    } else {
+      article.category = 'News';
+      article.topics = [];
+      article.visibleTopics = [];
+      article.allTopics = [];
+    }
   }
 }
 
