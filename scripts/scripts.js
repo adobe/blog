@@ -1077,7 +1077,7 @@ export async function getBlogArticle(path) {
   if (meta) {
     const articleMeta = {
       description: meta.description,
-      title: meta['og:title'],
+      title: meta['og:title'].split('|')[0],
       author: meta.author,
       image: meta['og:image'],
       imageAlt: meta['og:image:alt'],
