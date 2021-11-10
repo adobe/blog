@@ -170,6 +170,6 @@ function loadGetSocial() {
   });
 }
 
-if (getMetadata('author')) {
+if (getMetadata('publication-date')) {
   loadGetSocial();
 }
