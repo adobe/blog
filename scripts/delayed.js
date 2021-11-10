@@ -146,3 +146,30 @@ if (document.querySelector('.article-header')
 }
 
 updateExternalLinks();
+
+/**
+ * Loads the GetSocial sharing tool
+ */
+function loadGetSocial() {
+  if (window.location.pathname.includes('/drafts/')
+    || window.location.pathname.includes('/documentation/')) return;
+  const po = document.createElement('script');
+  po.setAttribute('type', 'text/javascript');
+  po.setAttribute('async', true);
+  po.setAttribute('src', 'https://api.at.getsocial.io/get/v1/7a87046a/gs_async.js');
+
+  document.head.appendChild(po);
+
+  document.addEventListener('gs:load', () => {
+    if (typeof window.GS === 'object' && window.GS.isMobile) {
+      const footer = document.querySelector('footer');
+      if (footer instanceof HTMLElement) {
+        footer.classList.add('mobile-footer');
+      }
+    }
+  });
+}
+
+if (getMetadata('publication-date')) {
+  loadGetSocial();
+}
