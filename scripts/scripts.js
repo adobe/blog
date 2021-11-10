@@ -392,7 +392,11 @@ function loadArticleTaxonomy(article) {
     const { tags, path } = article;
 
     if (tags) {
-      const topics = tags.replace(/[["\]]/gm, '').split(',');
+      const topics = tags
+        .replace(/[["\]]/gm, '')
+        .split(',')
+        .map((t) => t.trim())
+        .filter((t) => t && t !== '');
 
       const articleTax = computeTaxonomyFromTopics(topics, path);
 
