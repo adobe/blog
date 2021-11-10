@@ -16,9 +16,9 @@ indices:
         value: |
           attribute(el, 'content')
       title:
-        select: head > meta[property="og:title"]
+        select: main h1:first-of-type
         value: |
-          attribute(el, 'content')
+          textContent(el)
       date:
         select: head > meta[name="publication-date"]
         value: |
