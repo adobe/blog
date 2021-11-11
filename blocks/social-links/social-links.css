@@ -1,6 +1,6 @@
 main .social-links {
   text-align: center;
-  margin: 0 auto;
+  margin: 0 auto 30px 0;
 }
 
 main .social-links ul {
@@ -19,6 +19,7 @@ main .social-links svg {
   opacity: 0.5;
   fill: currentColor;
   height: 1rem;
+  width: 1rem;
 }
 
 main .social-links svg:hover {
