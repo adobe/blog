@@ -1086,13 +1086,13 @@ export async function fetchBlogArticleIndex() {
 export async function getBlogArticle(path) {
   const meta = await getMetadataJson(`${path}.metadata.json`);
 
-  let title = meta['og:title'].trim();
-  const trimEndings = ['|Adobe', '| Adobe'];
-  trimEndings.forEach((ending) => {
-    if (title.endsWith(ending)) title = title.substr(0, title.length - ending.length);
-  });
-
   if (meta) {
+    let title = meta['og:title'].trim();
+    const trimEndings = ['|Adobe', '| Adobe'];
+    trimEndings.forEach((ending) => {
+      if (title.endsWith(ending)) title = title.substr(0, title.length - ending.length);
+    });
+
     const articleMeta = {
       description: meta.description,
       title,
