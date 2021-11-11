@@ -1,0 +1,33 @@
+main .social-links {
+  text-align: center;
+  margin: 0 auto;
+}
+
+main .social-links ul {
+  padding-inline-start: 0;
+}
+
+main .social-links li {
+  list-style: none;
+  display: inline;
+  margin-right: 16px;
+  position: relative;
+  top: 2px;
+}
+
+main .social-links svg {
+  opacity: 0.5;
+  fill: currentColor;
+  height: 1rem;
+}
+
+main .social-links svg:hover {
+  opacity: 0.8;
+}
+
+@media (min-width: 600px) {
+  main .social-links {
+    text-align: left;
+    padding-left: 232px;
+  }
+}
