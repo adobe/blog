@@ -644,6 +644,15 @@ function buildAuthorHeader(mainEl) {
   div.prepend(authorHeaderBlockEl);
 }
 
+function buildSocialLinks(mainEl) {
+  const socialPar = [...mainEl.querySelectorAll('p')].find((p) => p.textContent.trim() === 'Social:');
+  if (socialPar && socialPar.nextElementSibling === socialPar.parentNode.querySelector('ul')) {
+    const socialLinkList = socialPar.nextElementSibling.outerHTML;
+    socialPar.nextElementSibling.remove();
+    socialPar.replaceWith(buildBlock('social-links', [[socialLinkList]]));
+  }
+}
+
 function buildArticleFeed(mainEl, type) {
   const div = document.createElement('div');
   const title = mainEl.querySelector('h1, h2').textContent.trim();
@@ -702,6 +711,7 @@ function buildAutoBlocks(mainEl) {
     }
     if (window.location.pathname.includes('/authors/')) {
       buildAuthorHeader(mainEl);
+      buildSocialLinks(mainEl);
       if (!document.querySelector('.article-feed')) {
         buildArticleFeed(mainEl, 'author');
       }
