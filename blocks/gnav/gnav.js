@@ -3,6 +3,7 @@ import {
   getHelixEnv,
   debug,
   adjustLinks,
+  getLocale,
 } from '../../scripts/scripts.js';
 import createTag from './gnav-utils.js';
 
@@ -220,9 +221,9 @@ class Gnav {
     const profileEl = createTag('div', { class: 'gnav-profile' });
 
     window.adobeid = {
-      client_id: 'bizweb',
+      client_id: 'theblog-helix',
       scope: 'AdobeID,openid,gnav',
-      locale: 'en_US',
+      locale: getLocale(),
       autoValidateToken: true,
       environment: this.env.ims,
       useLocalStorage: false,

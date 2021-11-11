@@ -112,6 +112,17 @@ const LANG = {
   BR: 'br',
 };
 
+const LANG_LOCALE = {
+  en: 'en_US',
+  de: 'de_DE',
+  fr: 'fr_FR',
+  ko: 'ko_KR',
+  es: 'es_ES',
+  it: 'it_IT',
+  jp: 'ja_JP',
+  br: 'pt_BR',
+};
+
 let language;
 
 export function getLanguage() {
@@ -128,6 +139,11 @@ export function getLanguage() {
     }
   }
   return language;
+}
+
+export function getLocale() {
+  const lang = getLanguage();
+  return LANG_LOCALE[lang];
 }
 
 function getDateLocale() {
