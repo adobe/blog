@@ -13,36 +13,39 @@ export default function decorate(block) {
 
       // get response from the URL
       const { pathname } = new URL(a);
-      const response = await fetch(`${pathname}.plain.html`);
-      if (response.ok) {
-        const responseEl = document.createElement('div');
-        responseEl.innerHTML = await response.text();
-        block.classList.add('is-loaded');
+      const path = pathname?.replace(/\.html$/, '');
+      if (path) {
+        const response = await fetch(`${path}.plain.html`);
+        if (response.ok) {
+          const responseEl = document.createElement('div');
+          responseEl.innerHTML = await response.text();
+          block.classList.add('is-loaded');
 
-        // creating banner image and text div.
-        const bannerImage = document.createElement('div');
-        const bannerText = document.createElement('div');
-        bannerImage.classList.add('banner-image');
-        bannerText.classList.add('banner-text');
+          // creating banner image and text div.
+          const bannerImage = document.createElement('div');
+          const bannerText = document.createElement('div');
+          bannerImage.classList.add('banner-image');
+          bannerText.classList.add('banner-text');
 
-        // banner image content
-        const picture = responseEl.querySelector('picture');
-        bannerImage.append(picture);
+          // banner image content
+          const picture = responseEl.querySelector('picture');
+          bannerImage.append(picture);
 
-        // banner text content
-        normalizeHeadings(responseEl, ['h3']);
-        const link = responseEl.querySelector('a');
-        link.classList.add('cta-link');
-        bannerText.append(responseEl);
+          // banner text content
+          normalizeHeadings(responseEl, ['h3']);
+          const link = responseEl.querySelector('a');
+          link.classList.add('cta-link');
+          bannerText.append(responseEl);
 
-        // appending DOM objects
-        bannerContent.append(bannerImage);
-        bannerContent.append(bannerText);
-        bannerContents.append(bannerContent);
-        block.innerHTML = '';
-        block.append(bannerContents);
-      } else {
-        block.remove();
+          // appending DOM objects
+          bannerContent.append(bannerImage);
+          bannerContent.append(bannerText);
+          bannerContents.append(bannerContent);
+          block.innerHTML = '';
+          block.append(bannerContents);
+        } else {
+          block.remove();
+        }
       }
     }
   });
