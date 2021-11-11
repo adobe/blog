@@ -16,8 +16,7 @@
  * @param {Object} data additional data for RUM sample
  */
 
-// eslint-disable-next-line object-curly-newline
-if (!navigator.sendBeacon) { window.data = JSON.stringify({ referer: window.location.href, checkpoint: 'unsupported', weight: 1 }); new Image().src = `https://rum.hlx3.page/.rum/1?data=${window.data}`; }
+const RUM_GENERATION = 'blog-gen-4';
 
 export function sampleRUM(checkpoint, data = {}) {
   try {
@@ -35,14 +34,31 @@ export function sampleRUM(checkpoint, data = {}) {
     }
     const { random, weight, id } = window.hlx.rum;
     if (random && (random * weight < 1)) {
-      // eslint-disable-next-line object-curly-newline
-      const body = JSON.stringify({ weight, id, referer: window.location.href, generation: 'biz-gen1', checkpoint, ...data });
-      const url = `https://rum.hlx3.page/.rum/${weight}`;
-      // eslint-disable-next-line no-unused-expressions
-      navigator.sendBeacon(url, body); // we should probably use XHR instead of fetch
+      const sendPing = () => {
+        // eslint-disable-next-line object-curly-newline, max-len
+        const body = JSON.stringify({ weight, id, referer: window.location.href, generation: RUM_GENERATION, checkpoint, ...data });
+        const url = `https://rum.hlx3.page/.rum/${weight}`;
+        // eslint-disable-next-line no-unused-expressions
+        navigator.sendBeacon(url, body);
+      };
+      sendPing();
+      // special case CWV
+      if (checkpoint === 'cwv') {
+        // eslint-disable-next-line import/no-unresolved
+        import('./web-vitals-module-2-1-2.js').then((mod) => {
+          const storeCWV = (measurement) => {
+            data.cwv = {};
+            data.cwv[measurement.name] = measurement.value;
+            sendPing();
+          };
+          mod.getCLS(storeCWV);
+          mod.getFID(storeCWV);
+          mod.getLCP(storeCWV);
+        });
+      }
     }
   } catch (e) {
-    // somethign went wrong
+    // something went wrong
   }
 }
 
@@ -375,20 +391,31 @@ function loadArticleTaxonomy(article) {
     // for now, we can only compute the category
     const { tags, path } = article;
 
-    const topics = tags.replace(/[["\]]/gm, '').split(',');
+    if (tags) {
+      const topics = tags
+        .replace(/[["\]]/gm, '')
+        .split(',')
+        .map((t) => t.trim())
+        .filter((t) => t && t !== '');
 
-    const articleTax = computeTaxonomyFromTopics(topics, path);
+      const articleTax = computeTaxonomyFromTopics(topics, path);
 
-    article.category = articleTax.category;
+      article.category = articleTax.category;
 
-    // topics = tags as an array
-    article.topics = topics;
+      // topics = tags as an array
+      article.topics = topics;
 
-    // visibleTopics = visible topics including parents
-    article.visibleTopics = articleTax.allVisibleTopics;
+      // visibleTopics = visible topics including parents
+      article.visibleTopics = articleTax.allVisibleTopics;
 
-    // allTopics = all topics including parents
-    article.allTopics = articleTax.allTopics;
+      // allTopics = all topics including parents
+      article.allTopics = articleTax.allTopics;
+    } else {
+      article.category = 'News';
+      article.topics = [];
+      article.visibleTopics = [];
+      article.allTopics = [];
+    }
   }
 }
 
@@ -546,18 +573,21 @@ function getImageCaption(picture) {
  */
 function buildImageBlocks(mainEl) {
   // select all non-featured, default (non-images block) images
-  const parentEls = [];
   const imgEls = [...mainEl.querySelectorAll(':scope > div > p > picture')];
+  let lastImagesBlock;
   imgEls.forEach((imgEl) => {
     const parentEl = imgEl.parentNode;
     const imagesBlockEl = buildBlock('images', {
       elems: [imgEl.cloneNode(true), getImageCaption(imgEl)],
     });
-    parentEl.parentNode.insertBefore(imagesBlockEl, parentEl);
-    parentEls.push(parentEl);
+    if (parentEl.parentNode) {
+      parentEl.replaceWith(imagesBlockEl);
+      lastImagesBlock = imagesBlockEl;
+    } else {
+      // same parent, add image to last images block
+      lastImagesBlock.firstChild.append(imagesBlockEl.firstChild.firstChild);
+    }
   });
-  // remove old parent elems
-  parentEls.forEach((parentEl) => parentEl.remove());
 }
 
 /**
@@ -589,18 +619,18 @@ function buildArticleHeader(mainEl) {
 
 function buildTagHeader(mainEl) {
   const div = mainEl.querySelector('div');
-  const h1 = mainEl.querySelector('h1');
+  const heading = mainEl.querySelector('h1, h2');
   const picture = mainEl.querySelector('picture');
   const tagHeaderBlockEl = buildBlock('tag-header', [
-    [h1],
+    [heading],
     [{ elems: [picture.closest('p')] }],
   ]);
-  div.append(tagHeaderBlockEl);
+  div.prepend(tagHeaderBlockEl);
 }
 
 function buildAuthorHeader(mainEl) {
   const div = mainEl.querySelector('div');
-  const heading = mainEl.querySelector('h1, h2, h3');
+  const heading = mainEl.querySelector('h1, h2');
   const bio = heading.nextElementSibling;
   const picture = mainEl.querySelector('picture');
   const elArr = [[heading]];
@@ -682,7 +712,9 @@ function buildAutoBlocks(mainEl) {
     if (window.location.pathname.includes('/authors/')) {
       buildAuthorHeader(mainEl);
       buildSocialLinks(mainEl);
-      buildArticleFeed(mainEl, 'author');
+      if (!document.querySelector('.article-feed')) {
+        buildArticleFeed(mainEl, 'author');
+      }
     }
     buildImageBlocks(mainEl);
   } catch (error) {
@@ -721,7 +753,7 @@ function unwrapBlock(block) {
 
 function splitSections() {
   document.querySelectorAll('main > div > div').forEach((block) => {
-    const blocksToSplit = ['article-header', 'recommended-articles'];
+    const blocksToSplit = ['article-header', 'article-feed', 'recommended-articles'];
     if (blocksToSplit.includes(block.className)) {
       unwrapBlock(block);
     }
@@ -1033,16 +1065,26 @@ export function addFavIcon(href) {
  * fetches blog article index.
  * @returns {object} index with data and path lookup
  */
-let queryIndex;
-
 export async function fetchBlogArticleIndex() {
-  if (queryIndex) {
-    return queryIndex;
-  }
-  const resp = await fetch(`${getRootPath()}/query-index.json`);
+  const pageSize = 500;
+  window.blogIndex = window.blogIndex || {
+    data: [],
+    byPath: {},
+    offset: 0,
+    complete: false,
+  };
+  if (window.blogIndex.complete) return (window.blogIndex);
+  const index = window.blogIndex;
+  const resp = await fetch(`${getRootPath()}/query-index.json?limit=${pageSize}&offset=${index.offset}`);
   const json = await resp.json();
-  queryIndex = { data: json.data };
-  return queryIndex;
+  const complete = (json.limit + json.offset) === json.total;
+  json.data.forEach((post) => {
+    index.data.push(post);
+    index.byPath[post.path.split('.')[0]] = post;
+  });
+  index.complete = complete;
+  index.offset = json.offset + pageSize;
+  return (index);
 }
 
 /**
@@ -1053,10 +1095,17 @@ export async function fetchBlogArticleIndex() {
 
 export async function getBlogArticle(path) {
   const meta = await getMetadataJson(`${path}.metadata.json`);
+
   if (meta) {
+    let title = meta['og:title'].trim();
+    const trimEndings = ['|Adobe', '| Adobe'];
+    trimEndings.forEach((ending) => {
+      if (title.endsWith(ending)) title = title.substr(0, title.length - ending.length);
+    });
+
     const articleMeta = {
       description: meta.description,
-      title: meta['og:title'],
+      title,
       author: meta.author,
       image: meta['og:image'],
       imageAlt: meta['og:image:alt'],
@@ -1235,7 +1284,7 @@ displayEnv();
  * (needs a refactor)
  */
 
-function stamp(message) {
+export function stamp(message) {
   if (window.name.includes('performance')) {
     debug(`${new Date() - performance.timing.navigationStart}:${message}`);
   }

@@ -3,10 +3,10 @@ import {
   createOptimizedPicture,
 } from '../../scripts/scripts.js';
 
-async function populateAuthorImg(imgContainer, url, name, eager = false) {
+async function populateAuthorInfo(authorLink, imgContainer, url, name, eager = false) {
   const resp = await fetch(`${url}.plain.html`);
-  const text = await resp.text();
-  if (resp.status === 200) {
+  if (resp.ok) {
+    const text = await resp.text();
     const placeholder = document.createElement('div');
     placeholder.innerHTML = text;
     const placeholderImg = placeholder.querySelector('img');
@@ -31,6 +31,10 @@ async function populateAuthorImg(imgContainer, url, name, eager = false) {
         imgContainer.style.backgroundImage = 'none';
       }
     }
+  } else {
+    const p = document.createElement('p');
+    p.innerHTML = authorLink.innerHTML;
+    authorLink.replaceWith(p);
   }
 }
 
@@ -48,7 +52,8 @@ export default async function decorateArticleHeader(blockEl, blockName, document
   bylineContainer.firstChild.classList.add('article-byline-info');
   // author
   const author = bylineContainer.firstChild.firstChild;
-  const authorURL = author.querySelector('a').href;
+  const authorLink = author.querySelector('a');
+  const authorURL = authorLink.href;
   const authorName = author.textContent;
   author.classList.add('article-author');
   // publication date
@@ -59,7 +64,8 @@ export default async function decorateArticleHeader(blockEl, blockName, document
   authorImg.classList = 'article-author-image';
   authorImg.style.backgroundImage = 'url(/blocks/article-header/adobe-logo.svg)';
   bylineContainer.prepend(authorImg);
-  populateAuthorImg(authorImg, authorURL, authorName, eager);
+
+  populateAuthorInfo(authorLink, authorImg, authorURL, authorName, eager);
   // feature img
   const featureImgContainer = childrenEls[3];
   featureImgContainer.classList.add('article-feature-image');

@@ -9,16 +9,16 @@ indices:
       - /en/publish/*/*/*/*
     exclude:
       - '**/Document.*'
-    target: https://adobe.sharepoint.com/sites/AlexTest/Shared%20Documents/websites/blog/en/query-index.xlsx
+    target: https://adobe.sharepoint.com/sites/TheBlog/Shared%20Documents/theblog/en/query-index.xlsx
     properties:
       author:
         select: head > meta[name="author"]
         value: |
           attribute(el, 'content')
       title:
-        select: head > meta[property="og:title"]
+        select: main h1:first-of-type
         value: |
-          attribute(el, 'content')
+          textContent(el)
       date:
         select: head > meta[name="publication-date"]
         value: |
@@ -56,40 +56,40 @@ indices:
     <<: *default
     include:
       - /br/publish/*/*/*/*
-    target: https://adobe.sharepoint.com/sites/AlexTest/Shared%20Documents/websites/blog/br/query-index.xlsx
+    target: https://adobe.sharepoint.com/sites/TheBlog/Shared%20Documents/theblog/br/query-index.xlsx
 
   german:
     <<: *default
     include:
       - /de/publish/*/*/*/*
-    target: https://adobe.sharepoint.com/sites/AlexTest/Shared%20Documents/websites/blog/de/query-index.xlsx
+    target: https://adobe.sharepoint.com/sites/TheBlog/Shared%20Documents/theblog/de/query-index.xlsx
 
   spanish:
     <<: *default
     include:
       - /es/publish/*/*/*/*
-    target: https://adobe.sharepoint.com/sites/AlexTest/Shared%20Documents/websites/blog/es/query-index.xlsx
+    target: https://adobe.sharepoint.com/sites/TheBlog/Shared%20Documents/theblog/es/query-index.xlsx
 
   french:
     <<: *default
     include:
       - /fr/publish/*/*/*/*
-    target: https://adobe.sharepoint.com/sites/AlexTest/Shared%20Documents/websites/blog/fr/query-index.xlsx
+    target: https://adobe.sharepoint.com/sites/TheBlog/Shared%20Documents/theblog/fr/query-index.xlsx
 
   italian:
     <<: *default
     include:
       - /it/publish/*/*/*/*
-    target: https://adobe.sharepoint.com/sites/AlexTest/Shared%20Documents/websites/blog/it/query-index.xlsx
+    target: https://adobe.sharepoint.com/sites/TheBlog/Shared%20Documents/theblog/it/query-index.xlsx
 
   japanese:
     <<: *default
     include:
       - /jp/publish/*/*/*/*
-    target: https://adobe.sharepoint.com/sites/AlexTest/Shared%20Documents/websites/blog/jp/query-index.xlsx
+    target: https://adobe.sharepoint.com/sites/TheBlog/Shared%20Documents/theblog/jp/query-index.xlsx
 
   korean:
     <<: *default
     include:
       - /ko/publish/*/*/*/*
-    target: https://adobe.sharepoint.com/sites/AlexTest/Shared%20Documents/websites/blog/ko/query-index.xlsx
+    target: https://adobe.sharepoint.com/sites/TheBlog/Shared%20Documents/theblog/ko/query-index.xlsx

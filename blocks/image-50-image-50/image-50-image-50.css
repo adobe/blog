@@ -1,0 +1,4 @@
+.image-50-image-50 > div {
+  display: flex;
+  gap: 10px;
+}

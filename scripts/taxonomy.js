@@ -218,7 +218,8 @@ export default async (lang, url) => {
 
         getLink(topic, cat) {
           const t = findItem(topic, cat);
-          return t ? t.link : null;
+          const link = t?.link?.replace('.html', '');
+          return link;
         },
 
         getParents(topics, cat) {

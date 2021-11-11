@@ -10,10 +10,98 @@
  * governing permissions and limitations under the License.
  */
 
-/* globals webVitals */
-import { loadScript, sampleRUM, getHelixEnv } from './scripts.js';
+/* globals digitalData _satellite */
+/* eslint-disable no-underscore-dangle */
 
-const { target } = getHelixEnv();
+import {
+  loadScript,
+  sampleRUM,
+  getHelixEnv,
+  getMetadata,
+  getTaxonomy,
+  getLanguage,
+} from './scripts.js';
+
+function getTags() {
+  return getMetadata('article:tag', true);
+}
+
+function checkDX(tag) {
+  const dxtags = [
+    'Experience Cloud', 'Experience Manager', 'Magento Commerce', 'Marketo Engage', 'Target', 'Commerce Cloud', 'Campaign', 'Audience Manager, Analytics, Advertising Cloud',
+    'Travel & Hospitality', 'Media & Entertainment', 'Financial Services', 'Government', 'Non-profits', 'Other', 'Healthcare', 'High Tech', 'Retail', 'Telecom', 'Manufacturing', 'Education',
+    'B2B', 'Social', 'Personalization', 'Campaign Management', 'Content Management', 'Email Marketing', 'Commerce', 'Analytics', 'Advertising', 'Digital Transformation',
+  ];
+  return dxtags.includes(tag);
+}
+
+function setDigitalData() {
+  // creates a string from the categories & products for analytics
+  // example: "Category: #AdobeForAll | Category: Adobe Life | Product: Photoshop"
+  const getPageFilterInfo = () => {
+    let pageFilterInfo = '';
+    const tags = getTags();
+    const taxonomy = getTaxonomy();
+    const categories = [];
+    const products = [];
+    tags.forEach((t) => {
+      const tax = taxonomy.get(t);
+      if (tax) {
+        if (tax.category.toLowerCase() === taxonomy.PRODUCTS) {
+          products.push(t);
+        } else {
+          categories.push(t);
+        }
+      }
+    });
+
+    pageFilterInfo += `Category: ${categories.join(' | ')}`;
+    pageFilterInfo += ` | Product: ${products.join(' | ')}`;
+
+    return pageFilterInfo;
+  };
+
+  const langMap = { en: 'en-US' };
+  let lang = getLanguage();
+  if (langMap[lang]) lang = langMap[lang];
+  digitalData._set('page.pageInfo.language', lang);
+  digitalData._set('page.pageInfo.siteSection', 'blog.adobe.com');
+  digitalData._set('page.pageInfo.attributes.pageFilterInfo', getPageFilterInfo());
+}
+
+/**
+ * tracks the initial page load
+ */
+function trackPageLoad() {
+  if (!digitalData || !_satellite) {
+    return;
+  }
+
+  // pageload for initial pageload (For regular tracking of pageload hits)
+  _satellite.track('pageload', {
+    digitalData: digitalData._snapshot(),
+  });
+}
+
+const { target, name } = getHelixEnv();
+
+let isDX = false;
+const tags = getTags();
+tags.forEach((tag) => {
+  if (checkDX(tag)) {
+    isDX = true;
+  }
+});
+
+let accounts = '';
+if (isDX) {
+  if (name === 'prod') {
+    accounts = 'adbadobedxprod';
+  } else if (name === 'stage') {
+    accounts = 'adbadobedxqa';
+  }
+}
+
 window.marketingtech = window.marketingtech || {};
 window.marketingtech.adobe = {
   target,
@@ -22,22 +110,23 @@ window.marketingtech.adobe = {
     property: 'global',
     environment: 'production',
   },
+  analytics: {
+    // additional report suites to send data to “,” separated  Ex: 'RS1,RS2'
+    additionalAccounts: accounts,
+  },
 };
 window.targetGlobalSettings = window.targetGlobalSettings || {};
 window.targetGlobalSettings.bodyHidingEnabled = false;
 
-const launchScriptEl = loadScript('https://www.adobe.com/marketingtech/main.no-promise.min.js');
+const launchScriptEl = loadScript('https://www.adobe.com/marketingtech/main.no-promise.min.js', () => {
+  setDigitalData();
+  trackPageLoad();
+});
 launchScriptEl.setAttribute('data-seed-adobelaunch', 'true');
 
 /* Core Web Vitals RUM collection */
 
 sampleRUM('cwv');
-
-function storeCWV(measurement) {
-  const rum = { cwv: { } };
-  rum.cwv[measurement.name] = measurement.value;
-  sampleRUM('cwv', rum);
-}
 
 function updateExternalLinks() {
   document.querySelectorAll('main a').forEach((a) => {
@@ -49,19 +138,6 @@ function updateExternalLinks() {
   });
 }
 
-if (window.hlx.rum.isSelected) {
-  const script = document.createElement('script');
-  script.src = 'https://unpkg.com/web-vitals';
-  script.onload = () => {
-    // When loading `web-vitals` using a classic script, all the public
-    // methods can be found on the `webVitals` global namespace.
-    webVitals.getCLS(storeCWV);
-    webVitals.getFID(storeCWV);
-    webVitals.getLCP(storeCWV);
-  };
-  document.head.appendChild(script);
-}
-
 // no-interlinks is a special "tag" to skip interlink via content
 if (document.querySelector('.article-header')
   && !document.querySelector('[data-origin]')
@@ -70,3 +146,30 @@ if (document.querySelector('.article-header')
 }
 
 updateExternalLinks();
+
+/**
+ * Loads the GetSocial sharing tool
+ */
+function loadGetSocial() {
+  if (window.location.pathname.includes('/drafts/')
+    || window.location.pathname.includes('/documentation/')) return;
+  const po = document.createElement('script');
+  po.setAttribute('type', 'text/javascript');
+  po.setAttribute('async', true);
+  po.setAttribute('src', 'https://api.at.getsocial.io/get/v1/7a87046a/gs_async.js');
+
+  document.head.appendChild(po);
+
+  document.addEventListener('gs:load', () => {
+    if (typeof window.GS === 'object' && window.GS.isMobile) {
+      const footer = document.querySelector('footer');
+      if (footer instanceof HTMLElement) {
+        footer.classList.add('mobile-footer');
+      }
+    }
+  });
+}
+
+if (getMetadata('publication-date')) {
+  loadGetSocial();
+}
