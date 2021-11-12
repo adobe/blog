@@ -2,9 +2,6 @@ version: 1
 
 indices:
   english: &default
-    # note, the following 2 properties are no longer used with Helix3
-    source: html
-    fetch: https://{ref}--{repo}--{owner}.hlx.live{path}
     include:
       - /en/publish/*/*/*/*
     exclude:
