@@ -106,7 +106,7 @@ const copyArticleData = async (sk) => {
 const generateFeed = (
   feedTitle = 'Adobe Blog',
   feedAuthor = 'Adobe',
-  feedData = window.blogIndex.data,
+  feedData = window.blogIndex?.data || [],
   baseURL = `https://${window.hlx.sidekick.config.host}`,
   limit = 50,
 ) => {
@@ -165,7 +165,7 @@ const generateFeed = (
   return ser.serializeToString(feedEl);
 };
 
-const hasFeed = () => !!document.querySelector('link[type="application/xml+atom"]');
+const hasFeed = () => window.blogIndex && !!document.querySelector('link[type="application/xml+atom"]');
 
 const updateFeed = async (sk) => {
   /* eslint-disable no-console */
