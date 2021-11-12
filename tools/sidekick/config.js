@@ -174,7 +174,7 @@ const updateFeed = async (sk) => {
     const {
       connect,
       saveFile,
-    } = await import('./sharepoint.js');
+    } = await import(`${window.location.origin}/tools/sidekick/sharepoint.js`);
     const { owner, repo, ref } = sk.config;
     const feedPath = new URL(feedUrl).pathname;
     console.log(`Updating feed ${feedPath}`);
