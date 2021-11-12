@@ -9,7 +9,7 @@ indices:
       - /en/publish/*/*/*/*
     exclude:
       - '**/Document.*'
-    target: https://adobe.sharepoint.com/sites/TheBlog/Shared%20Documents/theblog/en/query-index.xlsx
+    target: /en/query-index.xlsx
     properties:
       author:
         select: head > meta[name="author"]
