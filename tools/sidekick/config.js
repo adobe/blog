@@ -103,13 +103,111 @@ const copyArticleData = async (sk) => {
   sk.notify('Article data copied to clipboard');
 };
 
+const generateFeed = (
+  feedTitle = 'Adobe Blog',
+  feedAuthor = 'Adobe',
+  feedData = window.blogIndex.data,
+  baseURL = `https://${window.hlx.sidekick.config.host}`,
+  limit = 50,
+) => {
+  const ns = 'http://www.w3.org/2005/Atom';
+  const feedEl = document.createElementNS(ns, 'feed');
+  const feedTitleEl = document.createElementNS(ns, 'title');
+  const feedUpdatedEl = document.createElementNS(ns, 'updated');
+  const feedAuthorEl = document.createElementNS(ns, 'author');
+  const feedNameEl = document.createElementNS(ns, 'name');
+  const feedIdEl = document.createElementNS(ns, 'id');
+
+  feedTitleEl.textContent = feedTitle;
+  feedUpdatedEl.textContent = new Date().toISOString();
+  feedNameEl.textContent = feedAuthor;
+  feedIdEl.textContent = `${baseURL}/`;
+
+  feedEl.setAttributeNS('http://www.w3.org/XML/1998/namespace', 'xml:base', baseURL);
+  feedEl.appendChild(feedTitleEl);
+  feedEl.appendChild(feedUpdatedEl);
+  feedAuthorEl.appendChild(feedNameEl);
+  feedEl.appendChild(feedAuthorEl);
+  feedEl.appendChild(feedIdEl);
+
+  feedData
+    .slice(0, limit - 1)
+    .forEach(({
+      date, path, title, author, description,
+    }) => {
+      const entryEl = document.createElementNS(ns, 'entry');
+      const titleEl = document.createElementNS(ns, 'title');
+      const linkEl = document.createElementNS(ns, 'link');
+      const authorEl = document.createElementNS(ns, 'author');
+      const nameEl = document.createElementNS(ns, 'name');
+      const idEl = document.createElementNS(ns, 'id');
+      const updatedEl = document.createElementNS(ns, 'updated');
+      const summaryEl = document.createElementNS(ns, 'summary');
+
+      titleEl.textContent = title;
+      linkEl.setAttributeNS('', 'href', path);
+      nameEl.textContent = author;
+      idEl.textContent = baseURL + path;
+      updatedEl.textContent = new Date(Math.round((date - 25569) * 86400 * 1000)).toISOString();
+      summaryEl.textContent = description;
+
+      entryEl.appendChild(titleEl);
+      entryEl.appendChild(linkEl);
+      authorEl.appendChild(nameEl);
+      entryEl.appendChild(authorEl);
+      entryEl.appendChild(idEl);
+      entryEl.appendChild(updatedEl);
+      entryEl.appendChild(summaryEl);
+      feedEl.appendChild(entryEl);
+    });
+
+  const ser = new XMLSerializer();
+  return ser.serializeToString(feedEl);
+};
+
+const hasFeed = () => !!document.querySelector('link[type="application/xml+atom"]');
+
+const updateFeed = async (sk) => {
+  /* eslint-disable no-console */
+  const feedUrl = document.querySelector('link[type="application/xml+atom"]')?.href;
+  if (feedUrl) {
+    const {
+      connect,
+      saveFile,
+    } = await import('./sharepoint.js');
+    const { owner, repo, ref } = sk.config;
+    const feedPath = new URL(feedUrl).pathname;
+    console.log(`Updating feed ${feedPath}`);
+    await connect(async () => {
+      try {
+        sk.showModal('Please wait …', true);
+        const feedXml = new Blob([generateFeed()], { type: 'application/atom+xml' });
+        await saveFile(feedXml, feedPath);
+        let resp = await fetch(`https://admin.hlx3.page/preview/${owner}/${repo}/${ref}${feedPath}`, { method: 'POST' });
+        if (!resp.ok) {
+          throw new Error(`Failed to update preview for ${feedPath}`);
+        }
+        resp = await fetch(`https://admin.hlx3.page/live/${owner}/${repo}/${ref}${feedPath}`, { method: 'POST' });
+        if (!resp.ok) {
+          throw new Error(`Failed to publish ${feedPath}`);
+        }
+        sk.notify(`Feed ${feedUrl} updated`);
+      } catch (e) {
+        console.error(e);
+        sk.showModal('Failed to update feed, please try again later', false, 0);
+      }
+    });
+  }
+  /* eslint-enable no-console */
+};
+
 window.hlx.initSidekick({
   project: 'Blog',
   hlx3: true,
   host: 'blog.adobe.com',
   pushDownSelector: 'header',
   plugins: [
-    // TAGGER -----------------------------------------------------------------------
+    // TAGGER -------------------------------------------------------------------------
     {
       id: 'tagger',
       condition: (sk) => sk.isEditor() && (sk.location.search.includes('.docx&') || sk.location.search.includes('.md&')),
@@ -130,7 +228,7 @@ window.hlx.initSidekick({
         action: async (_, sk) => toggleCardPreview(sk),
       },
     },
-    // PREDICTED URL ----------------------------------------------------------------
+    // PREDICTED URL ------------------------------------------------------------------
     {
       id: 'predicted-url',
       condition: (sidekick) => {
@@ -162,11 +260,20 @@ window.hlx.initSidekick({
         action: async (_, sk) => copyArticleData(sk),
       },
     },
-    // PUBLISH ----------------------------------------------------------------------
+    // PUBLISH ------------------------------------------------------------------------
     // do not show publish button for drafts
     {
       id: 'publish',
       condition: (sidekick) => sidekick.isHelix() && !sidekick.location.pathname.includes('/drafts/'),
+    },
+    // UPDATE FEED --------------------------------------------------------------------
+    {
+      id: 'feed',
+      condition: () => hasFeed(),
+      button: {
+        text: 'Update Feed',
+        action: async (_, sk) => updateFeed(sk),
+      },
     },
   ],
 });
