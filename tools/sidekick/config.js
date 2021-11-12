@@ -169,14 +169,14 @@ const hasFeed = () => !!document.querySelector('link[type="application/xml+atom"
 
 const updateFeed = async (sk) => {
   /* eslint-disable no-console */
-  const {
-    connect,
-    saveFile,
-  } = await import('./sharepoint.js');
-  const { owner, repo, ref } = sk.config;
-  sk.showModal('Please wait …', true);
   const feedUrl = document.querySelector('link[type="application/xml+atom"]')?.href;
   if (feedUrl) {
+    const {
+      connect,
+      saveFile,
+    } = await import('./sharepoint.js');
+    const { owner, repo, ref } = sk.config;
+    sk.showModal('Please wait …', true);
     const feedPath = new URL(feedUrl).pathname;
     console.log(`Updating feed ${feedPath}`);
     await connect(async () => {
@@ -198,7 +198,7 @@ const updateFeed = async (sk) => {
       }
     });
   }
-/* eslint-enable no-console */
+  /* eslint-enable no-console */
 };
 
 window.hlx.initSidekick({
