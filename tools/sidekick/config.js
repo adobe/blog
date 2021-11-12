@@ -165,12 +165,12 @@ const generateFeed = (
   return ser.serializeToString(feedEl);
 };
 
-const hasFeed = () => window.blogIndex && !!document.querySelector('link[type="application/xml+atom"]');
+const hasFeed = () => !!document.querySelector('link[type="application/xml+atom"]');
 
 const updateFeed = async (sk) => {
   /* eslint-disable no-console */
   const feedUrl = document.querySelector('link[type="application/xml+atom"]')?.href;
-  if (feedUrl) {
+  if (feedUrl && window.blogIndex) {
     const {
       connect,
       saveFile,
