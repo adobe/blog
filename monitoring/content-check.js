@@ -48,7 +48,7 @@ async function checkHomepage(url) {
     }).then((articles) => {
       assert.ok(articles.length >= 12, `Expected at least 12 articles, got ${articles.length}`);
       console.log(`Found ${articles.length} articles in the page. Retrieving featured article...`);
-      return $browser.findElement($driver.By.css('.featured-article-card'), 60000);
+      return $browser.findElement($driver.By.css('.featured-article-card'));
     })
     .then(() => console.log('Found featured article. All good!'));
 }
