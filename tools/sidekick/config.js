@@ -176,11 +176,11 @@ const updateFeed = async (sk) => {
       saveFile,
     } = await import('./sharepoint.js');
     const { owner, repo, ref } = sk.config;
-    sk.showModal('Please wait …', true);
     const feedPath = new URL(feedUrl).pathname;
     console.log(`Updating feed ${feedPath}`);
     await connect(async () => {
       try {
+        sk.showModal('Please wait …', true);
         const feedXml = new Blob([generateFeed()], { type: 'application/atom+xml' });
         await saveFile(feedXml, feedPath);
         let resp = await fetch(`https://admin.hlx3.page/preview/${owner}/${repo}/${ref}${feedPath}`, { method: 'POST' });
