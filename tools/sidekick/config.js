@@ -41,7 +41,7 @@ const toggleCardPreview = async (sk) => {
     const {
       getBlogArticle,
       buildArticleCard,
-    } = await import('/scripts/scripts.js');
+    } = await import(`${window.location.origin}/scripts/scripts.js`);
     $modal.append(buildArticleCard(await getBlogArticle(sk.location.pathname)));
 
     const $overlay = document.createElement('div');
@@ -58,7 +58,7 @@ const toggleCardPreview = async (sk) => {
 const predictUrl = async (host, path) => {
   const {
     getBlogArticle,
-  } = await import('/scripts/scripts.js');
+  } = await import(`${window.location.origin}/scripts/scripts.js`);
   const pathsplits = path.split('/');
   let publishPath = '';
   const article = await getBlogArticle(path);
@@ -75,7 +75,7 @@ const predictUrl = async (host, path) => {
 const copyArticleData = async (sk) => {
   const {
     getBlogArticle,
-  } = await import('/scripts/scripts.js');
+  } = await import(`${window.location.origin}/scripts/scripts.js`);
   const { location, status } = sk;
   const {
     date,
@@ -106,7 +106,7 @@ const copyArticleData = async (sk) => {
 const generateFeed = (
   feedTitle = 'Adobe Blog',
   feedAuthor = 'Adobe',
-  feedData = window.blogIndex?.data || [],
+  feedData = [],
   baseURL = `https://${window.hlx.sidekick.config.host}`,
   limit = 50,
 ) => {
@@ -162,7 +162,7 @@ const generateFeed = (
     });
 
   const ser = new XMLSerializer();
-  return ser.serializeToString(feedEl);
+  return new Blob([ser.serializeToString(feedEl)], { type: 'application/atom+xml' });
 };
 
 const hasFeed = () => !!document.querySelector('link[type="application/xml+atom"]');
@@ -170,7 +170,10 @@ const hasFeed = () => !!document.querySelector('link[type="application/xml+atom"
 const updateFeed = async (sk) => {
   /* eslint-disable no-console */
   const feedUrl = document.querySelector('link[type="application/xml+atom"]')?.href;
-  if (feedUrl && window.blogIndex) {
+  if (feedUrl) {
+    const {
+      fetchBlogArticleIndex,
+    } = await import(`${window.location.origin}/scripts/scripts.js`);
     const {
       connect,
       saveFile,
@@ -181,7 +184,8 @@ const updateFeed = async (sk) => {
     await connect(async () => {
       try {
         sk.showModal('Please wait …', true);
-        const feedXml = new Blob([generateFeed()], { type: 'application/atom+xml' });
+        const { data } = await fetchBlogArticleIndex();
+        const feedXml = generateFeed('Adobe Blog', 'Adobe', data);
         await saveFile(feedXml, feedPath);
         let resp = await fetch(`https://admin.hlx3.page/preview/${owner}/${repo}/${ref}${feedPath}`, { method: 'POST' });
         if (!resp.ok) {
