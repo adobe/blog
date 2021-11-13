@@ -14,7 +14,7 @@ const sp = {
     },
   },
   login: {
-    redirectUri: '/tools/sidekick/spauth.html',
+    redirectUri: '/tools/sidekick/spauth.plain.html',
   },
   api: {
     url: graphURL,
