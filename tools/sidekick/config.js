@@ -41,7 +41,7 @@ const toggleCardPreview = async (sk) => {
     const {
       getBlogArticle,
       buildArticleCard,
-    } = await import(`${window.location.origin}/scripts/scripts.js`);
+    } = await import('/scripts/scripts.js');
     $modal.append(buildArticleCard(await getBlogArticle(sk.location.pathname)));
 
     const $overlay = document.createElement('div');
@@ -58,7 +58,7 @@ const toggleCardPreview = async (sk) => {
 const predictUrl = async (host, path) => {
   const {
     getBlogArticle,
-  } = await import(`${window.location.origin}/scripts/scripts.js`);
+  } = await import('/scripts/scripts.js');
   const pathsplits = path.split('/');
   let publishPath = '';
   const article = await getBlogArticle(path);
@@ -75,7 +75,7 @@ const predictUrl = async (host, path) => {
 const copyArticleData = async (sk) => {
   const {
     getBlogArticle,
-  } = await import(`${window.location.origin}/scripts/scripts.js`);
+  } = await import('/scripts/scripts.js');
   const { location, status } = sk;
   const {
     date,
@@ -173,11 +173,11 @@ const updateFeed = async (sk) => {
   if (feedUrl) {
     const {
       fetchBlogArticleIndex,
-    } = await import(`${window.location.origin}/scripts/scripts.js`);
+    } = await import('/scripts/scripts.js');
     const {
       connect,
       saveFile,
-    } = await import(`${window.location.origin}/tools/sidekick/sharepoint.js`);
+    } = await import('/tools/sidekick/sharepoint.js');
     const { owner, repo, ref } = sk.config;
     const feedPath = new URL(feedUrl).pathname;
     console.log(`Updating feed ${feedPath}`);
