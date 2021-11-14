@@ -967,6 +967,8 @@ export function formatLocalCardDate(date) {
     // - add days between 1/1/1900 and 1/1/1970
     // - add one more day for Excel's leap year bug
     jsDate = new Date(Math.round((date - (1 + 25567 + 1)) * 86400 * 1000));
+  } else {
+    jsDate = date.replace('-', '/');
   }
   const dateLocale = getDateLocale();
 
