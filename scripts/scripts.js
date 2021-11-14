@@ -968,6 +968,7 @@ export function formatLocalCardDate(date) {
     // - add one more day for Excel's leap year bug
     jsDate = new Date(Math.round((date - (1 + 25567 + 1)) * 86400 * 1000));
   } else {
+    // Safari won't accept '-' as a date separator
     jsDate = date.replace(/-/g, '/');
   }
   const dateLocale = getDateLocale();
