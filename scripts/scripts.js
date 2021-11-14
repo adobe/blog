@@ -1237,6 +1237,10 @@ function loadDelayed() {
  * Decorates the page.
  */
 async function decoratePage() {
+  // only decorate page once
+  if (document.body.classList.contains('appear')) {
+    return;
+  }
   await loadEager();
   loadLazy();
   loadDelayed();
