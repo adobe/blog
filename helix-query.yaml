@@ -2,14 +2,11 @@ version: 1
 
 indices:
   english: &default
-    # note, the following 2 properties are no longer used with Helix3
-    source: html
-    fetch: https://{ref}--{repo}--{owner}.hlx.live{path}
     include:
       - /en/publish/*/*/*/*
     exclude:
       - '**/Document.*'
-    target: https://adobe.sharepoint.com/sites/TheBlog/Shared%20Documents/theblog/en/query-index.xlsx
+    target: /en/query-index.xlsx
     properties:
       author:
         select: head > meta[name="author"]
@@ -56,40 +53,40 @@ indices:
     <<: *default
     include:
       - /br/publish/*/*/*/*
-    target: https://adobe.sharepoint.com/sites/TheBlog/Shared%20Documents/theblog/br/query-index.xlsx
+    target: /br/query-index.xlsx
 
   german:
     <<: *default
     include:
       - /de/publish/*/*/*/*
-    target: https://adobe.sharepoint.com/sites/TheBlog/Shared%20Documents/theblog/de/query-index.xlsx
+    target: /de/query-index.xlsx
 
   spanish:
     <<: *default
     include:
       - /es/publish/*/*/*/*
-    target: https://adobe.sharepoint.com/sites/TheBlog/Shared%20Documents/theblog/es/query-index.xlsx
+    target: /es/query-index.xlsx
 
   french:
     <<: *default
     include:
       - /fr/publish/*/*/*/*
-    target: https://adobe.sharepoint.com/sites/TheBlog/Shared%20Documents/theblog/fr/query-index.xlsx
+    target: /fr/query-index.xlsx
 
   italian:
     <<: *default
     include:
       - /it/publish/*/*/*/*
-    target: https://adobe.sharepoint.com/sites/TheBlog/Shared%20Documents/theblog/it/query-index.xlsx
+    target: /it/query-index.xlsx
 
   japanese:
     <<: *default
     include:
       - /jp/publish/*/*/*/*
-    target: https://adobe.sharepoint.com/sites/TheBlog/Shared%20Documents/theblog/jp/query-index.xlsx
+    target: /jp/query-index.xlsx
 
   korean:
     <<: *default
     include:
       - /ko/publish/*/*/*/*
-    target: https://adobe.sharepoint.com/sites/TheBlog/Shared%20Documents/theblog/ko/query-index.xlsx
+    target: /ko/query-index.xlsx
