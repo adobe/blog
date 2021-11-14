@@ -103,13 +103,16 @@ const copyArticleData = async (sk) => {
   sk.notify('Article data copied to clipboard');
 };
 
-const generateFeed = (
+const generateFeed = ({
   feedTitle = 'Adobe Blog',
   feedAuthor = 'Adobe',
-  feedData = [],
+  data,
   baseURL = `https://${window.hlx.sidekick.config.host}`,
   limit = 50,
-) => {
+}) => {
+  if (!data) {
+    return null;
+  }
   const ns = 'http://www.w3.org/2005/Atom';
   const feedEl = document.createElementNS(ns, 'feed');
   const feedTitleEl = document.createElementNS(ns, 'title');
@@ -130,8 +133,8 @@ const generateFeed = (
   feedEl.appendChild(feedAuthorEl);
   feedEl.appendChild(feedIdEl);
 
-  feedData
-    .slice(0, limit - 1)
+  data
+    .slice(0, limit)
     .forEach(({
       date, path, title, author, description,
     }) => {
@@ -165,15 +168,30 @@ const generateFeed = (
   return new Blob([ser.serializeToString(feedEl)], { type: 'application/atom+xml' });
 };
 
+const fetchFilteredArticles = async (limit = 50) => {
+  const {
+    filterArticles,
+  } = await import('/blocks/article-feed/article-feed.js');
+  const block = document.querySelector('.article-feed');
+  if (!block) {
+    return null;
+  }
+  const config = block.dataset.config ? JSON.parse(block.dataset.config) : {};
+  const feed = {
+    data: [],
+    cursor: 0,
+    complete: false,
+  };
+  await filterArticles(config, feed, limit, 0);
+  return feed.data.slice(0, limit);
+};
+
 const hasFeed = () => !!document.querySelector('link[type="application/xml+atom"]');
 
 const updateFeed = async (sk) => {
   /* eslint-disable no-console */
   const feedUrl = document.querySelector('link[type="application/xml+atom"]')?.href;
   if (feedUrl) {
-    const {
-      fetchBlogArticleIndex,
-    } = await import('/scripts/scripts.js');
     const {
       connect,
       saveFile,
@@ -184,8 +202,14 @@ const updateFeed = async (sk) => {
     await connect(async () => {
       try {
         sk.showModal('Please wait …', true);
-        const { data } = await fetchBlogArticleIndex();
-        const feedXml = generateFeed(document.title, 'Adobe', data);
+        const data = await fetchFilteredArticles();
+        const feedXml = generateFeed({
+          feedTitle: document.title,
+          data,
+        });
+        if (!feedXml) {
+          throw new Error(`Failed to generate XML for ${feedPath}`);
+        }
         await saveFile(feedXml, feedPath);
         let resp = await fetch(`https://admin.hlx3.page/preview/${owner}/${repo}/${ref}${feedPath}`, { method: 'POST' });
         if (!resp.ok) {

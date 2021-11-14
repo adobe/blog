@@ -271,7 +271,7 @@ function buildFilter(type, tax, ph, block, config) {
   return container;
 }
 
-async function filterArticles(config, feed, limit, offset) {
+export async function filterArticles(config, feed, limit, offset) {
   const result = [];
 
   /* filter posts by category, tag and author */
@@ -415,6 +415,7 @@ async function decorateFeedFilter(articleFeedEl, config) {
 
 export default function decorate(block) {
   const config = readBlockConfig(block);
+  block.dataset.config = JSON.stringify(config);
   block.innerHTML = '';
   if (config.filters) {
     decorateFeedFilter(block, config);
