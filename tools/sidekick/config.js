@@ -185,7 +185,7 @@ const updateFeed = async (sk) => {
       try {
         sk.showModal('Please wait …', true);
         const { data } = await fetchBlogArticleIndex();
-        const feedXml = generateFeed('Adobe Blog', 'Adobe', data);
+        const feedXml = generateFeed(document.title, 'Adobe', data);
         await saveFile(feedXml, feedPath);
         let resp = await fetch(`https://admin.hlx3.page/preview/${owner}/${repo}/${ref}${feedPath}`, { method: 'POST' });
         if (!resp.ok) {
