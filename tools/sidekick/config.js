@@ -183,7 +183,7 @@ const fetchFilteredArticles = async (limit = 50) => {
     complete: false,
   };
   await filterArticles(config, feed, limit, 0);
-  return feed.data.slice(0, limit);
+  return feed.data.length ? feed.data.slice(0, limit) : null;
 };
 
 const hasFeed = () => !!document.querySelector('link[type="application/xml+atom"]');
