@@ -1,6 +1,11 @@
 main .social-links {
+  visibility: hidden;
   text-align: center;
   margin: 0 auto 30px 0;
+}
+
+main .social-links[data-block-loaded=true] {
+  visibility: unset;
 }
 
 main p.social-links-text {
