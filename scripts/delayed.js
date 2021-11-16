@@ -128,6 +128,41 @@ launchScriptEl.setAttribute('data-seed-adobelaunch', 'true');
 
 sampleRUM('cwv');
 
+function loadPrivacy() {
+  function getOtDomainId() {
+    const domains = {
+      'adobe.com': '7a5eb705-95ed-4cc4-a11d-0cc5760e93db',
+      'hlx.page': '3a6a37fe-9e07-4aa9-8640-8f358a623271',
+      'adobeaemcloud.com': '70cd62b6-0fe3-4e20-8788-ef0435b8cdb1',
+    };
+
+    const currentDomain = Object.keys(domains)
+      .find((domain) => window.location.host.indexOf(domain) > -1);
+
+    return `${domains[currentDomain] || domains[Object.keys(domains)[0]]}`;
+  }
+
+  // Configure Privacy
+  window.fedsConfig = {
+    privacy: {
+      otDomainId: getOtDomainId(),
+    },
+  };
+
+  const preferenceCenter = document.querySelector('[href="https://www.adobe.com/#openPrivacy"]');
+  if (preferenceCenter) {
+    preferenceCenter.addEventListener('click', (event) => {
+      event.preventDefault();
+      window?.adobePrivacy?.showConsentPopup();
+    });
+  }
+
+  const env = getHelixEnv().name === 'prod' ? '' : 'stage.';
+  loadScript(`https://www.${env}adobe.com/etc/beagle/public/globalnav/adobe-privacy/latest/privacy.min.js`);
+}
+
+loadPrivacy();
+
 function updateExternalLinks() {
   document.querySelectorAll('main a').forEach((a) => {
     const { origin } = new URL(a);
