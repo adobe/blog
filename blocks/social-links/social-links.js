@@ -1,3 +1,7 @@
+import {
+  fetchPlaceholders,
+} from '../../scripts/scripts.js';
+
 /**
  * Creates an SVG tag using the specified ID.
  * @param {string} id The ID
@@ -29,6 +33,9 @@ function getSocialLinkDetails(url) {
       title = t;
     }
   });
+  if (!title && url.includes('@')) {
+    title = 'Email';
+  }
   if (!title) title = 'Unknown';
   const type = title.toLowerCase();
   return {
@@ -42,7 +49,7 @@ function getSocialLinkDetails(url) {
  * Decorates social links.
  * @param {Element} blockEl The block element
  */
-export default function decorateSocialLinks(blockEl) {
+export default async function decorateSocialLinks(blockEl) {
   blockEl.querySelectorAll(':scope a').forEach((linkEl) => {
     const { title, type, className } = getSocialLinkDetails(linkEl.href);
     if (type === 'unknown') {
@@ -50,9 +57,25 @@ export default function decorateSocialLinks(blockEl) {
       linkEl.remove();
       return;
     }
+    if (type === 'email') {
+      linkEl.setAttribute('title', title);
+      linkEl.href = `mailto:${linkEl.textContent}`;
+      linkEl.className = className;
+      return;
+    }
     linkEl.innerHTML = '';
     linkEl.appendChild(createSVG(type));
     linkEl.setAttribute('title', title);
     linkEl.className = className;
   });
+  const ul = blockEl.querySelector('ul');
+  if (ul.hasChildNodes()) {
+    // add language specific text
+    const parent = ul.parentNode;
+    const placeholders = await fetchPlaceholders();
+    const followMe = document.createElement('p');
+    followMe.classList.add('social-links-text');
+    followMe.textContent = placeholders.social;
+    parent.prepend(followMe);
+  }
 }
