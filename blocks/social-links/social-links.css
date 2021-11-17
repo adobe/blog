@@ -63,5 +63,6 @@ main .social-links svg:hover {
 @media (min-width: 600px) {
   main .social-links {
     text-align: left;
+    padding-left: calc(200px + 2rem);
   }
 }
