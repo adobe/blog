@@ -16,7 +16,7 @@
  * @param {Object} data additional data for RUM sample
  */
 
-const RUM_GENERATION = 'blog-gen-4';
+const RUM_GENERATION = 'blog-gen-5-intersection';
 
 export function sampleRUM(checkpoint, data = {}) {
   try {
