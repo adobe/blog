@@ -636,7 +636,7 @@ function buildArticleHeader(mainEl) {
 function buildTagHeader(mainEl) {
   const div = mainEl.querySelector('div');
   const heading = mainEl.querySelector('h1, h2');
-  const picture = mainEl.querySelector('picture');
+  const picture = mainEl.querySelector('h1 + picture');
   const tagHeaderBlockEl = buildBlock('tag-header', [
     [heading],
     [{ elems: [picture.closest('p')] }],
