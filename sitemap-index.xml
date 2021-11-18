@@ -1,7 +1,26 @@
-<sitemapindex xmlns="https://www.sitemaps.org/schemas/sitemap/0.9">
-<!--
-<sitemap>
-<loc>https://blog.adobe.com/sitemap.xml</loc>
-</sitemap>
--->
+<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <sitemap>
+    <loc>https://blog.adobe.com/en/sitemap.xml</loc>
+  </sitemap>
+  <sitemap>
+    <loc>https://blog.adobe.com/ko/sitemap.xml</loc>
+  </sitemap>
+  <sitemap>
+    <loc>https://blog.adobe.com/jp/sitemap.xml</loc>
+  </sitemap>
+  <sitemap>
+    <loc>https://blog.adobe.com/it/sitemap.xml</loc>
+  </sitemap>
+  <sitemap>
+    <loc>https://blog.adobe.com/fr/sitemap.xml</loc>
+  </sitemap>
+  <sitemap>
+    <loc>https://blog.adobe.com/es/sitemap.xml</loc>
+  </sitemap>
+  <sitemap>
+    <loc>https://blog.adobe.com/de/sitemap.xml</loc>
+  </sitemap>
+  <sitemap>
+    <loc>https://blog.adobe.com/br/sitemap.xml</loc>
+  </sitemap>
 </sitemapindex>
