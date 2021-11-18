@@ -538,6 +538,7 @@ export function decorateBlock(block) {
 
   block.classList.add('block');
   block.setAttribute('data-block-name', blockName);
+  blockobserver.observe(block);
 }
 
 /**
@@ -977,6 +978,7 @@ export function createOptimizedPicture(src, alt = '', eager = false, breakpoints
     }
   });
 
+  mediaobserver.observe(picture.querySelector('img'));
   return picture;
 }
 
