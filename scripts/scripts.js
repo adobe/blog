@@ -66,6 +66,20 @@ sampleRUM('top');
 window.addEventListener('load', () => sampleRUM('load'));
 document.addEventListener('click', () => sampleRUM('click'));
 
+const mediaobserver = new IntersectionObserver((entries) => {
+  entries
+    .filter((entry) => entry.isIntersecting)
+    .forEach((entry) => sampleRUM('viewmedia', { target: entry.target.src }))
+}, { threshold: 0.25 });
+
+const blockobserver = new IntersectionObserver((entries) => {
+  entries
+    .filter((entry) => entry.isIntersecting)
+    .forEach((entry) => sampleRUM('viewblock', { target: entry.target.className }))
+}, { threshold: 0.25 });
+
+IntersectionObserverEntry
+
 /**
  * Loads a CSS file.
  * @param {string} href The path to the CSS file
