@@ -78,8 +78,6 @@ const blockobserver = new IntersectionObserver((entries) => {
     .forEach((entry) => sampleRUM('viewblock', { target: entry.target.className }))
 }, { threshold: 0.25 });
 
-IntersectionObserverEntry
-
 /**
  * Loads a CSS file.
  * @param {string} href The path to the CSS file
