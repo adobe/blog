@@ -69,7 +69,10 @@ document.addEventListener('click', () => sampleRUM('click'));
 const mediaobserver = new IntersectionObserver((entries) => {
   entries
     .filter((entry) => entry.isIntersecting)
-    .forEach((entry) => sampleRUM('viewmedia', { target: entry.target.querySelector('img').currentSrc }));
+    .forEach((entry) => {
+      console.log(`seen: ${entry.target.querySelector('img').currentSrc}`);
+      sampleRUM('viewmedia', { target: entry.target.querySelector('img').currentSrc });
+    });
 }, { threshold: 0.25 });
 
 const blockobserver = new IntersectionObserver((entries) => {
@@ -979,6 +982,7 @@ export function createOptimizedPicture(src, alt = '', eager = false, breakpoints
   });
 
   mediaobserver.observe(picture);
+  console.log(`observe ${picture.querySelector('img').currentSrc}`);
   return picture;
 }
 
