@@ -62,28 +62,31 @@ export function sampleRUM(checkpoint, data = {}) {
   }
 }
 
+sampleRUM.mediaobserver = (window.IntersectionObserver) ? new IntersectionObserver((entries) => {
+  entries
+    .filter((entry) => entry.isIntersecting)
+    .forEach((entry) => sampleRUM('viewmedia', { target: entry.target.querySelector('img').currentSrc }));
+}, { threshold: 0.25 }) : { observe: () => {} };
+
+sampleRUM.blockobserver = (window.IntersectionObserver) ? new IntersectionObserver((entries) => {
+  entries
+    .filter((entry) => entry.isIntersecting)
+    .forEach((entry) => sampleRUM('viewblock', { target: (entry.target.getAttribute('data-block-name') || entry.target.className) }));
+}, { threshold: 0.25 }) : { observe: () => {} };
+
+sampleRUM.observe = ((elements) => {
+  elements.forEach((element) => {
+    if (element.tagName === 'PICTURE') {
+      sampleRUM.mediaobserver.observe(element);
+    } else {
+      sampleRUM.blockobserver.observe(element);
+    }
+  });
+});
+
 sampleRUM('top');
 window.addEventListener('load', () => sampleRUM('load'));
 document.addEventListener('click', () => sampleRUM('click'));
-
-const mediaobserver = new IntersectionObserver((entries) => {
-  entries
-    .filter((entry) => entry.isIntersecting)
-    .forEach((entry) => {
-      if (entry.target.querySelector('img').currentSrc) {
-        console.log(`seen: ${entry.target.querySelector('img').currentSrc} (${entry.target.querySelector('img').alt})`);
-      }
-      sampleRUM('viewmedia', { target: entry.target.querySelector('img').currentSrc });
-    });
-}, { threshold: 0.25 });
-
-window.mediaobserver = mediaobserver;
-
-const blockobserver = new IntersectionObserver((entries) => {
-  entries
-    .filter((entry) => entry.isIntersecting)
-    .forEach((entry) => sampleRUM('viewblock', { target: entry.target.className }));
-}, { threshold: 0.25 });
 
 /**
  * Loads a CSS file.
@@ -545,7 +548,6 @@ export function decorateBlock(block) {
 
   block.classList.add('block');
   block.setAttribute('data-block-name', blockName);
-  blockobserver.observe(block);
 }
 
 /**
@@ -1066,12 +1068,7 @@ function decoratePictures(main) {
     const newPicture = createOptimizedPicture(img.src, img.alt, !i);
     const picture = img.closest('picture');
     if (picture) picture.parentElement.replaceChild(newPicture, picture);
-    mediaobserver.observe(newPicture || picture);
   });
-}
-
-function observePictures(main) {
-  main.querySelectorAll('picture').forEach((picture) => mediaobserver.observe(picture));
 }
 
 /**
@@ -1086,7 +1083,8 @@ export function decorateMain(main) {
   removeEmptySections();
   wrapSections(main.querySelectorAll(':scope > div'));
   decorateBlocks(main);
-  observePictures(main);
+  sampleRUM.observe(main.querySelectorAll('picture'));
+  sampleRUM.observe(main.querySelectorAll('div[data-block-name]'));
 }
 
 /**
