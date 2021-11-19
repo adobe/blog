@@ -71,13 +71,8 @@ const mediaobserver = new IntersectionObserver((entries) => {
     .filter((entry) => entry.isIntersecting)
     .forEach((entry) => {
       if (entry.target.querySelector('img').currentSrc) {
-        console.log(`seen: ${entry.target.querySelector('img').currentSrc}`);
-      } else {
-        console.log('seen:');
-        console.log(entry.target);
-        console.log(entry.target.querySelector('img'));
+        console.log(`seen: ${entry.target.querySelector('img').currentSrc} (${entry.target.querySelector('img').alt})`);
       }
-
       sampleRUM('viewmedia', { target: entry.target.querySelector('img').currentSrc });
     });
 }, { threshold: 0.25 });
@@ -990,9 +985,6 @@ export function createOptimizedPicture(src, alt = '', eager = false, breakpoints
     }
   });
 
-  mediaobserver.observe(picture);
-  console.log('observe');
-  console.log(picture.outerHTML);
   return picture;
 }
 
@@ -1074,6 +1066,7 @@ function decoratePictures(main) {
     const newPicture = createOptimizedPicture(img.src, img.alt, !i);
     const picture = img.closest('picture');
     if (picture) picture.parentElement.replaceChild(newPicture, picture);
+    mediaobserver.observe(picture || newPicture);
   });
 }
 
