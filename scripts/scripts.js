@@ -1066,7 +1066,7 @@ function decoratePictures(main) {
     const newPicture = createOptimizedPicture(img.src, img.alt, !i);
     const picture = img.closest('picture');
     if (picture) picture.parentElement.replaceChild(newPicture, picture);
-    mediaobserver.observe(picture || newPicture);
+    mediaobserver.observe(newPicture || picture);
   });
 }
 
