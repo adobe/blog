@@ -70,7 +70,14 @@ const mediaobserver = new IntersectionObserver((entries) => {
   entries
     .filter((entry) => entry.isIntersecting)
     .forEach((entry) => {
-      console.log(`seen: ${entry.target.querySelector('img').currentSrc}`);
+      if (entry.target.querySelector('img').currentSrc) {
+        console.log(`seen: ${entry.target.querySelector('img').currentSrc}`);
+      } else {
+        console.log('seen:');
+        console.log(entry.target);
+        console.log(entry.target.querySelector('img'));
+      }
+
       sampleRUM('viewmedia', { target: entry.target.querySelector('img').currentSrc });
     });
 }, { threshold: 0.25 });
