@@ -991,7 +991,8 @@ export function createOptimizedPicture(src, alt = '', eager = false, breakpoints
   });
 
   mediaobserver.observe(picture);
-  console.log(`observe ${picture.querySelector('img').currentSrc}`);
+  console.log('observe');
+  console.log(picture);
   return picture;
 }
 
