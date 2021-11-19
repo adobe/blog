@@ -336,11 +336,38 @@ async function decorateArticleFeed(articleFeedEl, config, offset = 0,
     articleCards.className = 'article-cards';
     articleFeedEl.appendChild(articleCards);
   }
+  // display spinner
+  const placeholders = await fetchPlaceholders();
+  const emptyDiv = document.createElement('div');
+  emptyDiv.classList.add('article-cards-empty');
+  const spinner = document.createElement('div');
+  spinner.classList.add('spinner');
+  emptyDiv.append(spinner);
+  articleCards.append(emptyDiv);
 
   const limit = 12;
   const pageEnd = offset + limit;
   await filterArticles(config, feed, limit, offset);
   const articles = feed.data;
+  if (articles.length) {
+    // results were found
+    emptyDiv.remove();
+  } else if (config.selectedProducts || config.selectedIndustries) {
+    // no user filtered results were found
+    spinner.remove();
+    const noMatches = document.createElement('p');
+    noMatches.innerHTML = `<strong>${placeholders['no-matches']}</strong>`;
+    const userHelp = document.createElement('p');
+    userHelp.classList.add('article-cards-empty-filtered');
+    userHelp.textContent = placeholders['user-help'];
+    emptyDiv.append(noMatches, userHelp);
+  } else {
+    // no results were found
+    spinner.remove();
+    const noResults = document.createElement('p');
+    noResults.innerHTML = `<strong>${placeholders['no-results']}</strong>`;
+    emptyDiv.append(noResults);
+  }
   const max = pageEnd > articles.length ? articles.length : pageEnd;
   for (let i = offset; i < max; i += 1) {
     const article = articles[i];
@@ -352,7 +379,6 @@ async function decorateArticleFeed(articleFeedEl, config, offset = 0,
     const loadMore = document.createElement('a');
     loadMore.className = 'load-more button small primary light';
     loadMore.href = '#';
-    const placeholders = await fetchPlaceholders();
     loadMore.textContent = placeholders['load-more'];
     articleFeedEl.append(loadMore);
     loadMore.addEventListener('click', (event) => {
