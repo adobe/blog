@@ -992,7 +992,7 @@ export function createOptimizedPicture(src, alt = '', eager = false, breakpoints
 
   mediaobserver.observe(picture);
   console.log('observe');
-  console.log(picture);
+  console.log(picture.outerHTML);
   return picture;
 }
 
