@@ -69,13 +69,13 @@ document.addEventListener('click', () => sampleRUM('click'));
 const mediaobserver = new IntersectionObserver((entries) => {
   entries
     .filter((entry) => entry.isIntersecting)
-    .forEach((entry) => sampleRUM('viewmedia', { target: entry.target.querySelector('img').currentSrc }))
+    .forEach((entry) => sampleRUM('viewmedia', { target: entry.target.querySelector('img').currentSrc }));
 }, { threshold: 0.25 });
 
 const blockobserver = new IntersectionObserver((entries) => {
   entries
     .filter((entry) => entry.isIntersecting)
-    .forEach((entry) => sampleRUM('viewblock', { target: entry.target.className }))
+    .forEach((entry) => sampleRUM('viewblock', { target: entry.target.className }));
 }, { threshold: 0.25 });
 
 /**
