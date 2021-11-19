@@ -82,6 +82,8 @@ const mediaobserver = new IntersectionObserver((entries) => {
     });
 }, { threshold: 0.25 });
 
+window.mediaobserver = mediaobserver;
+
 const blockobserver = new IntersectionObserver((entries) => {
   entries
     .filter((entry) => entry.isIntersecting)
