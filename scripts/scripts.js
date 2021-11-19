@@ -1070,6 +1070,10 @@ function decoratePictures(main) {
   });
 }
 
+function observePictures(main) {
+  main.querySelectorAll('picture').forEach((picture) => mediaobserver.observe(picture));
+}
+
 /**
  * Decorates the main element.
  * @param {Element} main The main element
@@ -1082,6 +1086,7 @@ export function decorateMain(main) {
   removeEmptySections();
   wrapSections(main.querySelectorAll(':scope > div'));
   decorateBlocks(main);
+  observePictures(main);
 }
 
 /**
