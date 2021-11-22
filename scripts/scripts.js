@@ -804,8 +804,8 @@ export function buildFigure(blockEl) {
   figEl.classList.add('figure');
   blockEl.childNodes.forEach((child) => {
     const clone = child.cloneNode(true);
-    // picture or video is NOT wrapped in P tag
-    if (clone.nodeName === 'PICTURE' || clone.nodeName === 'VIDEO') {
+    // picture, video, or embed link is NOT wrapped in P tag
+    if (clone.nodeName === 'PICTURE' || clone.nodeName === 'VIDEO' || clone.nodeName === 'A') {
       figEl.prepend(clone);
     } else {
       // content wrapped in P tag(s)
