@@ -55,10 +55,16 @@ function setDigitalData() {
       }
     });
 
-    pageFilterInfo += `Category: ${categories.join(' | ')}`;
-    pageFilterInfo += ` | Product: ${products.join(' | ')}`;
+    // Outputs a String for analytics, example: Category: A | Category: B | Product: C | Product: D
+    categories.forEach((category) => {
+      pageFilterInfo += `Category: ${category} | `;
+    });
+    products.forEach((product) => {
+      pageFilterInfo += `Product: ${product} | `;
+    });
 
-    return pageFilterInfo;
+    // remove " | " from the end of the string
+    return pageFilterInfo.replace(/ \| $/m, '');
   };
 
   const langMap = { en: 'en-US' };
