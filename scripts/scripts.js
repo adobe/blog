@@ -65,13 +65,19 @@ export function sampleRUM(checkpoint, data = {}) {
 sampleRUM.mediaobserver = (window.IntersectionObserver) ? new IntersectionObserver((entries) => {
   entries
     .filter((entry) => entry.isIntersecting)
-    .forEach((entry) => sampleRUM('viewmedia', { target: entry.target.querySelector('img').currentSrc }));
+    .forEach((entry) => {
+      sampleRUM.mediaobserver.unobserve(entry.target); // observe only once
+      sampleRUM('viewmedia', { target: entry.target.querySelector('img').currentSrc });
+    });
 }, { threshold: 0.25 }) : { observe: () => {} };
 
 sampleRUM.blockobserver = (window.IntersectionObserver) ? new IntersectionObserver((entries) => {
   entries
     .filter((entry) => entry.isIntersecting)
-    .forEach((entry) => sampleRUM('viewblock', { target: (entry.target.getAttribute('data-block-name') || entry.target.className) }));
+    .forEach((entry) => {
+      sampleRUM.blockobserver.unobserve(entry.target); // observe only once
+      sampleRUM('viewblock', { target: (entry.target.getAttribute('data-block-name') || entry.target.className) });
+    });
 }, { threshold: 0.25 }) : { observe: () => {} };
 
 sampleRUM.observe = ((elements) => {
