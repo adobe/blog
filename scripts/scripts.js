@@ -273,8 +273,14 @@ export function debug(message) {
  * @returns {Object} containing sanitized meta data
  */
 async function getMetadataJson(path) {
-  const resp = await fetch(path.split('.')[0]);
-  if (resp.ok) {
+  let resp;
+  try {
+    resp = await fetch(path.split('.')[0]);
+  } catch {
+    debug(`Could not retrieve metadata for ${path}`);
+  }
+
+  if (resp && resp.ok) {
     const text = await resp.text();
     const headStr = text.split('<head>')[1].split('</head>')[0];
     const head = document.createElement('head');
