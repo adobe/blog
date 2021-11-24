@@ -275,7 +275,7 @@ export function debug(message) {
 async function getMetadataJson(path) {
   let resp;
   try {
-    resp = await fetch(path.split('.')[0]);
+    resp = await fetch(`${path.split('.')[0]}?noredirect`);
   } catch {
     debug(`Could not retrieve metadata for ${path}`);
   }
@@ -1080,7 +1080,7 @@ export function buildArticleCard(article, type = 'article', eager = false) {
  * @param {Element} main The main element
  */
 function decoratePictures(main) {
-  main.querySelectorAll('img[src*="/media_"').forEach((img, i) => {
+  main.querySelectorAll('img[src*="/media_"]').forEach((img, i) => {
     const newPicture = createOptimizedPicture(img.src, img.alt, !i);
     const picture = img.closest('picture');
     if (picture) picture.parentElement.replaceChild(newPicture, picture);
