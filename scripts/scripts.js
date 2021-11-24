@@ -16,7 +16,7 @@
  * @param {Object} data additional data for RUM sample
  */
 
-const RUM_GENERATION = 'blog-gen-4';
+const RUM_GENERATION = 'blog-gen-5-intersection';
 
 export function sampleRUM(checkpoint, data = {}) {
   try {
@@ -61,6 +61,34 @@ export function sampleRUM(checkpoint, data = {}) {
     // something went wrong
   }
 }
+
+sampleRUM.mediaobserver = (window.IntersectionObserver) ? new IntersectionObserver((entries) => {
+  entries
+    .filter((entry) => entry.isIntersecting)
+    .forEach((entry) => {
+      sampleRUM.mediaobserver.unobserve(entry.target); // observe only once
+      sampleRUM('viewmedia', { target: entry.target.querySelector('img').currentSrc });
+    });
+}, { threshold: 0.25 }) : { observe: () => {} };
+
+sampleRUM.blockobserver = (window.IntersectionObserver) ? new IntersectionObserver((entries) => {
+  entries
+    .filter((entry) => entry.isIntersecting)
+    .forEach((entry) => {
+      sampleRUM.blockobserver.unobserve(entry.target); // observe only once
+      sampleRUM('viewblock', { target: (entry.target.getAttribute('data-block-name') || entry.target.className) });
+    });
+}, { threshold: 0.25 }) : { observe: () => {} };
+
+sampleRUM.observe = ((elements) => {
+  elements.forEach((element) => {
+    if (element.tagName === 'PICTURE') {
+      sampleRUM.mediaobserver.observe(element);
+    } else {
+      sampleRUM.blockobserver.observe(element);
+    }
+  });
+});
 
 sampleRUM('top');
 window.addEventListener('load', () => sampleRUM('load'));
@@ -1065,6 +1093,8 @@ export function decorateMain(main) {
   removeEmptySections();
   wrapSections(main.querySelectorAll(':scope > div'));
   decorateBlocks(main);
+  sampleRUM.observe(main.querySelectorAll('picture'));
+  sampleRUM.observe(main.querySelectorAll('div[data-block-name]'));
 }
 
 /**
