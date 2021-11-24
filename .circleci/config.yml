@@ -33,7 +33,7 @@ jobs:
 
       - helix-post-deploy/monitoring:
           newrelic_name: Adobe Blog - Content (live)
-          newrelic_url: https://theblog--adobe.hlx.live
+          newrelic_url: https://main--blog--adobe.hlx.live
           newrelic_type: browser
           newrelic_script: ./monitoring/content-check.js
           newrelic_group_policy: Customer Sites
