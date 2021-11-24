@@ -40,17 +40,8 @@ async function checkHomepage(url) {
           assert.fail('This homepage is static: backend must be down!');
         }
       }
-      console.log('Waiting for ".load-more" element...');
-      return $browser.waitForAndFindElement($driver.By.css('.load-more'), 60000);
-    }).then(() => {
-      console.log('".load-more" element found. Retrieving the articles...');
-      return $browser.findElements($driver.By.css('.article-card, .featured-article-card'));
-    }).then((articles) => {
-      assert.ok(articles.length >= 12, `Expected at least 12 articles, got ${articles.length}`);
-      console.log(`Found ${articles.length} articles in the page. Retrieving featured article...`);
-      return $browser.findElement($driver.By.css('.featured-article-card'));
     })
-    .then(() => console.log('Found featured article. All good!'));
+    .then(() => console.log('All good!'));
 }
 
 // Check the default and all regional homepages
