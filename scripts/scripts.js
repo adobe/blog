@@ -1074,7 +1074,7 @@ export function buildArticleCard(article, type = 'article', eager = false) {
  * @param {Element} main The main element
  */
 function decoratePictures(main) {
-  main.querySelectorAll('img[src*="/media_"').forEach((img, i) => {
+  main.querySelectorAll('img[src*="/media_"]').forEach((img, i) => {
     const newPicture = createOptimizedPicture(img.src, img.alt, !i);
     const picture = img.closest('picture');
     if (picture) picture.parentElement.replaceChild(newPicture, picture);
