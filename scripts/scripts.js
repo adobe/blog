@@ -16,7 +16,7 @@
  * @param {Object} data additional data for RUM sample
  */
 
-const RUM_GENERATION = 'blog-gen-5-intersection';
+const RUM_GENERATION = 'blog-gen-6-clicktargets';
 
 export function sampleRUM(checkpoint, data = {}) {
   try {
@@ -90,9 +90,65 @@ sampleRUM.observe = ((elements) => {
   });
 });
 
+sampleRUM.targetselector = (element) => {
+  let selector = element.tagName.toLowerCase();
+  // always include these attributes as they have valuable info
+  const distinctAttributes = ['src', 'href'];
+  // capture the actual click target instead of a child element
+  const terminateearly = (e) => e.tagName.toLowerCase() === 'a'
+    || e.tagName.toLowerCase() === 'button';
+  if (element === document.body || element === document.documentElement) {
+    return selector;
+  }
+  if (element.id) {
+    return `#${element.id}`;
+  }
+  if (element.className) {
+    selector = `${selector}.${Array.from(element.classList).join('.')}`;
+  }
+  selector = distinctAttributes.reduce((pv, attname) => {
+    if (element.getAttribute(attname)) {
+      return `${pv}[${attname}="${element.getAttribute(attname)}"]`;
+    }
+    return pv;
+  }, selector);
+  // check for uniqueness
+  const otherchildren = element.parentElement.querySelectorAll(element.tagName);
+  for (let i = 0; (
+    i < otherchildren.length
+    && otherchildren.length > 1
+    && element.parentElement.querySelectorAll(selector).length > 1);
+    i += 1) {
+    if (otherchildren[i] === element) {
+      selector = `${element.tagName.toLowerCase()}:nth-of-type(${i + 1})`;
+      break;
+    }
+  }
+  // recurse
+  const parent = sampleRUM.targetselector(element.parentElement);
+
+  let ancestor = element.parentElement;
+  while (ancestor) {
+    if (terminateearly(ancestor)) {
+      return parent;
+    }
+    ancestor = ancestor.parentElement;
+  }
+
+  if (parent === 'body') {
+    return selector;
+  }
+  return `${parent} > ${selector}`;
+};
+
 sampleRUM('top');
 window.addEventListener('load', () => sampleRUM('load'));
-document.addEventListener('click', () => sampleRUM('click'));
+document.addEventListener('click', (event) => {
+  console.debug(event.target,
+    sampleRUM.targetselector(event.target),
+    document.querySelector(sampleRUM.targetselector(event.target)));
+  sampleRUM('click', { target: sampleRUM.targetselector(event.target) });
+});
 
 /**
  * Loads a CSS file.
