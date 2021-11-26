@@ -67,7 +67,8 @@ sampleRUM.mediaobserver = (window.IntersectionObserver) ? new IntersectionObserv
     .filter((entry) => entry.isIntersecting)
     .forEach((entry) => {
       sampleRUM.mediaobserver.unobserve(entry.target); // observe only once
-      sampleRUM('viewmedia', { target: entry.target.querySelector('img').currentSrc });
+      const target = sampleRUM.targetselector(entry.target);
+      sampleRUM('viewmedia', { target });
     });
 }, { threshold: 0.25 }) : { observe: () => {} };
 
@@ -76,13 +77,16 @@ sampleRUM.blockobserver = (window.IntersectionObserver) ? new IntersectionObserv
     .filter((entry) => entry.isIntersecting)
     .forEach((entry) => {
       sampleRUM.blockobserver.unobserve(entry.target); // observe only once
-      sampleRUM('viewblock', { target: (entry.target.getAttribute('data-block-name') || entry.target.className) });
+      sampleRUM('viewblock', { target: sampleRUM.targetselector(entry.target) });
     });
 }, { threshold: 0.25 }) : { observe: () => {} };
 
 sampleRUM.observe = ((elements) => {
   elements.forEach((element) => {
-    if (element.tagName === 'PICTURE') {
+    if (element.tagName.toLowerCase() === 'img'
+    || element.tagName.toLowerCase() === 'video'
+    || element.tagName.toLowerCase() === 'audio'
+    || element.tagName.toLowerCase() === 'iframe') {
       sampleRUM.mediaobserver.observe(element);
     } else {
       sampleRUM.blockobserver.observe(element);
@@ -90,13 +94,10 @@ sampleRUM.observe = ((elements) => {
   });
 });
 
-sampleRUM.targetselector = (element) => {
+sampleRUM.targetselector = (element, terminateearly = () => false) => {
   let selector = element.tagName.toLowerCase();
   // always include these attributes as they have valuable info
-  const distinctAttributes = ['src', 'href', 'data-block-name'];
-  // capture the actual click target instead of a child element
-  const terminateearly = (e) => e.tagName.toLowerCase() === 'a'
-    || e.tagName.toLowerCase() === 'button';
+  const distinctAttributes = ['src', 'href', 'data-block-name', ['src', 'currentSrc']];
   if (element === document.body || element === document.documentElement) {
     return selector;
   }
@@ -106,7 +107,10 @@ sampleRUM.targetselector = (element) => {
 
   let addClassnames = !!element.className;
   selector = distinctAttributes.reduce((pv, attname) => {
-    if (element.getAttribute(attname)) {
+    if (Array.isArray(attname) && attname.some((propname) => element[propname])) {
+      addClassnames = false;
+      return `${pv}[${attname[0]}="${attname.filter((propname) => element[propname]).map((propname) => element[propname]).pop()}"]`;
+    } if (element.getAttribute(attname)) {
       addClassnames = false; // attributes are distinctive enough
       return `${pv}[${attname}="${element.getAttribute(attname)}"]`;
     }
@@ -129,7 +133,7 @@ sampleRUM.targetselector = (element) => {
     }
   }
   // recurse
-  const parent = sampleRUM.targetselector(element.parentElement);
+  const parent = sampleRUM.targetselector(element.parentElement, terminateearly);
 
   let ancestor = element.parentElement;
   while (ancestor) {
@@ -149,10 +153,12 @@ sampleRUM.targetselector = (element) => {
 sampleRUM('top');
 window.addEventListener('load', () => sampleRUM('load'));
 document.addEventListener('click', (event) => {
-  console.debug(event.target,
-    sampleRUM.targetselector(event.target),
-    document.querySelector(sampleRUM.targetselector(event.target)));
-  sampleRUM('click', { target: sampleRUM.targetselector(event.target) });
+  sampleRUM('click', {
+    target: sampleRUM.targetselector(event.target,
+    // capture the actual click target instead of a child element
+      (e) => e.tagName.toLowerCase() === 'a'
+      || e.tagName.toLowerCase() === 'button'),
+  });
 });
 
 /**
@@ -1160,8 +1166,9 @@ export function decorateMain(main) {
   removeEmptySections();
   wrapSections(main.querySelectorAll(':scope > div'));
   decorateBlocks(main);
-  sampleRUM.observe(main.querySelectorAll('picture'));
+
   sampleRUM.observe(main.querySelectorAll('div[data-block-name]'));
+  window.setTimeout(() => sampleRUM.observe(main.querySelectorAll('picture > img')), 1000);
 }
 
 /**
