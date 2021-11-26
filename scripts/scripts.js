@@ -93,7 +93,7 @@ sampleRUM.observe = ((elements) => {
 sampleRUM.targetselector = (element) => {
   let selector = element.tagName.toLowerCase();
   // always include these attributes as they have valuable info
-  const distinctAttributes = ['src', 'href'];
+  const distinctAttributes = ['src', 'href', 'data-block-name'];
   // capture the actual click target instead of a child element
   const terminateearly = (e) => e.tagName.toLowerCase() === 'a'
     || e.tagName.toLowerCase() === 'button';
@@ -103,15 +103,19 @@ sampleRUM.targetselector = (element) => {
   if (element.id) {
     return `#${element.id}`;
   }
-  if (element.className) {
-    selector = `${selector}.${Array.from(element.classList).join('.')}`;
-  }
+
+  let addClassnames = !!element.className;
   selector = distinctAttributes.reduce((pv, attname) => {
     if (element.getAttribute(attname)) {
+      addClassnames = false; // attributes are distinctive enough
       return `${pv}[${attname}="${element.getAttribute(attname)}"]`;
     }
     return pv;
   }, selector);
+
+  if (addClassnames) {
+    selector = `${selector}.${Array.from(element.classList).join('.')}`;
+  }
   // check for uniqueness
   const otherchildren = element.parentElement.querySelectorAll(element.tagName);
   for (let i = 0; (
@@ -135,7 +139,8 @@ sampleRUM.targetselector = (element) => {
     ancestor = ancestor.parentElement;
   }
 
-  if (parent === 'body') {
+  // no need for the parent selector if we are either at the root or unique within the document
+  if (parent === 'body' || document.querySelectorAll(selector).length === 1) {
     return selector;
   }
   return `${parent} > ${selector}`;
