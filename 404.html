@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Adobe Blog: Page not found</title>
+    <script type="text/javascript">
+        window.isErrorPage = true;
+        window.errorCode = '404';
+    </script>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="google-site-verification" content="YD_ublu5NDiQWLZhQC5N-7eL-zo0TFpPS-l9vFqgdSI" />
+    <meta property="article:publisher" content="https://www.facebook.com/Adobe" />
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="Adobe Blog" />
+    <meta name="twitter:site" content="@Adobe" />
+    <meta name="twitter:creator" content="@Adobe" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="serp-content-type" content="blog" />
+    <link rel="publisher" href="https://www.facebook.com/Adobe" />
+    <script>
+        const i18n = {
+            br: {
+                title: 'Estas são águas desconhecidas.',
+                subtitle: 'Desculpe, essa página não pode ser encontrada.',
+                home: 'Vá para a página inicial ›',
+                search: 'Pesquisar em Adobe.com ›',
+            },
+            de: {
+                title: 'Die Seite wurde leider nicht gefunden.',
+                subtitle: '',
+                home: 'Zur Homepage ›',
+                search: 'Adobe.com durchsuchen ›',
+            },
+            en: {
+                title: 'These are uncharted waters.',
+                subtitle: 'Sorry, that page can\'t be found.',
+                home: 'Go to homepage ›',
+                search: 'Search Adobe.com ›',
+            },
+            es: {
+                title: 'Estas son aguas inexploradas.',
+                subtitle: 'Lo siento, no se puede encontrar esa página.',
+                home: 'Ir a la página de inicio ›',
+                search: 'Buscar en Adobe.com ›',
+            },
+            fr: {
+                title: 'La page que vous recherchez ne semble pas exister.',
+                subtitle: 'Désolé, la page ne peut être trouvée.',
+                home: 'Allez à l\'accueil ›',
+                search: 'Chercher sur Adobe.com ›',
+            },
+            it: {
+                title: 'Stai navigando in acque inesplorate.',
+                subtitle: 'Pagina non trovata.',
+                home: 'Vai alla home page ›',
+                search: 'Cerca su Adobe.com ›',
+            },
+            jp: {
+                title: '申し訳ございません。ページが見つかりません。',
+                subtitle: 'Sorry, that page can\'t be found.',
+                home: 'Go to homepage ›',
+                search: 'Search Adobe.com ›',
+            },
+            ko: {
+                title: '해당 페이지가 없습니다',
+                subtitle: '죄송합니다. 페이지를 찾을 수 없습니다.',
+                home: '홈페이지 가기',
+                search: '사이트 내 검색',
+            },
+        };
+
+        window.addEventListener('load', () => {
+            const { pathname } = new URL(window.location);
+            // default english
+            const lang = Object.keys(i18n).includes(pathname.split('/')[1]) ? pathname.split('/')[1] : 'en';
+
+            const title = document.getElementById('error-title');
+            title.textContent = i18n[lang].title;
+
+            const subtitle = document.getElementById('error-subtitle');
+            subtitle.textContent = i18n[lang].subtitle;
+
+            const home = document.getElementById('error-home');
+            home.textContent = i18n[lang].home;
+
+            const search = document.getElementById('error-search');
+            search.textContent = i18n[lang].search;
+        });
+    </script>
+    <script src="/scripts/scripts.js" type="module" crossorigin="use-credentials"></script>
+    <style>
+        .error {
+          position: relative;
+        }
+        
+        main.error div.section-wrapper {
+          margin-top: 0;
+        }
+        
+        .error .error-img {
+          position: absolute;
+          object-fit: cover;
+          object-position: 70%;
+          height: 80vh;
+          z-index: -1;
+        }
+        
+        .error .error-msg {
+          height: 80vh;
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+        }
+
+        .error a:any-link {
+          text-decoration: none;
+        }
+        
+        .error .error-nav {
+          margin-top: 30px;
+          font-size: 16px;
+        }
+
+        .error .error-nav a {
+          color: #1473e6;
+        }
+
+        .error .error-nav a:hover,
+        .error .error-nav a:focus {
+          text-decoration: underline;
+        }
+
+        .error .error-nav ul {
+          list-style-type: none;
+          padding-left: 0;
+        }
+
+        .error .error-nav ul li {
+          margin: 8px 0;
+        }
+        
+        .error .error-attr {
+          width: 100%;
+          font-size: 12px;
+          margin-bottom: 30px;
+        }
+        
+        .error .error-attr img {
+          display: block;
+          height: 2rem;
+          width: 2rem;
+        }
+        
+        .error .error-attr a {
+          color: #b1aba8;
+          font-style: normal;
+        }
+    </style>
+    <link rel="stylesheet" href="/styles/styles.css" />
+    <link rel="icon" href="data:,">
+</head>
+
+<body>
+    <!--  main content -->
+    <main class="error">
+        <img class="error-img" src="https://adobe.com/content/dam/acom/en/error-pages/images/404-1440x612_edge2.jpg" alt="The Story Begins Here by Risfan Fardiansyah">
+        <div class="error-msg">
+          <div class="error-text">
+            <h2 id="error-title"></h2>
+            <p id="error-subtitle"></p>
+            <nav class="error-nav">
+              <ul>
+                <li><a id="error-home" href="/"></a></li>
+                <li><a id="error-search" href="https://adobe.com/search.html"></a></li>
+              </ul>
+            </nav>
+          </div>
+          <div class="error-attr">
+            <cite>
+              <a href="https://www.behance.net/rsvn" target="_blank">
+                <img src="https://www.adobe.com/content/dam/cc/icons/behance-brands.svg" alt="Behance logo" />
+              </a>
+              <a href="https://www.behance.net/rsvn" target="_blank">The Story Begins Here by Risfan Fardiansyah</a>	
+            </cite>
+          </div>
+        </div>
+    </main>
+
+</body>
+
+</html>
