@@ -68,7 +68,8 @@ sampleRUM.mediaobserver = (window.IntersectionObserver) ? new IntersectionObserv
     .forEach((entry) => {
       sampleRUM.mediaobserver.unobserve(entry.target); // observe only once
       const target = sampleRUM.targetselector(entry.target);
-      sampleRUM('viewmedia', { target });
+      const source = sampleRUM.sourceselector(entry.target);
+      sampleRUM('viewmedia', { target, source });
     });
 }, { threshold: 0.25 }) : { observe: () => {} };
 
@@ -77,7 +78,9 @@ sampleRUM.blockobserver = (window.IntersectionObserver) ? new IntersectionObserv
     .filter((entry) => entry.isIntersecting)
     .forEach((entry) => {
       sampleRUM.blockobserver.unobserve(entry.target); // observe only once
-      sampleRUM('viewblock', { target: sampleRUM.targetselector(entry.target) });
+      const target = sampleRUM.targetselector(entry.target);
+      const source = sampleRUM.sourceselector(entry.target);
+      sampleRUM('viewblock', { target, source });
     });
 }, { threshold: 0.25 }) : { observe: () => {} };
 
@@ -94,70 +97,34 @@ sampleRUM.observe = ((elements) => {
   });
 });
 
-sampleRUM.targetselector = (element, terminateearly = () => false) => {
-  let selector = element.tagName.toLowerCase();
-  // always include these attributes as they have valuable info
-  const distinctAttributes = ['src', 'href', 'data-block-name', ['src', 'currentSrc']];
+sampleRUM.sourceselector = (element) => {
   if (element === document.body || element === document.documentElement) {
-    return selector;
+    return undefined;
   }
   if (element.id) {
     return `#${element.id}`;
   }
-
-  let addClassnames = !!element.className;
-  selector = distinctAttributes.reduce((pv, attname) => {
-    if (Array.isArray(attname) && attname.some((propname) => element[propname])) {
-      addClassnames = false;
-      return `${pv}[${attname[0]}="${attname.filter((propname) => element[propname]).map((propname) => element[propname]).pop()}"]`;
-    } if (element.getAttribute(attname)) {
-      addClassnames = false; // attributes are distinctive enough
-      return `${pv}[${attname}="${element.getAttribute(attname)}"]`;
-    }
-    return pv;
-  }, selector);
-
-  if (addClassnames) {
-    selector = `${selector}.${Array.from(element.classList).join('.')}`;
+  if (element.getAttribute('data-block-name')) {
+    return `.${element.getAttribute('data-block-name')}`;
   }
-  // check for uniqueness
-  const otherchildren = element.parentElement.querySelectorAll(element.tagName);
-  for (let i = 0; (
-    i < otherchildren.length
-    && otherchildren.length > 1
-    && element.parentElement.querySelectorAll(selector).length > 1);
-    i += 1) {
-    if (otherchildren[i] === element) {
-      selector = `${element.tagName.toLowerCase()}:nth-of-type(${i + 1})`;
-      break;
-    }
-  }
-  // recurse
-  const parent = sampleRUM.targetselector(element.parentElement, terminateearly);
+  return sampleRUM.sourceselector(element.parentElement);
+};
 
-  let ancestor = element.parentElement;
-  while (ancestor) {
-    if (terminateearly(ancestor)) {
-      return parent;
-    }
-    ancestor = ancestor.parentElement;
+sampleRUM.targetselector = (element) => {
+  let value = element.getAttribute('href') || element.currentSrc || element.getAttribute('src');
+  if (value && value.startsWith('https://')) {
+    // resolve relative links
+    value = new URL(value, window.location).href;
   }
-
-  // no need for the parent selector if we are either at the root or unique within the document
-  if (parent === 'body' || document.querySelectorAll(selector).length === 1) {
-    return selector;
-  }
-  return `${parent} > ${selector}`;
+  return value;
 };
 
 sampleRUM('top');
 window.addEventListener('load', () => sampleRUM('load'));
 document.addEventListener('click', (event) => {
   sampleRUM('click', {
-    target: sampleRUM.targetselector(event.target,
-    // capture the actual click target instead of a child element
-      (e) => e.tagName.toLowerCase() === 'a'
-      || e.tagName.toLowerCase() === 'button'),
+    target: sampleRUM.targetselector(event.target),
+    source: sampleRUM.sourceselector(event.target),
   });
 });
 
