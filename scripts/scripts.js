@@ -134,6 +134,8 @@ window.onerror = (event, source, line) => {
   // keep the old error handler around
   if (typeof olderror === 'function') {
     olderror(event, source, line);
+  } else {
+    throw new Error(event);
   }
 };
 
