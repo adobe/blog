@@ -128,6 +128,15 @@ document.addEventListener('click', (event) => {
   });
 });
 
+const olderror = window.onerror;
+window.onerror = (event, source, line) => {
+  sampleRUM('error', { source, target: line });
+  // keep the old error handler around
+  if (typeof olderror === 'function') {
+    olderror(event, source, line);
+  }
+};
+
 /**
  * Loads a CSS file.
  * @param {string} href The path to the CSS file
