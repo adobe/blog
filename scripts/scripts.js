@@ -417,6 +417,10 @@ export function getTaxonomy() {
  * @returns {string} A link tag as a string
  */
 export function getLinkForTopic(topic, path) {
+  // temporary title substitutions
+  const titleSubs = {
+    'Transformation digitale': 'Transformation numérique',
+  };
   let catLink;
   if (taxonomy) {
     const tax = taxonomy.get(topic);
@@ -429,7 +433,7 @@ export function getLinkForTopic(topic, path) {
     }
   }
 
-  return `<a href="${catLink || ''}" ${!catLink ? `data-topic-link="${topic}"` : ''}>${topic}</a>`;
+  return `<a href="${catLink || ''}" ${!catLink ? `data-topic-link="${topic}"` : ''}>${titleSubs[topic] || topic}</a>`;
 }
 
 /**
