@@ -302,12 +302,12 @@ export function getHelixEnv() {
   return env;
 }
 
-export function debug(message) {
+export function debug(message, ...args) {
   const { hostname } = window.location;
   const env = getHelixEnv();
   if (env.name !== 'prod' || hostname === 'localhost') {
     // eslint-disable-next-line no-console
-    console.log(message);
+    console.log(message, ...args);
   }
 }
 
