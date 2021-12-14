@@ -16,7 +16,7 @@
  * @param {Object} data additional data for RUM sample
  */
 
-const RUM_GENERATION = 'blog-gen-5-intersection';
+const RUM_GENERATION = 'blog-gen-6-clicktargets';
 
 export function sampleRUM(checkpoint, data = {}) {
   try {
@@ -67,7 +67,9 @@ sampleRUM.mediaobserver = (window.IntersectionObserver) ? new IntersectionObserv
     .filter((entry) => entry.isIntersecting)
     .forEach((entry) => {
       sampleRUM.mediaobserver.unobserve(entry.target); // observe only once
-      sampleRUM('viewmedia', { target: entry.target.querySelector('img').currentSrc });
+      const target = sampleRUM.targetselector(entry.target);
+      const source = sampleRUM.sourceselector(entry.target);
+      sampleRUM('viewmedia', { target, source });
     });
 }, { threshold: 0.25 }) : { observe: () => {} };
 
@@ -76,13 +78,18 @@ sampleRUM.blockobserver = (window.IntersectionObserver) ? new IntersectionObserv
     .filter((entry) => entry.isIntersecting)
     .forEach((entry) => {
       sampleRUM.blockobserver.unobserve(entry.target); // observe only once
-      sampleRUM('viewblock', { target: (entry.target.getAttribute('data-block-name') || entry.target.className) });
+      const target = sampleRUM.targetselector(entry.target);
+      const source = sampleRUM.sourceselector(entry.target);
+      sampleRUM('viewblock', { target, source });
     });
 }, { threshold: 0.25 }) : { observe: () => {} };
 
 sampleRUM.observe = ((elements) => {
   elements.forEach((element) => {
-    if (element.tagName === 'PICTURE') {
+    if (element.tagName.toLowerCase() === 'img'
+    || element.tagName.toLowerCase() === 'video'
+    || element.tagName.toLowerCase() === 'audio'
+    || element.tagName.toLowerCase() === 'iframe') {
       sampleRUM.mediaobserver.observe(element);
     } else {
       sampleRUM.blockobserver.observe(element);
@@ -90,9 +97,47 @@ sampleRUM.observe = ((elements) => {
   });
 });
 
+sampleRUM.sourceselector = (element) => {
+  if (element === document.body || element === document.documentElement) {
+    return undefined;
+  }
+  if (element.id) {
+    return `#${element.id}`;
+  }
+  if (element.getAttribute('data-block-name')) {
+    return `.${element.getAttribute('data-block-name')}`;
+  }
+  return sampleRUM.sourceselector(element.parentElement);
+};
+
+sampleRUM.targetselector = (element) => {
+  let value = element.getAttribute('href') || element.currentSrc || element.getAttribute('src');
+  if (value && value.startsWith('https://')) {
+    // resolve relative links
+    value = new URL(value, window.location).href;
+  }
+  return value;
+};
+
 sampleRUM('top');
 window.addEventListener('load', () => sampleRUM('load'));
-document.addEventListener('click', () => sampleRUM('click'));
+document.addEventListener('click', (event) => {
+  sampleRUM('click', {
+    target: sampleRUM.targetselector(event.target),
+    source: sampleRUM.sourceselector(event.target),
+  });
+});
+
+const olderror = window.onerror;
+window.onerror = (event, source, line) => {
+  sampleRUM('error', { source, target: line });
+  // keep the old error handler around
+  if (typeof olderror === 'function') {
+    olderror(event, source, line);
+  } else {
+    throw new Error(event);
+  }
+};
 
 /**
  * Loads a CSS file.
@@ -257,12 +302,12 @@ export function getHelixEnv() {
   return env;
 }
 
-export function debug(message) {
+export function debug(message, ...args) {
   const { hostname } = window.location;
   const env = getHelixEnv();
   if (env.name !== 'prod' || hostname === 'localhost') {
     // eslint-disable-next-line no-console
-    console.log(message);
+    console.log(message, ...args);
   }
 }
 
@@ -1103,8 +1148,9 @@ export function decorateMain(main) {
   removeEmptySections();
   wrapSections(main.querySelectorAll(':scope > div'));
   decorateBlocks(main);
-  sampleRUM.observe(main.querySelectorAll('picture'));
+
   sampleRUM.observe(main.querySelectorAll('div[data-block-name]'));
+  window.setTimeout(() => sampleRUM.observe(main.querySelectorAll('picture > img')), 1000);
 }
 
 /**
