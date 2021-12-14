@@ -318,20 +318,14 @@ export function debug(message, ...args) {
  * @returns {Object} containing sanitized meta data
  */
 async function getMetadataJson(path) {
-  let resp;
-  try {
-    resp = await fetch(`${path.split('.')[0]}?noredirect`);
-  } catch {
-    debug(`Could not retrieve metadata for ${path}`);
-  }
-
-  if (resp && resp.ok) {
-    const text = await resp.text();
+  const resp = await fetch(path.split('.')[0]);
+  const text = await resp.text();
+  const meta = {};
+  if (resp.status === 200 && text && text.includes('<head>')) {
     const headStr = text.split('<head>')[1].split('</head>')[0];
     const head = document.createElement('head');
     head.innerHTML = headStr;
     const metaTags = head.querySelectorAll(':scope > meta');
-    const meta = {};
     metaTags.forEach((metaTag) => {
       const name = metaTag.getAttribute('name') || metaTag.getAttribute('property');
       const value = metaTag.getAttribute('content');
@@ -341,9 +335,8 @@ async function getMetadataJson(path) {
         meta[name] = value;
       }
     });
-    return meta;
   }
-  return null;
+  return (JSON.stringify(meta));
 }
 
 let taxonomy;
@@ -1203,9 +1196,10 @@ export async function fetchBlogArticleIndex() {
  */
 
 export async function getBlogArticle(path) {
-  const meta = await getMetadataJson(`${path}.metadata.json`);
+  const json = await getMetadataJson(`${path}.metadata.json`);
+  const meta = JSON.parse(json);
 
-  if (meta) {
+  if (meta && meta['og:title']) {
     let title = meta['og:title'].trim();
     const trimEndings = ['|Adobe', '| Adobe'];
     trimEndings.forEach((ending) => {
