@@ -8,7 +8,7 @@ export default function decorateTags(blockEl) {
   const target = Array.from(tags).reduce((targets, tag) => {
     tag.classList.add('button');
     container.append(tag);
-    targets.push(tag.href);
+    targets.push(tag.textContent);
     return targets;
   }, []).join('; ');
   sampleRUM('loadtags', { target, source: `.${blockEl.getAttribute('data-block-name')}` });
