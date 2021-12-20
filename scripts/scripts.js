@@ -553,7 +553,7 @@ export function addPublishDependencies(url) {
   const urls = Array.isArray(url) ? url : [url];
   window.hlx = window.hlx || {};
   if (window.hlx.dependencies && Array.isArray(window.hlx.dependencies)) {
-    window.hlx.dependencies.concat(urls);
+    window.hlx.dependencies = window.hlx.dependencies.concat(urls);
   } else {
     window.hlx.dependencies = urls;
   }
@@ -1322,6 +1322,16 @@ async function loadLazy() {
   loadBlocks(main);
   loadCSS('/styles/lazy-styles.css');
   addFavIcon('/styles/favicon.svg');
+
+  if (window.location.pathname.endsWith('/')) {
+    // homepage, add query index to publish dependencies
+    const limit = 500;
+    let offset = 0;
+    while (offset < limit * 10) {
+      addPublishDependencies(`/${getLanguage()}/query-index.json?limit=${limit}&offset=${offset}`);
+      offset += limit;
+    }
+  }
 }
 
 /**
