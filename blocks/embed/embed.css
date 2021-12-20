@@ -22,6 +22,11 @@ main .embed img {
   max-width: 100%;
 }
 
+main .embed > div > div p a {
+  visibility: hidden;
+  word-break: break-word;
+}
+
 main .embed.embed-instagram {
   max-width: fit-content;
 }
