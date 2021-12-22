@@ -1,0 +1,30 @@
+@import url(../styles.css);
+
+#results .nbOfResults {
+  padding: 20px 0;
+}
+
+#results .result {
+  margin-top: 10px;
+  border: 1px solid lightgrey;
+}
+
+#results .path {
+  padding: 10px;
+  background-color: lightgray;
+  color: black;
+}
+
+#results .line {
+  padding: 10px;
+}
+
+#results .lineNumber {
+  margin: 0 5px;
+}
+
+#results .text font {
+  font-weight: bold;
+  background-color: lightcoral;
+  padding: 2px;
+}

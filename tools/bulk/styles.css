@@ -1,0 +1,62 @@
+@import url(https://www.hlx.page/tools/sidekick/app.css);
+
+body {
+  background-color: var(--hlx-sk-bg);
+  color: var(--hlx-sk-color);
+  font-family: var(--hlx-sk-font-family);
+  font-size: var(--hlx-sk-font-size);
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+a:any-link {
+  color: currentColor;
+}
+
+a.button,
+button {
+  background-color: transparent;
+  border: var(--hlx-sk-button-border);
+  border-radius: 6px;
+  color: var(--hlx-sk-button-color);
+  font-size: var(--hlx-sk-button-font-size);
+  line-height: var(--hlx-sk-line-height);
+  font-weight: var(--hlx-sk-button-font-weight);
+  text-align: center;
+  text-decoration: none;
+  white-space: nowrap;
+  padding: var(--hlx-sk-button-padding);
+  cursor: pointer;
+  outline: none;
+  margin: 10px 8px 0 0;
+}
+
+button:hover,
+button:focus,
+button.pressed,
+a.button:hover,
+a.button:focus,
+a.button.pressed {
+  background-color: var(--hlx-sk-button-hover-bg);
+  border-color: var(--hlx-sk-button-hover-border);
+  color: var(--hlx-sk-button-hover-color);
+}
+
+a.button:disabled,
+button:disabled {
+  color: var(--hlx-sk-button-disabled-color);
+  border: var(--hlx-sk-button-disabled-border);
+}
+
+a.button,
+button:disabled:hover {
+  background-color: var(--hlx-sk-button-disabled-hover-bg);
+}
+
+.hidden {
+  display: none !important;
+}
