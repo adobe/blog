@@ -93,7 +93,10 @@ function displayResults(total, time, searchString) {
 
           const text = document.createElement('span');
           text.classList.add('text');
-          text.innerHTML = line.replaceAll(searchString, `<font>${searchString}</font>`);
+          text.innerHTML = line
+            .replaceAll('<', '&lt;')
+            .replaceAll('>', '&gt;')
+            .replaceAll(searchString, `<font>${searchString}</font>`);
 
           const lineElement = document.createElement('div');
           lineElement.classList.add('line');
