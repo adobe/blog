@@ -142,6 +142,8 @@ async function loadContent(path) {
   return null;
 }
 
+const BATCH_SIZE = 100;
+
 async function search() {
   const searchString = (document.querySelector('#search input').value || '').trim();
   const pathFilter = (document.querySelector('#path').value || '').trim();
@@ -160,16 +162,34 @@ async function search() {
     loadingON('Searching....');
 
     const paths = await getPaths(pathFilter, limit);
+    let load = 0;
+    let index = 0;
+    const promises = [];
+    do {
+      if (load < BATCH_SIZE) {
+        const path = paths[index];
+        // eslint-disable-next-line no-loop-func
+        promises.push(new Promise((resolve) => {
+          getContent(path).then((c) => {
+            total += 1;
+            if (c && c.content.indexOf(searchString) !== -1) {
+              searchResults.push(c);
+            }
+            displayResults(total, (new Date().getTime() - start) / 1000, searchString);
+            resolve();
+          });
+        }));
 
-    paths.forEach((path) => {
-      getContent(path).then((c) => {
-        total += 1;
-        if (c && c.content.indexOf(searchString) !== -1) {
-          searchResults.push(c);
-        }
-        displayResults(total, (new Date().getTime() - start) / 1000, searchString);
-      });
-    });
+        load += 1;
+        index += 1;
+      } else {
+        load = 0;
+        // eslint-disable-next-line no-await-in-loop
+        await Promise.all(promises);
+      }
+    } while (index < paths.length);
+
+    await Promise.all(promises);
 
     displayResults(total, (new Date().getTime() - start) / 1000, searchString);
     loadingOFF();
