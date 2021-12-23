@@ -1,5 +1,13 @@
 @import url(../styles.css);
 
+#filters div {
+  display: flex;
+}
+
+#filters label {
+  min-width: 100px;
+}
+
 #search input {
   width: 300px;
 }

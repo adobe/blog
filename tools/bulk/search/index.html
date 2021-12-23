@@ -10,7 +10,11 @@
     <h1>Search and Replace (WIP)</h1>
   </header>
   <main>
-    <div id="search"><input type="text" value="Transformation digitale"><button>Search</button></div>
+    <div id="filters">
+      <div><label>Path filter:</label><input type="text" value="/en" id="path"></div>
+      <div><label>Limit:</label><input type="text" value="1000" id="limit"></div>
+    </div>
+    <div id="search"><input type="text" placeholder="Adobe Experience Manager"><button>Search</button></div>
     <div id="results"></div>
     <div id="loading" class="hlx-sk-overlay hidden">
       <div id="status" class="modal level-4 wait">Application is loading...</div>

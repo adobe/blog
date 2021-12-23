@@ -137,6 +137,10 @@ async function loadContent(path) {
 
 async function search() {
   const searchString = (document.querySelector('#search input').value || '').trim();
+  const pathFilter = (document.querySelector('#path').value || '').trim();
+  const limit = Number.parseInt(document.querySelector('#limit').value || -1, 10);
+
+  saveSearchParams();
 
   searchResults = [];
   lastIndexDisplayed = -1;
@@ -146,9 +150,9 @@ async function search() {
   displayResults(total, (new Date().getTime() - start) / 1000);
 
   if (searchString !== '') {
-    console.log('searching...', searchString);
+    loadingON('Searching....');
 
-    const paths = await getPaths(/^\/fr/g, 5000);
+    const paths = await getPaths(pathFilter, limit);
 
     paths.forEach((path) => {
       getContent(path).then((c) => {
@@ -161,6 +165,7 @@ async function search() {
     });
 
     displayResults(total, (new Date().getTime() - start) / 1000, searchString);
+    loadingOFF();
   }
 }
 
@@ -168,6 +173,28 @@ function setListeners() {
   // document.querySelector('#sync button').addEventListener('click', sync);
   // document.querySelector('#save button').addEventListener('click', save);
   document.querySelector('#search button').addEventListener('click', search);
+}
+
+function saveSearchParams() {
+  const searchString = (document.querySelector('#search input').value || '').trim();
+  const pathFilter = (document.querySelector('#path').value || '').trim();
+  const limit = Number.parseInt(document.querySelector('#limit').value || -1, 10);
+
+  window.localStorage.setItem('bulk.search.params', JSON.stringify({
+    searchString,
+    pathFilter,
+    limit,
+  }));
+}
+
+function loadSearchParams() {
+  const item = window.localStorage.getItem('bulk.search.params');
+  if (item) {
+    const o = JSON.parse(item);
+    document.querySelector('#search input').value = o.searchString;
+    document.querySelector('#path').value = o.pathFilter;
+    document.querySelector('#limit').value = o.limit;
+  }
 }
 
 async function init() {
@@ -180,6 +207,7 @@ async function init() {
     return;
   }
   loadingON('Config loaded');
+  loadSearchParams();
   // loadingON('Connecting now to Sharepoint...');
   // await connectToSP(async () => {
   //   loadingON('Connected to Sharepoint!');

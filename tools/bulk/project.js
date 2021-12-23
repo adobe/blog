@@ -46,7 +46,7 @@ async function getPaths(filter, limit = -1) {
   if (allPaths) {
     let filtered = allPaths;
     if (filter) {
-      filtered = allPaths.filter((path) => path.match(filter));
+      filtered = allPaths.filter((path) => path.startsWith(filter));
     }
     if (limit > 0) {
       filtered = filtered.slice(0, limit);
