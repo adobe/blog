@@ -41,7 +41,11 @@ let allPaths;
 async function getPaths(filter, limit = -1) {
   if (!allPaths) {
     allPaths = await loadSitemap(SITEMAP_ROOT) || [];
-    allPaths.sort();
+    allPaths.sort((a, b) => {
+      if (a > b) { return -1; }
+      if (a < b) { return 1; }
+      return 0;
+    });
   }
   if (allPaths) {
     let filtered = allPaths;

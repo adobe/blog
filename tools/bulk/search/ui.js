@@ -74,7 +74,11 @@ function displayResults(total, time, searchString) {
 
       const path = document.createElement('div');
       path.classList.add('path');
-      path.innerHTML = r.path;
+      const a = document.createElement('a');
+      a.href = r.path;
+      a.innerHTML = r.path;
+      a.target = '_new';
+      path.append(a);
 
       const lines = document.createElement('div');
       lines.classList.add('lines');
