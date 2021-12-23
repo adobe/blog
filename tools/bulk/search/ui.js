@@ -12,8 +12,7 @@
 /* eslint-disable no-use-before-define, no-console */
 
 import { getConfig } from '../config.js';
-import { debounce } from '../utils.js';
-import { getPaths, getURL } from '../project.js';
+import { getPaths } from '../project.js';
 
 const status = document.getElementById('status');
 const loading = document.getElementById('loading');
@@ -40,25 +39,36 @@ function setError(msg, error) {
   console.error(msg, error);
 }
 
-function displayResults(total, time, results, searchString) {
+let searchResults = [];
+let lastIndexDisplayed = -1;
+function displayResults(total, time, searchString) {
   const panel = document.getElementById('results');
-  panel.innerHTML = '';
-  if (!results || results.length === 0) {
+  if (!searchResults || searchResults.length === 0) {
+    panel.innerHTML = '';
+    lastIndexDisplayed = -1;
     if (searchString) {
       const child = document.createElement('div');
-      child.classList.add('noresult');
+      child.classList.add('noResult');
       child.innerHTML = `No results for "${searchString}" in ${total} files (${time}s).`;
       panel.appendChild(child);
     }
   } else {
-    const numberOfResults = document.createElement('div');
-    numberOfResults.classList.add('nbOfResults');
+    let numberOfResults;
+    if (lastIndexDisplayed < 0) {
+      panel.innerHTML = '';
+      numberOfResults = document.createElement('div');
+      numberOfResults.classList.add('nbOfResults');
+      panel.appendChild(numberOfResults);
+    } else {
+      numberOfResults = panel.querySelector('.nbOfResults');
+    }
 
-    numberOfResults.innerHTML = `"${searchString}" has been found in ${results.length}/${total} files (${time}s).`;
+    numberOfResults.innerHTML = `"${searchString}" has been found in ${searchResults.length}/${total} files (${time}s).`;
 
-    panel.appendChild(numberOfResults);
+    let i = lastIndexDisplayed + 1;
+    for (; i < searchResults.length; i += 1) {
+      const r = searchResults[i];
 
-    results.forEach((r) => {
       const child = document.createElement('div');
       child.classList.add('result');
 
@@ -70,12 +80,12 @@ function displayResults(total, time, results, searchString) {
       lines.classList.add('lines');
 
       const split = r.content.split('\n');
-      for (let i = 0; i < split.length; i += 1) {
-        const line = split[i];
+      for (let l = 0; l < split.length; l += 1) {
+        const line = split[l];
         if (line.indexOf(searchString) !== -1) {
           const lineNumber = document.createElement('span');
           lineNumber.classList.add('lineNumber');
-          lineNumber.innerHTML = `${i + 1}: `;
+          lineNumber.innerHTML = `${l + 1}: `;
 
           const text = document.createElement('span');
           text.classList.add('text');
@@ -93,7 +103,8 @@ function displayResults(total, time, results, searchString) {
       child.appendChild(path);
       child.appendChild(lines);
       panel.appendChild(child);
-    });
+    }
+    lastIndexDisplayed = i - 1;
   }
 }
 
@@ -109,7 +120,7 @@ async function getContent(path) {
 
 async function loadContent(path) {
   const mdPath = `${path}.md`;
-  const res = await fetch(getURL(mdPath));
+  const res = await fetch(mdPath);
   if (res.ok) {
     const text = await res.text();
     const o = {
@@ -124,54 +135,39 @@ async function loadContent(path) {
   return null;
 }
 
-let lastSearch = '';
 async function search() {
   const searchString = (document.querySelector('#search input').value || '').trim();
-  if (searchString === lastSearch) return;
 
-  const searchResults = [];
+  searchResults = [];
+  lastIndexDisplayed = -1;
+
   let total = 0;
   const start = new Date().getTime();
   displayResults(total, (new Date().getTime() - start) / 1000);
 
-  lastSearch = searchString;
-
   if (searchString !== '') {
     console.log('searching...', searchString);
 
-    const paths = await getPaths();
+    const paths = await getPaths(/^\/fr/g, 5000);
 
     paths.forEach((path) => {
       getContent(path).then((c) => {
         total += 1;
         if (c && c.content.indexOf(searchString) !== -1) {
           searchResults.push(c);
-          displayResults(total, (new Date().getTime() - start) / 1000, searchResults, searchString);
         }
+        displayResults(total, (new Date().getTime() - start) / 1000, searchString);
       });
     });
 
-    // const promises = paths.map(async (path) => {
-    //   total += 1;
-    //   const c = await getContent(path);
-    //   if (c && c.content.indexOf(searchString) !== -1) {
-    //     searchResults.push(c);
-    // displayResults(total, (new Date().getTime() - start) / 1000, searchResults, searchString);
-    //   }
-    // });
-
-    // await Promise.all(promises);
-
-    // if (searchResults.length === 0) {
-    //   displayResults(total, (new Date().getTime() - start) / 1000, null, searchString);
-    // }
+    displayResults(total, (new Date().getTime() - start) / 1000, searchString);
   }
 }
 
 function setListeners() {
   // document.querySelector('#sync button').addEventListener('click', sync);
   // document.querySelector('#save button').addEventListener('click', save);
-  document.querySelector('#search button').addEventListener('click', debounce(search, 500));
+  document.querySelector('#search button').addEventListener('click', search);
 }
 
 async function init() {

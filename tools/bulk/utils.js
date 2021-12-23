@@ -10,6 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
+async function asyncForEach(array, callback) {
+  for (let index = 0; index < array.length; index += 1) {
+    // eslint-disable-next-line no-await-in-loop
+    await callback(array[index], index, array);
+  }
+}
+
 function debounce(func, wait, immediate) {
   let timeout;
   return (...args) => {
@@ -27,6 +34,6 @@ function debounce(func, wait, immediate) {
 }
 
 export {
-  // eslint-disable-next-line import/prefer-default-export
+  asyncForEach,
   debounce,
 };

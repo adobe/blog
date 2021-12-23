@@ -10,38 +10,53 @@
  * governing permissions and limitations under the License.
  */
 
-// const OWNER = 'adobe';
-// const REPO = 'blog';
-// const BRANCH = 'main';
-const INDEX_PATH = '/fr/query-index.json';
+const SITEMAP_ROOT = '/sitemap-index.xml';
 
-// const HOST = `https://${BRANCH}--${REPO}--${OWNER}.hlx.live`;
-// const INDEX_URL = `${HOST}${INDEX_PATH}`;
+async function loadSitemap(sitemapURL) {
+  const resp = await fetch(sitemapURL);
+  const xml = await resp.text();
+  const sitemap = new DOMParser().parseFromString(xml, 'text/xml');
+  const subSitemaps = [...sitemap.querySelectorAll('sitemap loc')];
+  let paths = [];
+  const promises = subSitemaps.map((loc) => new Promise((resolve) => {
+    const subSitemapURL = new URL(loc.textContent);
+    loadSitemap(subSitemapURL.pathname).then((result) => {
+      paths = paths.concat(result);
+      resolve();
+    });
+  }));
 
-// const LIMIT = -1;
-const LIMIT = 1000;
+  await Promise.all(promises);
 
-let fetched;
-async function getPaths() {
-  if (fetched) return fetched;
-  const res = await fetch(INDEX_PATH);
-  if (res.ok) {
-    const json = await res.json();
-    fetched = json.data.map((d) => d.path);
-    if (LIMIT > 0) {
-      fetched = fetched.slice(0, LIMIT);
+  const urlLocs = sitemap.querySelectorAll('url loc');
+  urlLocs.forEach((loc) => {
+    const locURL = new URL(loc.textContent);
+    paths.push(locURL.pathname);
+  });
+
+  return paths;
+}
+
+let allPaths;
+async function getPaths(filter, limit = -1) {
+  if (!allPaths) {
+    allPaths = await loadSitemap(SITEMAP_ROOT) || [];
+    allPaths.sort();
+  }
+  if (allPaths) {
+    let filtered = allPaths;
+    if (filter) {
+      filtered = allPaths.filter((path) => path.match(filter));
     }
-    return fetched;
+    if (limit > 0) {
+      filtered = filtered.slice(0, limit);
+    }
+    return filtered;
   }
   return [];
 }
 
-function getURL(path) {
-  return path;
-  // return `${HOST}${path}`;
-}
-
 export {
+  // eslint-disable-next-line import/prefer-default-export
   getPaths,
-  getURL,
 };

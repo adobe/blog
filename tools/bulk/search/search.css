@@ -1,6 +1,10 @@
 @import url(../styles.css);
 
-#results .nbOfResults {
+#search input {
+  width: 300px;
+}
+
+#results .nbOfResults, #results .noResult {
   padding: 20px 0;
 }
 
