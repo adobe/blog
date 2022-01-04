@@ -108,18 +108,6 @@ window.hlx.initSidekick({
   hlx3: true,
   host: 'blog.adobe.com',
   pushDownSelector: 'header',
-  specialViews: [
-    {
-      path: '/de/**.json',
-      js: (container, json) => {
-        const { limit, total, data } = JSON.parse(json);
-        container.innerHTML = `Custom data view - Showing ${limit} of ${total} records<ol>
-          ${data.map(({ title, path }) => `<li><a href="${path}>${title}</a>`).join('')}
-          </ol>`;
-      },
-      css: '.hlx-sk-special-view, .hlx-sk-special-view a:any-link { color: orangered }',
-    },
-  ],
   plugins: [
     // TAGGER -----------------------------------------------------------------------
     {
