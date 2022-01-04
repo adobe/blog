@@ -39,33 +39,24 @@ async function checkHomepage(url) {
         if (staticMarker) {
           assert.fail('This homepage is static: backend must be down!');
         }
+        assert.ok(await $browser.findElement($driver.By.css('div.featured-article')), 'no featured article');
       }
-      console.log('Waiting for ".load-more" element...');
-      return $browser.waitForAndFindElement($driver.By.css('.load-more'), 60000);
-    }).then(() => {
-      console.log('".load-more" element found. Retrieving the articles...');
-      return $browser.findElements($driver.By.css('.article-card, .featured-article-card'));
-    }).then((articles) => {
-      assert.ok(articles.length >= 12, `Expected at least 12 articles, got ${articles.length}`);
-      console.log(`Found ${articles.length} articles in the page. Retrieving featured article...`);
-      return $browser.findElement($driver.By.css('.featured-article-card'), 60000);
-    })
-    .then(() => console.log('Found featured article. All good!'));
+    });
 }
 
-// Check the default and all regional homepages
+// Check the homepage
 (async () => {
   await Promise.all([
     '/',
-    '/br/',
-    '/de/',
-    '/en/apac.html',
-    '/en/uk.html',
-    '/es/',
-    '/es/latam.html',
-    '/fr/',
-    '/it/',
-    '/jp/',
-    '/ko/',
+    // '/br/',
+    // '/de/',
+    // '/en/apac',
+    // '/en/uk',
+    // '/es/',
+    // '/es/latam',
+    // '/fr/',
+    // '/it/',
+    // '/jp/',
+    // '/ko/',
   ].map((path) => checkHomepage(`${baseUrl}${path}`)));
 })();

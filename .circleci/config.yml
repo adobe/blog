@@ -19,7 +19,7 @@ jobs:
       - helix-post-deploy/monitoring:
           newrelic_name: Adobe Blog - Uptime (prod)
           newrelic_url: https://blog.adobe.com
-          newrelic_script: ./monitoring/health-check.js
+          newrelic_script: ./.monitoring/health-check.js
           newrelic_group_policy: Customer Sites
           newrelic_locations: AWS_US_WEST_1
           newrelic_frequency: 1
@@ -28,21 +28,21 @@ jobs:
           newrelic_name: Adobe Blog - Content (prod)
           newrelic_url: https://blog.adobe.com
           newrelic_type: browser
-          newrelic_script: ./monitoring/content-check.js
+          newrelic_script: ./.monitoring/content-check.js
           newrelic_group_policy: Customer Sites
 
       - helix-post-deploy/monitoring:
           newrelic_name: Adobe Blog - Content (live)
           newrelic_url: https://main--blog--adobe.hlx.live
           newrelic_type: browser
-          newrelic_script: ./monitoring/content-check.js
+          newrelic_script: ./.monitoring/content-check.js
           newrelic_group_policy: Customer Sites
       
       - helix-post-deploy/monitoring:
           newrelic_name: Adobe Blog - Content (preview)
           newrelic_url: https://main--blog--adobe.hlx3.page
           newrelic_type: browser
-          newrelic_script: ./monitoring/content-check.js
+          newrelic_script: ./.monitoring/content-check.js
           newrelic_group_policy: Customer Sites
 
 workflows:
