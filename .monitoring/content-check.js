@@ -39,9 +39,9 @@ async function checkHomepage(url) {
         if (staticMarker) {
           assert.fail('This homepage is static: backend must be down!');
         }
+        assert.ok(await $browser.findElement($driver.By.css('div.featured-article')), 'no featured article');
       }
-    })
-    .then(() => console.log('All good!'));
+    });
 }
 
 // Check the default and all regional homepages
@@ -50,10 +50,10 @@ async function checkHomepage(url) {
     '/',
     '/br/',
     '/de/',
-    '/en/apac.html',
-    '/en/uk.html',
+    '/en/apac',
+    '/en/uk',
     '/es/',
-    '/es/latam.html',
+    '/es/latam',
     '/fr/',
     '/it/',
     '/jp/',
