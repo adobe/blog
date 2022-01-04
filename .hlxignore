@@ -3,5 +3,4 @@
 *.json
 karma.config.js
 LICENSE
-monitoring/*
 test/*
