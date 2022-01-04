@@ -150,21 +150,19 @@ function loadPrivacy() {
 
   // Configure Privacy
   window.fedsConfig = {
+    locale: getLanguage(), // use supported locale
+    disableTarget: true, // this will bypass Target A/B tests
+    content: {
+      experience: 'privacy', // authored experience with Privacy component
+    },
     privacy: {
-      otDomainId: getOtDomainId(),
+      otDomainId: getOtDomainId(), // your OneTrust domain ID - see list of domains
+      footerLinkSelector: '[href="https://www.adobe.com/#openPrivacy"]', // CSS selector that will open the privacy modal
     },
   };
 
-  const preferenceCenter = document.querySelector('[href="https://www.adobe.com/#openPrivacy"]');
-  if (preferenceCenter) {
-    preferenceCenter.addEventListener('click', (event) => {
-      event.preventDefault();
-      window?.adobePrivacy?.showConsentPopup();
-    });
-  }
-
   const env = getHelixEnv().name === 'prod' ? '' : 'stage.';
-  loadScript(`https://www.${env}adobe.com/etc/beagle/public/globalnav/adobe-privacy/latest/privacy.min.js`);
+  loadScript(`https://www.${env}adobe.com/etc.clientlibs/globalnav/clientlibs/base/privacy.standalone.js`);
 }
 
 loadPrivacy();
