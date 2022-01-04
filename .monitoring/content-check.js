@@ -44,19 +44,19 @@ async function checkHomepage(url) {
     });
 }
 
-// Check the default and all regional homepages
+// Check the homepage
 (async () => {
   await Promise.all([
     '/',
-    '/br/',
-    '/de/',
-    '/en/apac',
-    '/en/uk',
-    '/es/',
-    '/es/latam',
-    '/fr/',
-    '/it/',
-    '/jp/',
-    '/ko/',
+    // '/br/',
+    // '/de/',
+    // '/en/apac',
+    // '/en/uk',
+    // '/es/',
+    // '/es/latam',
+    // '/fr/',
+    // '/it/',
+    // '/jp/',
+    // '/ko/',
   ].map((path) => checkHomepage(`${baseUrl}${path}`)));
 })();
