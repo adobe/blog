@@ -1,0 +1,212 @@
+<html>
+    <head>
+        <title>blog.adobe.com Speaker Image</title>
+        <style>
+            body {
+                font-family: "Adobe Clean", Arial, Helvetica, sans-serif;
+                color: white;
+                margin: 0;
+                background-color: #9093fa;
+            }
+
+            h1 {
+                margin-top: 32px;
+                margin-bottom: 0px;
+            }
+
+            .card-feed {
+                margin-top: 50px;
+                background-image: url(https://ec-prod.scene7.com/is/image/ECPROD/speakers-bg-1920-short?$pjpeg$&jpegSize=1920&wid=1920);
+                background-repeat: no-repeat;
+                background-position-y: top;
+                background-size: 100%;
+                padding: 100px;
+            }
+
+            p {
+                max-width: 900px;
+                margin: 10px auto;
+            }
+            
+            .card {
+                width: 228px;
+                background-color: #282828;
+                color: white;
+                margin: auto;
+                border-radius: 5px;
+                text-align: left;
+                box-shadow: 3px 3px 5px #00000080;
+            }
+
+            .card-body {
+                padding: 16px;
+                height: 168px;
+            }
+
+            .card h3 {
+                margin-top: 0;
+                font-size: 1.125rem;
+                line-height: 1.375rem;
+            }
+
+            .card p {
+                font-size: .875rem;
+                line-height: 1.3125rem;
+                margin: 0.6875rem 0 0;
+            }
+
+            .wrapper {
+                width: 228px;
+                height: 228px;
+                position: relative;
+                margin: auto;
+            }
+            .wrapper>img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                border-radius: 5px 5px 0 0;
+            }
+
+            .grid.highlight {
+                border: 3px solid green;
+            }
+            .grid {
+                position: absolute;
+                display: grid;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+            }
+            .grid>.safe {
+                border-width: 2px;
+                border-style: solid;
+                border-color: red;
+                background-color: #ff000040;
+                text-shadow: 0px 0px 2px red;
+                padding: 10px;
+
+            }
+
+            .grid.card>.safe{
+                border-color: green;
+                background-color: #00ff0040;
+                text-shadow: 0px 0px 2px green;
+            }
+
+
+
+            .grid>div {
+                overflow:hidden;
+                display: flex;
+                align-items: top;
+                justify-content: left;
+                font-size: 1.5em;
+                color: white;
+                }
+
+            main {
+                text-align: center;
+            }
+
+        </style>
+ 
+    </head>
+    <body>
+        <main>
+            <h1>Adobe Speaker Image Tester</h1>
+            <p>Drag your image onto the card below to see what it will look like on your speaker card.</p>
+            <div class="card-feed">
+            <div class="card">
+            <div class="wrapper">
+                <img src="https://www.adobe.com/content/dam/www/us/en/max/2021/speakers/Jason-Levine_1564001479871001NKYu.jpg">
+            </div>
+            <div class="card-body">
+                <h3 id="name">Jason Levine</h3>
+                <p id="title">Principal Evangelist for Adobe Creative Cloud</p>
+            </div>
+            </div>
+        </div>
+        </main>
+        <script>
+
+function capFirst(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
+function getRandomInt(min, max) {
+  	return Math.floor(Math.random() * (max - min)) + min;
+}
+
+function generateName(){
+	var name1 = ["able","absolute","adorable","adventurous","academic","acclaimed","accomplished","acrobatic","active","adept","admirable","admired","adorable","adored","advanced","aged","altruistic","amazing","ambitious","amused","amusing","anchored","angelic","animated","apt","artistic","astonishing","athletic","attentive","authentic","awesome","beautiful","beloved","big-hearted","blissful","brave","bright","brilliant","celebrated","charming","cheerful","classic","clever","competent","cool","courageous","courteous","creative","cute","dapper","darling","dazzling","dear","dearest","delightful","ecstatic","electric","elegant"];
+
+	var name2 = ["art","world","thanks","music","method","data","understanding","theory","literature","knowledge","power","ability","love","science","nature","fact","idea","story","industry","media","community","quality","player","strategy","technology","freedom"];
+
+	var name = capFirst(name1[getRandomInt(0, name1.length + 1)]) + ' ' + capFirst(name2[getRandomInt(0, name2.length + 1)]);
+	return name;
+
+}
+
+let dropArea = document.querySelector('.wrapper');
+document.getElementById('name').innerText = generateName();
+
+
+// Prevent default drag behaviors
+;['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+  dropArea.addEventListener(eventName, preventDefaults, false)   
+  document.body.addEventListener(eventName, preventDefaults, false)
+})
+
+// Highlight drop area when item is dragged over it
+;['dragenter', 'dragover'].forEach(eventName => {
+  dropArea.addEventListener(eventName, highlight, false)
+})
+
+;['dragleave', 'drop'].forEach(eventName => {
+  dropArea.addEventListener(eventName, unhighlight, false)
+})
+
+// Handle dropped files
+dropArea.addEventListener('drop', handleDrop, false)
+
+function preventDefaults (e) {
+  e.preventDefault()
+  e.stopPropagation()
+}
+
+function highlight(e) {
+  dropArea.classList.add('highlight')
+}
+
+function unhighlight(e) {
+  dropArea.classList.remove('highlight')
+}
+
+function handleDrop(e) {
+  var dt = e.dataTransfer
+  var files = dt.files
+
+  handleFiles(files)
+  document.getElementById('name').innerText = generateName();
+}
+
+
+function handleFiles(files) {
+  files = [...files]
+  files.forEach(previewFile)
+}
+
+function previewFile(file) {
+  let reader = new FileReader()
+  reader.readAsDataURL(file)
+  reader.onloadend = function() {
+    const $wrapper=document.querySelector('.wrapper');
+    $wrapper.innerHTML=`<img src="${reader.result}">`;
+    }
+}
+
+        </script>
+    </body>
+</html>
