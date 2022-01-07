@@ -36,6 +36,7 @@
                 border-radius: 5px;
                 text-align: left;
                 box-shadow: 3px 3px 5px #00000080;
+                position: relative;
             }
 
             .card-body {
@@ -68,43 +69,17 @@
                 border-radius: 5px 5px 0 0;
             }
 
-            .grid.highlight {
-                border: 3px solid green;
-            }
-            .grid {
+            .overlay > img {
+                width: 228px;
+                height: 228px;
                 position: absolute;
-                display: grid;
                 top: 0;
                 left: 0;
-                right: 0;
-                bottom: 0;
-            }
-            .grid>.safe {
-                border-width: 2px;
-                border-style: solid;
-                border-color: red;
-                background-color: #ff000040;
-                text-shadow: 0px 0px 2px red;
-                padding: 10px;
-
             }
 
-            .grid.card>.safe{
-                border-color: green;
-                background-color: #00ff0040;
-                text-shadow: 0px 0px 2px green;
+            .overlay > img:hover {
+                display: none;
             }
-
-
-
-            .grid>div {
-                overflow:hidden;
-                display: flex;
-                align-items: top;
-                justify-content: left;
-                font-size: 1.5em;
-                color: white;
-                }
 
             main {
                 text-align: center;
@@ -121,6 +96,9 @@
             <div class="card">
             <div class="wrapper">
                 <img src="https://www.adobe.com/content/dam/www/us/en/max/2021/speakers/Jason-Levine_1564001479871001NKYu.jpg">
+            </div>
+            <div class="overlay">
+                <img src="./speaker_guideline_2x.png">
             </div>
             <div class="card-body">
                 <h3 id="name">Jason Levine</h3>
