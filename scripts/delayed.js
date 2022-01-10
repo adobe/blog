@@ -150,11 +150,6 @@ function loadPrivacy() {
 
   // Configure Privacy
   window.fedsConfig = {
-    locale: getLanguage(), // use supported locale
-    disableTarget: true, // this will bypass Target A/B tests
-    content: {
-      experience: 'privacy', // authored experience with Privacy component
-    },
     privacy: {
       otDomainId: getOtDomainId(), // your OneTrust domain ID - see list of domains
       footerLinkSelector: '[href="https://www.adobe.com/#openPrivacy"]', // CSS selector that will open the privacy modal
@@ -162,7 +157,7 @@ function loadPrivacy() {
   };
 
   const env = getHelixEnv().name === 'prod' ? '' : 'stage.';
-  loadScript(`https://www.${env}adobe.com/etc.clientlibs/globalnav/clientlibs/base/privacy.standalone.js`);
+  loadScript(`https://www.${env}adobe.com/etc.clientlibs/globalnav/clientlibs/base/privacy-standalone.js`);
 }
 
 loadPrivacy();
