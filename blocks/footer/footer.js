@@ -115,11 +115,19 @@ class Footer {
     const regionButton = createTag('a', {
       class: 'footer-region-button',
       id: 'region-button',
-      'aria-haspopup': true,
       'aria-expanded': false,
+      'aria-haspopup': true,
+      'aria-label': placeholders['change-language'],
       role: 'button',
+      tabindex: 0,
     });
     regionButton.addEventListener('click', this.toggleMenu);
+    regionButton.addEventListener('focus', () => {
+      window.addEventListener('keydown', this.toggleOnKey);
+    });
+    regionButton.addEventListener('blur', () => {
+      window.removeEventListener('keydown', this.toggleOnKey);
+    });
     const regionText = createTag('span', { class: 'footer-region-text' });
     regionText.textContent = placeholders['change-language'];
     regionButton.insertAdjacentHTML('afterbegin', GLOBE_IMG);
@@ -136,7 +144,10 @@ class Footer {
     regionLinks.forEach((link) => {
       const selected = link.parentNode.nodeName === 'STRONG';
       const options = { class: 'footer-region-option' };
-      if (selected) { options.class += ' footer-region-selected'; }
+      if (selected) {
+        options.class += ' footer-region-selected';
+        options['aria-current'] = 'page';
+      }
       const li = createTag('li', options);
       li.append(link);
       regionOptions.append(li);
@@ -225,6 +236,12 @@ class Footer {
       window.addEventListener('click', this.closeOnDocClick);
     }
     el.setAttribute('aria-expanded', true);
+  }
+
+  toggleOnKey = (e) => {
+    if (e.code === 'Space' || e.code === 'Enter') {
+      this.toggleMenu(e);
+    }
   }
 
   closeOnEscape = (e) => {
