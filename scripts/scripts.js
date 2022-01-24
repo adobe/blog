@@ -268,8 +268,17 @@ export function getHelixEnv() {
   let envName = sessionStorage.getItem('helix-env');
   if (!envName) envName = 'prod';
   const envs = {
+    dev: {
+      ims: 'stg1',
+      subdomain: 'dev02.',
+      adobeIO: 'cc-collab-stage.adobe.io',
+      adminconsole: 'stage.adminconsole.adobe.com',
+      account: 'stage.account.adobe.com',
+      target: false,
+    },
     stage: {
       ims: 'stg1',
+      subdomain: 'stage.',
       adobeIO: 'cc-collab-stage.adobe.io',
       adminconsole: 'stage.adminconsole.adobe.com',
       account: 'stage.account.adobe.com',
@@ -277,6 +286,7 @@ export function getHelixEnv() {
     },
     prod: {
       ims: 'prod',
+      subdomain: '',
       adobeIO: 'cc-collab.adobe.io',
       adminconsole: 'adminconsole.adobe.com',
       account: 'account.adobe.com',
@@ -1265,6 +1275,34 @@ export function loadScript(url, callback, type) {
   return script;
 }
 
+function loadPrivacy() {
+  function getOtDomainId() {
+    const domains = {
+      'adobe.com': '7a5eb705-95ed-4cc4-a11d-0cc5760e93db',
+      'hlx.page': '3a6a37fe-9e07-4aa9-8640-8f358a623271',
+      'adobeaemcloud.com': '70cd62b6-0fe3-4e20-8788-ef0435b8cdb1',
+    };
+
+    const currentDomain = Object.keys(domains)
+      .find((domain) => window.location.host.indexOf(domain) > -1);
+
+    return `${domains[currentDomain] || domains[Object.keys(domains)[0]]}`;
+  }
+
+  // Configure Privacy
+  window.fedsConfig = {
+    privacy: {
+      otDomainId: getOtDomainId(), // your OneTrust domain ID - see list of domains
+      footerLinkSelector: '[href="https://www.adobe.com/#openPrivacy"]', // CSS selector that will open the privacy modal
+    },
+  };
+
+  const env = getHelixEnv().subdomain;
+  loadScript(`https://www.${env}adobe.com/etc.clientlibs/globalnav/clientlibs/base/privacy-standalone.js`);
+}
+
+loadPrivacy();
+
 /**
  * Loads everything needed to get to LCP.
  */
@@ -1322,6 +1360,7 @@ async function loadLazy() {
   loadBlocks(main);
   loadCSS('/styles/lazy-styles.css');
   addFavIcon('/styles/favicon.svg');
+  loadPrivacy();
 
   if (window.location.pathname.endsWith('/')) {
     // homepage, add query index to publish dependencies
