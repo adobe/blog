@@ -1360,7 +1360,6 @@ async function loadLazy() {
   loadBlocks(main);
   loadCSS('/styles/lazy-styles.css');
   addFavIcon('/styles/favicon.svg');
-  loadPrivacy();
 
   if (window.location.pathname.endsWith('/')) {
     // homepage, add query index to publish dependencies
