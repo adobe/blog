@@ -60,8 +60,8 @@ function copyToClipboard(button) {
 
 function buildSharing() {
   const url = encodeURIComponent(window.location.href);
-  const title = document.querySelector('h1').textContent;
-  const description = getMetadata('description');
+  const title = encodeURIComponent(document.querySelector('h1').textContent);
+  const description = encodeURIComponent(getMetadata('description'));
   const sharing = document.createElement('div');
   sharing.classList.add('article-byline-sharing');
   sharing.innerHTML = `<span>
