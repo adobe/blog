@@ -152,18 +152,18 @@ main .article-byline .article-byline-sharing svg {
   width: 22px;
 }
 
-main .article-byline .article-byline-sharing a[title~="Twitter"]:hover svg,
-main .article-byline .article-byline-sharing a[title~="Twitter"]:focus svg {
+main .article-byline .article-byline-sharing a[href*="twitter"]:hover svg,
+main .article-byline .article-byline-sharing a[href*="twitter"]:focus svg {
   fill: #1DA1F2;
 }
 
-main .article-byline .article-byline-sharing a[title~="LinkedIn"]:hover svg,
-main .article-byline .article-byline-sharing a[title~="LinkedIn"]:focus svg {
+main .article-byline .article-byline-sharing a[href*="linkedin"]:hover svg,
+main .article-byline .article-byline-sharing a[href*="linkedin"]:focus svg {
   fill: #0077b5;
 }
 
-main .article-byline .article-byline-sharing a[title~="Facebook"]:hover svg,
-main .article-byline .article-byline-sharing a[title~="Facebook"]:focus svg {
+main .article-byline .article-byline-sharing a[href*="facebook"]:hover svg,
+main .article-byline .article-byline-sharing a[href*="facebook"]:focus svg {
   fill: #3b5998;
 }
 
