@@ -14,14 +14,12 @@ async function populateAuthorInfo(authorLink, imgContainer, url, name, eager = f
       const src = new URL(placeholderImg.getAttribute('src'), new URL(url));
       const picture = createOptimizedPicture(src, name, eager, [{ width: 200 }]);
       imgContainer.append(picture);
-
       const img = picture.querySelector('img');
       if (!img.complete) {
         img.addEventListener('load', () => {
           // remove default background image to avoid halo
           imgContainer.style.backgroundImage = 'none';
         });
-
         img.addEventListener('error', () => {
           // removing 404 img will reveal fallback background img
           img.remove();
@@ -36,6 +34,58 @@ async function populateAuthorInfo(authorLink, imgContainer, url, name, eager = f
     p.innerHTML = authorLink.innerHTML;
     authorLink.replaceWith(p);
   }
+}
+
+/**
+ * Creates an SVG tag using the specified ID.
+ * @param {string} id The ID
+ * @returns {element} The SVG tag
+ */
+function createSVG(id) {
+  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  const use = document.createElementNS('http://www.w3.org/2000/svg', 'use');
+  use.setAttributeNS('http://www.w3.org/1999/xlink', 'href', `/icons/icons.svg#${id}`);
+  svg.appendChild(use);
+  return svg;
+}
+
+function copyToClipboard(button) {
+  navigator.clipboard.writeText(window.location.href).then(() => {
+    button.classList.add('copy-success');
+  }, () => {
+    button.classList.add('copy-failure');
+  });
+}
+
+function buildSharing() {
+  const url = encodeURIComponent(window.location.href);
+  const sharing = document.createElement('div');
+  sharing.classList.add('article-byline-sharing');
+  sharing.innerHTML = `<span>
+      <a target="_blank" href="http://twitter.com/share?&url=${url}" title="Share on Twitter">
+        ${createSVG('twitter').outerHTML}
+      </a>
+    </span>
+    <span>
+      <a target="_blank" href="https://www.linkedin.com/sharing/share-offsite/?url=${url}" title="Share on LinkedIn">
+        ${createSVG('linkedin').outerHTML}
+      </a>
+    </span>
+    <span>
+      <a target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=${url}" title="Share on Facebook">
+        ${createSVG('facebook').outerHTML}
+      </a>
+    </span>
+    <span>
+      <a id="copy-to-clipboard" title="Copy to Clipboard">
+        ${createSVG('link').outerHTML}
+      </a>
+    </span>`;
+  const copyButton = sharing.querySelector('#copy-to-clipboard');
+  copyButton.addEventListener('click', () => {
+    copyToClipboard(copyButton);
+  });
+  return sharing;
 }
 
 export default async function decorateArticleHeader(blockEl, blockName, document, eager) {
@@ -64,8 +114,10 @@ export default async function decorateArticleHeader(blockEl, blockName, document
   authorImg.classList = 'article-author-image';
   authorImg.style.backgroundImage = 'url(/blocks/article-header/adobe-logo.svg)';
   bylineContainer.prepend(authorImg);
-
   populateAuthorInfo(authorLink, authorImg, authorURL, authorName, eager);
+  // sharing
+  const shareBlock = buildSharing();
+  bylineContainer.append(shareBlock);
   // feature img
   const featureImgContainer = childrenEls[3];
   featureImgContainer.classList.add('article-feature-image');
