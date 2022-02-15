@@ -1,35 +1,4 @@
 user-agent: *
-disallow: /br/*
-disallow: /de/*
-disallow: /en/*
-disallow: /es/*
-disallow: /fr/*
-disallow: /it/*
-disallow: /jp/*
-disallow: /ko/*
+allow: /
 
-user-agent: *
-allow: /$
-allow: /br/$
-allow: /de/$
-allow: /en/$
-allow: /en/uk
-allow: /en/apac
-allow: /es/$
-allow: /es/latam
-allow: /fr/$
-allow: /it/$
-allow: /jp/$
-allow: /ko/$
-allow: /*/publish/
-allow: /*/authors/
-allow: /*/topics/
-
-sitemap: https://blog.adobe.com/en/sitemap.xml
-sitemap: https://blog.adobe.com/br/sitemap.xml
-sitemap: https://blog.adobe.com/de/sitemap.xml
-sitemap: https://blog.adobe.com/es/sitemap.xml
-sitemap: https://blog.adobe.com/fr/sitemap.xml
-sitemap: https://blog.adobe.com/it/sitemap.xml
-sitemap: https://blog.adobe.com/jp/sitemap.xml
-sitemap: https://blog.adobe.com/ko/sitemap.xml
+sitemap: https://blog.adobe.com/sitemap-index.xml
