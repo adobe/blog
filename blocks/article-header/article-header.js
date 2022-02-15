@@ -1,6 +1,7 @@
 import {
   buildFigure,
   createOptimizedPicture,
+  getMetadata,
 } from '../../scripts/scripts.js';
 
 async function populateAuthorInfo(authorLink, imgContainer, url, name, eager = false) {
@@ -59,20 +60,22 @@ function copyToClipboard(button) {
 
 function buildSharing() {
   const url = encodeURIComponent(window.location.href);
+  const title = document.querySelector('h1').textContent;
+  const description = getMetadata('description');
   const sharing = document.createElement('div');
   sharing.classList.add('article-byline-sharing');
   sharing.innerHTML = `<span>
-      <a target="_blank" href="http://twitter.com/share?&url=${url}" title="Share on Twitter">
+      <a target="_blank" href="http://twitter.com/share?&url=${url}&text=${title}">
         ${createSVG('twitter').outerHTML}
       </a>
     </span>
     <span>
-      <a target="_blank" href="https://www.linkedin.com/sharing/share-offsite/?url=${url}" title="Share on LinkedIn">
+      <a target="_blank" href="http://www.linkedin.com/shareArticle?mini=true&url=${url}&title=${title}&summary=${description || ''}">
         ${createSVG('linkedin').outerHTML}
       </a>
     </span>
     <span>
-      <a target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=${url}" title="Share on Facebook">
+      <a target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=${url}">
         ${createSVG('facebook').outerHTML}
       </a>
     </span>
