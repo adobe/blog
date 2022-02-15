@@ -80,7 +80,7 @@ function buildSharing() {
       </a>
     </span>
     <span>
-      <a id="copy-to-clipboard" title="Copy to Clipboard">
+      <a id="copy-to-clipboard">
         ${createSVG('link').outerHTML}
       </a>
     </span>`;
