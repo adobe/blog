@@ -3,6 +3,7 @@ version: 1
 sitemaps:
   blog:
     origin: https://blog.adobe.com
+    lastmod: YYYY-MM-DD
     languages:
       en:
         source: /en/query-index.json
