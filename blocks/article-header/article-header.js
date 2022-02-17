@@ -39,7 +39,10 @@ async function populateAuthorInfo(authorLink, imgContainer, url, name, eager = f
 }
 
 function validateDate(date) {
-  if (date && !window.location.hostname.includes('adobe.com')) {
+  if (date
+    && !window.location.hostname.includes('adobe.com')
+    && window.location.pathname.includes('/publish/')) {
+    // match publication date to date in pathname
     const [mm, dd, yyyy] = date.textContent.split('-');
     if (!window.location.pathname.includes(`/${yyyy}/${mm}/${dd}/`)) {
       date.classList.add('article-date-invalid');
