@@ -38,6 +38,15 @@ async function populateAuthorInfo(authorLink, imgContainer, url, name, eager = f
   }
 }
 
+function validateDate(date) {
+  if (date && !window.location.hostname.includes('adobe.com')) {
+    const [mm, dd, yyyy] = date.textContent.split('-');
+    if (!window.location.pathname.includes(`/${yyyy}/${mm}/${dd}/`)) {
+      date.classList.add('article-date-invalid');
+    }
+  }
+}
+
 export default async function decorateArticleHeader(blockEl, blockName, document, eager) {
   const childrenEls = Array.from(blockEl.children);
   // category
@@ -59,6 +68,7 @@ export default async function decorateArticleHeader(blockEl, blockName, document
   // publication date
   const date = bylineContainer.firstChild.lastChild;
   date.classList.add('article-date');
+  validateDate(date);
   // author img
   const authorImg = document.createElement('div');
   authorImg.classList = 'article-author-image';
