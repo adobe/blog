@@ -132,6 +132,7 @@ main .article-date {
 }
 
 main .article-date.article-date-invalid {
+  position: relative;
   padding: 0 5px;
   border: 10px solid red;
   background: yellow;
