@@ -131,6 +131,13 @@ main .article-date {
   font-weight: 300;
 }
 
+main .article-date.article-date-invalid {
+  position: relative;
+  padding: 0 5px;
+  border: 10px solid red;
+  background: yellow;
+}
+
 /* feature img */
 
 main .article-header .article-feature-image {

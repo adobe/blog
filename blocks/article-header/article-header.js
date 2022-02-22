@@ -1,6 +1,7 @@
 import {
   buildFigure,
   createOptimizedPicture,
+  fetchPlaceholders,
 } from '../../scripts/scripts.js';
 
 async function populateAuthorInfo(authorLink, imgContainer, url, name, eager = false) {
@@ -38,6 +39,20 @@ async function populateAuthorInfo(authorLink, imgContainer, url, name, eager = f
   }
 }
 
+function validateDate(date) {
+  if (date
+    && !window.location.hostname.includes('adobe.com')
+    && window.location.pathname.includes('/publish/')) {
+    // match publication date to MM-DD-YYYY format
+    if (!/[0-1]\d{1}-[0-3]\d{1}-[2]\d{3}/.test(date.textContent.trim())) {
+      date.classList.add('article-date-invalid');
+      fetchPlaceholders().then((placeholders) => {
+        date.setAttribute('title', placeholders['invalid-date']);
+      });
+    }
+  }
+}
+
 export default async function decorateArticleHeader(blockEl, blockName, document, eager) {
   const childrenEls = Array.from(blockEl.children);
   // category
@@ -59,6 +74,7 @@ export default async function decorateArticleHeader(blockEl, blockName, document
   // publication date
   const date = bylineContainer.firstChild.lastChild;
   date.classList.add('article-date');
+  validateDate(date);
   // author img
   const authorImg = document.createElement('div');
   authorImg.classList = 'article-author-image';
