@@ -2,6 +2,7 @@ import {
   buildFigure,
   createOptimizedPicture,
   getMetadata,
+  fetchPlaceholders,
 } from '../../scripts/scripts.js';
 
 async function populateAuthorInfo(authorLink, imgContainer, url, name, eager = false) {
@@ -50,10 +51,38 @@ function createSVG(id) {
   return svg;
 }
 
+function openPopup(e) {
+  const target = e.target.closest('a');
+  const href = target.getAttribute('data-href');
+  const type = target.getAttribute('data-type');
+  window.open(
+    href,
+    type,
+    'popup,top=233,left=233,width=700,height=467',
+  );
+}
+
 function copyToClipboard(button) {
   navigator.clipboard.writeText(window.location.href).then(() => {
+    const copied = document.querySelector('.copied-to-clipboard');
+    if (!copied) {
+      fetchPlaceholders().then((placeholders) => {
+        button.setAttribute('title', placeholders['copied-to-clipboard']);
+        const toolTip = document.createElement('div');
+        toolTip.setAttribute('role', 'status');
+        toolTip.setAttribute('aria-live', 'polite');
+        toolTip.classList.add('copied-to-clipboard');
+        toolTip.textContent = placeholders['copied-to-clipboard'];
+        button.append(toolTip);
+        setTimeout(() => {
+          toolTip.remove();
+        }, 5000);
+      });
+    }
+    button.classList.remove('copy-failure');
     button.classList.add('copy-success');
   }, () => {
+    button.classList.remove('copy-success');
     button.classList.add('copy-failure');
   });
 }
@@ -65,17 +94,17 @@ function buildSharing() {
   const sharing = document.createElement('div');
   sharing.classList.add('article-byline-sharing');
   sharing.innerHTML = `<span>
-      <a target="_blank" href="http://twitter.com/share?&url=${url}&text=${title}">
+      <a data-type="Twitter" data-href="https://www.twitter.com/share?&url=${url}&text=${title}">
         ${createSVG('twitter').outerHTML}
       </a>
     </span>
     <span>
-      <a target="_blank" href="http://www.linkedin.com/shareArticle?mini=true&url=${url}&title=${title}&summary=${description || ''}">
+      <a data-type="LinkedIn" data-href="https://www.linkedin.com/shareArticle?mini=true&url=${url}&title=${title}&summary=${description || ''}">
         ${createSVG('linkedin').outerHTML}
       </a>
     </span>
     <span>
-      <a target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=${url}">
+      <a data-type="Facebook" data-href="https://www.facebook.com/sharer/sharer.php?u=${url}">
         ${createSVG('facebook').outerHTML}
       </a>
     </span>
@@ -84,6 +113,9 @@ function buildSharing() {
         ${createSVG('link').outerHTML}
       </a>
     </span>`;
+  sharing.querySelectorAll('[data-href]').forEach((link) => {
+    link.addEventListener('click', openPopup);
+  });
   const copyButton = sharing.querySelector('#copy-to-clipboard');
   copyButton.addEventListener('click', () => {
     copyToClipboard(copyButton);

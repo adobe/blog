@@ -152,19 +152,23 @@ main .article-byline .article-byline-sharing svg {
   width: 22px;
 }
 
-main .article-byline .article-byline-sharing a[href*="twitter"]:hover svg,
-main .article-byline .article-byline-sharing a[href*="twitter"]:focus svg {
+main .article-byline .article-byline-sharing a[data-href*="twitter"]:hover svg,
+main .article-byline .article-byline-sharing a[data-href*="twitter"]:focus svg {
   fill: #1DA1F2;
 }
 
-main .article-byline .article-byline-sharing a[href*="linkedin"]:hover svg,
-main .article-byline .article-byline-sharing a[href*="linkedin"]:focus svg {
+main .article-byline .article-byline-sharing a[data-href*="linkedin"]:hover svg,
+main .article-byline .article-byline-sharing a[data-href*="linkedin"]:focus svg {
   fill: #0077b5;
 }
 
-main .article-byline .article-byline-sharing a[href*="facebook"]:hover svg,
-main .article-byline .article-byline-sharing a[href*="facebook"]:focus svg {
+main .article-byline .article-byline-sharing a[data-href*="facebook"]:hover svg,
+main .article-byline .article-byline-sharing a[data-href*="facebook"]:focus svg {
   fill: #3b5998;
+}
+
+main .article-byline .article-byline-sharing a#copy-to-clipboard {
+  position: relative;
 }
 
 main .article-byline .article-byline-sharing a#copy-to-clipboard:hover svg,
@@ -174,6 +178,42 @@ main .article-byline .article-byline-sharing a#copy-to-clipboard:focus svg {
 
 main .article-byline .article-byline-sharing a#copy-to-clipboard.copy-success {
   fill: var(--color-info-accent);
+  position: relative;
+}
+
+main .article-byline .article-byline-sharing a#copy-to-clipboard .copied-to-clipboard {
+  position: absolute;
+  top: 30px;
+  right: -8px;
+  display: flex;
+  justify-content: center;
+  width: 112px;
+  padding: 8px 4px;
+  background: var(--color-gray-800);
+  color: var(--color-white);
+  font-size: var(--body-font-size-xxs);
+  text-align: center;
+  animation: fadeOut ease 1s;
+  animation-delay: 4s;
+}
+
+main .article-byline .article-byline-sharing a#copy-to-clipboard .copied-to-clipboard::after {
+  content: '';
+  position: absolute;
+  bottom: 100%;
+  right: 11px;
+  margin-left: -8px;
+  border: 8px solid transparent;
+  border-bottom-color: var(--color-gray-800);
+}
+
+@keyframes fadeOut {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
 }
 
 main .article-byline .article-byline-sharing a#copy-to-clipboard.copy-failure {
