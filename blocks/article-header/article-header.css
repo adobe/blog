@@ -194,7 +194,7 @@ main .article-byline .article-byline-sharing a#copy-to-clipboard .copied-to-clip
   font-size: var(--body-font-size-xxs);
   text-align: center;
   animation: fadeOut ease 1s;
-  animation-delay: 4s;
+  animation-delay: 4.1s;
 }
 
 main .article-byline .article-byline-sharing a#copy-to-clipboard .copied-to-clipboard::after {
