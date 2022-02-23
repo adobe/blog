@@ -11,11 +11,34 @@
  */
 
 const BULKOPERATIONS_CONFIG = '/en/drafts/alex/bulkoperationsconfig.json';
+const CLIENT_ID = '49ae1d16-63eb-48c1-9434-b591f0b3cfb7';
+const AUTHORITY = 'https://login.microsoftonline.com/fa7b1b5a-7b34-4387-94ae-d2c178decee1';
 
 let config;
 
 async function getConfig() {
   if (!config) {
+    const adminServerURL = 'https://admin.hlx3.page';
+    const admin = {
+      api: {
+        preview: {
+          baseURI: `${adminServerURL}/preview`,
+        },
+        status: {
+          baseURI: `${adminServerURL}/status`,
+        },
+      },
+    };
+
+    // let res = await fetch('/');
+    // const key = res.headers.get('surrogate-key');
+    // if (key) {
+    //   const split = key.substring(0, key.indexOf(' ')).split('--');
+    //   if (split && split.length === 3) {
+    //     [admin.ref, admin.repo, admin.owner] = split;
+    //   }
+    // }
+
     const res = await fetch(BULKOPERATIONS_CONFIG);
     if (!res.ok) {
       throw new Error('Config not found!');
@@ -25,6 +48,7 @@ async function getConfig() {
     const sp = json.sp.data[0];
     // reshape object for easy access
     config = {
+      admin,
       sp,
     };
 
@@ -73,15 +97,6 @@ async function getConfig() {
         },
         batch: {
           uri: `${graphURL}/$batch`,
-        },
-      },
-    };
-
-    const adminServerURL = 'https://admin.hlx3.page';
-    config.admin = {
-      api: {
-        preview: {
-          baseURI: `${adminServerURL}/preview`,
         },
       },
     };

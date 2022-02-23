@@ -13,27 +13,45 @@
 const SITEMAP_ROOT = '/sitemap-index.xml';
 
 async function loadSitemap(sitemapURL) {
-  const resp = await fetch(sitemapURL);
-  const xml = await resp.text();
-  const sitemap = new DOMParser().parseFromString(xml, 'text/xml');
-  const subSitemaps = [...sitemap.querySelectorAll('sitemap loc')];
-  let paths = [];
-  const promises = subSitemaps.map((loc) => new Promise((resolve) => {
-    const subSitemapURL = new URL(loc.textContent);
-    loadSitemap(subSitemapURL.pathname).then((result) => {
-      paths = paths.concat(result);
-      resolve();
-    });
-  }));
+  // const resp = await fetch(sitemapURL);
+  // const xml = await resp.text();
+  // const sitemap = new DOMParser().parseFromString(xml, 'text/xml');
+  // const subSitemaps = [...sitemap.querySelectorAll('sitemap loc')];
+  // let paths = [];
+  // const promises = subSitemaps.map((loc) => new Promise((resolve) => {
+  //   const subSitemapURL = new URL(loc.textContent);
+  //   loadSitemap(subSitemapURL.pathname).then((result) => {
+  //     paths = paths.concat(result);
+  //     resolve();
+  //   });
+  // }));
 
-  await Promise.all(promises);
+  // await Promise.all(promises);
 
-  const urlLocs = sitemap.querySelectorAll('url loc');
-  urlLocs.forEach((loc) => {
-    const locURL = new URL(loc.textContent);
-    paths.push(locURL.pathname);
-  });
+  // const urlLocs = sitemap.querySelectorAll('url loc');
+  // urlLocs.forEach((loc) => {
+  //   const locURL = new URL(loc.textContent);
+  //   paths.push(locURL.pathname);
+  // });
 
+  // return paths;
+
+  const paths = [
+    '/en/drafts/alex/a/a',
+    '/en/drafts/alex/a/b',
+    '/en/drafts/alex/a/c',
+    '/en/drafts/alex/a/d',
+    '/en/drafts/alex/a/e',
+    '/en/drafts/alex/a/f',
+    '/en/drafts/alex/a/g',
+    '/en/drafts/alex/a/h',
+    '/en/drafts/alex/a/i',
+    '/en/drafts/alex/a/j',
+    '/en/drafts/alex/a/k',
+    '/en/drafts/alex/a/l',
+    '/en/drafts/alex/a/m',
+    '/en/drafts/alex/a/n',
+  ];
   return paths;
 }
 

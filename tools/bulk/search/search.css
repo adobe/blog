@@ -12,6 +12,10 @@
   width: 300px;
 }
 
+#replace input {
+  width: 300px;
+}
+
 #results .nbOfResults, #results .noResult {
   padding: 20px 0;
 }
@@ -35,8 +39,16 @@
   margin: 0 5px;
 }
 
-#results .text font {
+#results .text font.searched {
+  text-decoration: line-through;
   font-weight: bold;
   background-color: lightcoral;
   padding: 2px;
+}
+
+#results .text font.replaceWith {
+  font-weight: bold;
+  background-color: lightseagreen;
+  padding: 2px;
+  margin-left: 2px;
 }
