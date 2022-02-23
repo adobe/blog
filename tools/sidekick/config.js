@@ -210,6 +210,7 @@ window.hlx.initSidekick({
     // TOOLS DROPDOWN -----------------------------------------------------------------
     {
       id: 'tools',
+      condition: (sk) => !sk.isEditor(),
       button: {
         text: 'Tools',
         isDropdown: true,
@@ -219,7 +220,6 @@ window.hlx.initSidekick({
     {
       id: 'tagger',
       condition: (sk) => sk.isEditor() && (sk.location.search.includes('.docx&') || sk.location.search.includes('.md&')),
-      container: 'tools',
       button: {
         text: 'Tagger',
         action: (_, sk) => {
