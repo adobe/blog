@@ -41,7 +41,7 @@ const toggleCardPreview = async (sk) => {
     const {
       getBlogArticle,
       buildArticleCard,
-    } = await import('/scripts/scripts.js');
+    } = await import(`${window.location.origin}/scripts/scripts.js`);
     $modal.append(buildArticleCard(await getBlogArticle(sk.location.pathname)));
 
     const $overlay = document.createElement('div');
@@ -58,7 +58,7 @@ const toggleCardPreview = async (sk) => {
 const predictUrl = async (host, path) => {
   const {
     getBlogArticle,
-  } = await import('/scripts/scripts.js');
+  } = await import(`${window.location.origin}/scripts/scripts.js`);
   const pathsplits = path.split('/');
   let publishPath = '';
   const article = await getBlogArticle(path);
@@ -75,7 +75,7 @@ const predictUrl = async (host, path) => {
 const copyArticleData = async (sk) => {
   const {
     getBlogArticle,
-  } = await import('/scripts/scripts.js');
+  } = await import(`${window.location.origin}/scripts/scripts.js`);
   const { location, status } = sk;
   const {
     date,
@@ -207,6 +207,15 @@ window.hlx.initSidekick({
   host: 'blog.adobe.com',
   pushDownSelector: 'header',
   plugins: [
+    // TOOLS DROPDOWN -----------------------------------------------------------------
+    {
+      id: 'tools',
+      condition: (sk) => !sk.isEditor(),
+      button: {
+        text: 'Tools',
+        isDropdown: true,
+      },
+    },
     // TAGGER -------------------------------------------------------------------------
     {
       id: 'tagger',
@@ -223,6 +232,7 @@ window.hlx.initSidekick({
     {
       id: 'card-preview',
       condition: (sidekick) => sidekick.isHelix() && isArticle(sidekick.location.pathname),
+      container: 'tools',
       button: {
         text: 'Card Preview',
         action: async (_, sk) => toggleCardPreview(sk),
@@ -238,6 +248,7 @@ window.hlx.initSidekick({
           && config.host
           && location.host !== config.host;
       },
+      container: 'tools',
       button: {
         text: 'Copy Predicted URL',
         action: async (_, sk) => {
@@ -255,6 +266,7 @@ window.hlx.initSidekick({
     {
       id: 'article-data',
       condition: (sidekick) => sidekick.isHelix() && isArticle(sidekick.location.pathname),
+      container: 'tools',
       button: {
         text: 'Copy Article Data',
         action: async (_, sk) => copyArticleData(sk),
@@ -270,6 +282,7 @@ window.hlx.initSidekick({
     {
       id: 'feed',
       condition: () => hasFeed(),
+      container: 'tools',
       button: {
         text: 'Update Feed',
         action: async (_, sk) => updateFeed(sk),
