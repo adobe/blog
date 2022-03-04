@@ -16,14 +16,14 @@
  * @param {Object} data additional data for RUM sample
  */
 
-const RUM_GENERATION = 'blog-gen-6-clicktargets';
+const RUM_GENERATION = 'blog-gen-7-highrate';
 
 export function sampleRUM(checkpoint, data = {}) {
   try {
     window.hlx = window.hlx || {};
     if (!window.hlx.rum) {
       const usp = new URLSearchParams(window.location.search);
-      const weight = (usp.get('rum') === 'on') ? 1 : 100; // with parameter, weight is 1. Defaults to 100.
+      const weight = (usp.get('rum') === 'on') ? 1 : 10; // with parameter, weight is 1. Defaults to 100.
       // eslint-disable-next-line no-bitwise
       const hashCode = (s) => s.split('').reduce((a, b) => (((a << 5) - a) + b.charCodeAt(0)) | 0, 0);
       const id = `${hashCode(window.location.href)}-${new Date().getTime()}-${Math.random().toString(16).substr(2, 14)}`;
