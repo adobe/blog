@@ -136,10 +136,15 @@ sampleRUM('cwv');
 
 function updateExternalLinks() {
   document.querySelectorAll('main a').forEach((a) => {
-    const { origin } = new URL(a);
-    if (origin && origin !== window.location.origin) {
-      a.setAttribute('rel', 'noopener');
-      a.setAttribute('target', '_blank');
+    try {
+      const { origin } = new URL(a.href);
+      if (origin && origin !== window.location.origin) {
+        a.setAttribute('rel', 'noopener');
+        a.setAttribute('target', '_blank');
+      }
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.warn(`Invalid link: ${a.href}`);
     }
   });
 }
