@@ -29,16 +29,6 @@ async function checkHomepage(url) {
     .then(async () => {
       console.log(`Page ${url} loaded.`);
       if (url === `${baseUrl}/`) {
-        // First make sure the main homepage is not static
-        let staticMarker;
-        try {
-          staticMarker = await $browser.findElement($driver.By.id('___WARNING__STATIC_HOMEPAGE___'));
-        } catch (e) {
-          // good
-        }
-        if (staticMarker) {
-          assert.fail('This homepage is static: backend must be down!');
-        }
         assert.ok(await $browser.findElement($driver.By.css('div.featured-article')), 'no featured article');
       }
     });
