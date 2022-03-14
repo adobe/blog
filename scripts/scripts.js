@@ -18,6 +18,8 @@
 
 const RUM_GENERATION = 'blog-gen-7-highrate';
 
+const PRODUCTION_DOMAINS = ['blog.adobe.com'];
+
 export function sampleRUM(checkpoint, data = {}) {
   try {
     window.hlx = window.hlx || {};
@@ -155,23 +157,27 @@ export function loadCSS(href) {
 }
 
 /**
- * Adjust all links inside the container to point to current
- * host and not to blog.adobe.com (useful on localhost and authoring host)
- * @param {Element} container The element in which links will be adusted
+ * Turns absolute links within the domain into relative links.
+ * @param {Element} main The container element
  */
-export function adjustLinks(container) {
-  if (container && window.location.host !== 'blog.adobe.com') {
-    container.querySelectorAll('a').forEach((a) => {
+export function makeLinksRelative(main) {
+  main.querySelectorAll('a').forEach((a) => {
+    // eslint-disable-next-line no-use-before-define
+    const hosts = ['hlx3.page', 'hlx.page', 'hlx.live', ...PRODUCTION_DOMAINS];
+    if (a.href) {
       try {
-        if (a.href) {
-          const u = new URL(a.href);
-          a.href = `${window.location.origin}${u.pathname}`;
+        const url = new URL(a.href);
+        const relative = hosts.some((host) => url.hostname.includes(host));
+        if (relative) {
+          a.href = `${url.pathname.replace(/\.html$/, '')}${url.search}${url.hash}`;
         }
       } catch (e) {
-        // ignore
+        // something went wrong
+        // eslint-disable-next-line no-console
+        console.log(e);
       }
-    });
-  }
+    }
+  });
 }
 
 const LANG = {
@@ -1153,6 +1159,7 @@ function decoratePictures(main) {
 export function decorateMain(main) {
   // forward compatible pictures redecoration
   decoratePictures(main);
+  makeLinksRelative(main);
   buildAutoBlocks(main);
   splitSections();
   removeEmptySections();
