@@ -1133,7 +1133,7 @@ export function buildArticleCard(article, type = 'article', eager = false) {
       <p class="${type}-card-category">
         ${categoryTag}
       </p>
-      <h3>${title.replace(' | Adobe Blog', '')}</h3>
+      <h3>${title}</h3>
       <p class="${type}-card-description">${description}</p>
       <p class="${type}-card-date">${formatLocalCardDate(date)}
     </div>`;
@@ -1224,7 +1224,7 @@ export async function getBlogArticle(path) {
 
   if (meta) {
     let title = meta['og:title'].trim();
-    const trimEndings = ['|Adobe', '| Adobe'];
+    const trimEndings = ['|Adobe', '| Adobe', '| Adobe Blog', '|Adobe Blog'];
     trimEndings.forEach((ending) => {
       if (title.endsWith(ending)) title = title.substr(0, title.length - ending.length);
     });
