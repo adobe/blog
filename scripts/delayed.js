@@ -137,7 +137,7 @@ sampleRUM('cwv');
 function updateExternalLinks() {
   document.querySelectorAll('main a').forEach((a) => {
     try {
-      const { origin } = new URL(a.href);
+      const { origin } = new URL(a.href, window.location.href);
       if (origin && origin !== window.location.origin) {
         a.setAttribute('rel', 'noopener');
         a.setAttribute('target', '_blank');
