@@ -6,8 +6,8 @@ export default function decorate(block) {
   }
   const poster = block.querySelector('img') ? `poster="${block.querySelector('img').src}"` : '';
   const a = block.querySelector('a');
-  const href = a.textContent;
-  const url = new URL(href);
+  const href = a.getAttribute('href');
+  const url = new URL(href, window.location.href);
   const { hostname } = url;
   let { pathname } = url;
 
