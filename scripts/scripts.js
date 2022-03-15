@@ -1224,7 +1224,7 @@ export async function getBlogArticle(path) {
 
   if (meta) {
     let title = meta['og:title'].trim();
-    const trimEndings = ['|Adobe', '| Adobe'];
+    const trimEndings = ['|Adobe', '| Adobe', '| Adobe Blog', '|Adobe Blog'];
     trimEndings.forEach((ending) => {
       if (title.endsWith(ending)) title = title.substr(0, title.length - ending.length);
     });
