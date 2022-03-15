@@ -1133,7 +1133,7 @@ export function buildArticleCard(article, type = 'article', eager = false) {
       <p class="${type}-card-category">
         ${categoryTag}
       </p>
-      <h3>${title}</h3>
+      <h3>${title.replace(' | Adobe Blog', '')}</h3>
       <p class="${type}-card-description">${description}</p>
       <p class="${type}-card-date">${formatLocalCardDate(date)}
     </div>`;
