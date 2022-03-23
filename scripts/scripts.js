@@ -768,6 +768,13 @@ function buildSocialLinks(mainEl) {
   }
 }
 
+function buildNewsletterModal(mainEl) {
+  const div = document.createElement('div');
+  const $newsletterModal = buildBlock('newsletter-modal', []);
+  div.append($newsletterModal);
+  mainEl.append(div);
+}
+
 function buildArticleFeed(mainEl, type) {
   const div = document.createElement('div');
   const title = mainEl.querySelector('h1, h2').textContent.trim();
@@ -832,6 +839,7 @@ function buildAutoBlocks(mainEl) {
       }
     }
     buildImageBlocks(mainEl);
+    buildNewsletterModal(mainEl);
   } catch (error) {
     // eslint-disable-next-line no-console
     console.error('Auto Blocking failed', error);

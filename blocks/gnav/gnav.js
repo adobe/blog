@@ -137,6 +137,13 @@ class Gnav {
       }
       mainNav.appendChild(navItem);
     });
+
+    const $subscribeContainer = createTag('div', { class: 'gnav-navitem' });
+    const $subscribe = createTag('a', { href: '/', role: 'button', class: 'newsletter-modal-cta', 'aria-expanded': 'false', 'aria-controls': 'navmenu-4' });
+    $subscribe.textContent = 'Subscribe';
+    $subscribeContainer.append($subscribe);
+    mainNav.appendChild($subscribeContainer);
+
     return mainNav;
   }
 
