@@ -32,8 +32,10 @@ export default function decorate(block) {
           const img = responseEl.querySelector('img');
           const picture = img.closest('picture');
           const newPicture = createOptimizedPicture(img.src, img.alt);
-          if (picture) picture.parentElement.replaceChild(newPicture, picture);
-          bannerImage.append(newPicture);
+          if (picture) {
+            picture.parentElement.replaceChild(newPicture, picture);
+            bannerImage.append(newPicture);
+          }
 
           // banner text content
           normalizeHeadings(responseEl, ['h3']);
