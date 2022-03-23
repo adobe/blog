@@ -34,7 +34,6 @@ export default function decorate(block) {
           const newPicture = createOptimizedPicture(img.src, img.alt);
           if (picture) picture.parentElement.replaceChild(newPicture, picture);
           bannerImage.append(newPicture);
-          // img.remove();
 
           // banner text content
           normalizeHeadings(responseEl, ['h3']);
