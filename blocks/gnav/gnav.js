@@ -124,6 +124,20 @@ class Gnav {
       menu.querySelector('h2').remove();
       navItem.appendChild(navLink);
 
+      if (navLink.href.match('newsletter-modal.com')) {
+        navLink.classList.add('newsletter-modal-cta');
+        navLink.href = '/';
+
+        navLink.addEventListener('click', (e) => {
+          e.preventDefault();
+          const $modal = document.querySelector('.newsletter-modal-container');
+
+          if ($modal) {
+            $modal.classList.add('active');
+          }
+        });
+      }
+
       if (menu.childElementCount > 0) {
         const id = `navmenu-${idx}`;
         menu.id = id;
@@ -137,12 +151,6 @@ class Gnav {
       }
       mainNav.appendChild(navItem);
     });
-
-    const $subscribeContainer = createTag('div', { class: 'gnav-navitem' });
-    const $subscribe = createTag('a', { href: '/', role: 'button', class: 'newsletter-modal-cta', 'aria-expanded': 'false', 'aria-controls': 'navmenu-4' });
-    $subscribe.textContent = 'Subscribe';
-    $subscribeContainer.append($subscribe);
-    mainNav.appendChild($subscribeContainer);
 
     return mainNav;
   }

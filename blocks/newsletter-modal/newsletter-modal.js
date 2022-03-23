@@ -4,22 +4,6 @@ import {
 } from '../../scripts/scripts.js';
 import createTag from '../gnav/gnav-utils.js';
 
-function bindNewsletterCTAs() {
-    setTimeout(() => {
-        const $links = document.querySelectorAll('a');
-
-        $links.forEach(($link) => {
-            if ($link.classList.contains('newsletter-modal-cta')) {
-                $link.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    const $container = document.querySelector('.newsletter-modal-container');
-                    $container.classList.add('active');
-                });
-            }
-        });
-    }, 10);
-}
-
 export default async function decorate(block) {
     const $container = block.closest('.newsletter-modal-container');
     const $bannerContainer = createTag('div', { class: 'newsletter-modal-banner-container' });
@@ -66,6 +50,4 @@ export default async function decorate(block) {
 
     $disclaimer.innerHTML = `The Adobe family of companies may keep me informed with personalized emails about Discover content. See our <a href='https://adobe.com/privacy' target='_blank' rel='noopener'>Privacy Policy</a> for more details or to opt-out at any time.`;
     block.append($disclaimer);
-
-    bindNewsletterCTAs();
 }
