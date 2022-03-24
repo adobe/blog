@@ -4,7 +4,7 @@ export default function decorateAnimation(blockEl) {
   const a = blockEl.querySelector('a');
   const parentEl = a.parentNode;
   const href = a.getAttribute('href');
-  const url = new URL(href);
+  const url = new URL(href, window.location.href);
   const { hostname } = url;
   let { pathname } = url;
 

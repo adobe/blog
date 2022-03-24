@@ -1,7 +1,7 @@
 import {
   fetchPlaceholders,
   debug,
-  adjustLinks,
+  makeLinksRelative,
 } from '../../scripts/scripts.js';
 import createTag from '../gnav/gnav-utils.js';
 
@@ -34,7 +34,7 @@ class Footer {
       infoRow.classList.add('has-region');
     }
 
-    adjustLinks(region);
+    makeLinksRelative(region);
 
     const social = this.decorateSocial();
     if (social) {

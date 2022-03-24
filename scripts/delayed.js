@@ -136,10 +136,15 @@ sampleRUM('cwv');
 
 function updateExternalLinks() {
   document.querySelectorAll('main a').forEach((a) => {
-    const { origin } = new URL(a);
-    if (origin && origin !== window.location.origin) {
-      a.setAttribute('rel', 'noopener');
-      a.setAttribute('target', '_blank');
+    try {
+      const { origin } = new URL(a.href, window.location.href);
+      if (origin && origin !== window.location.origin) {
+        a.setAttribute('rel', 'noopener');
+        a.setAttribute('target', '_blank');
+      }
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.warn(`Invalid link: ${a.href}`);
     }
   });
 }
@@ -152,30 +157,3 @@ if (document.querySelector('.article-header')
 }
 
 updateExternalLinks();
-
-/**
- * Loads the GetSocial sharing tool
- */
-function loadGetSocial() {
-  if (window.location.pathname.includes('/drafts/')
-    || window.location.pathname.includes('/documentation/')) return;
-  const po = document.createElement('script');
-  po.setAttribute('type', 'text/javascript');
-  po.setAttribute('async', true);
-  po.setAttribute('src', 'https://api.at.getsocial.io/get/v1/7a87046a/gs_async.js');
-
-  document.head.appendChild(po);
-
-  document.addEventListener('gs:load', () => {
-    if (typeof window.GS === 'object' && window.GS.isMobile) {
-      const footer = document.querySelector('footer');
-      if (footer instanceof HTMLElement) {
-        footer.classList.add('mobile-footer');
-      }
-    }
-  });
-}
-
-if (getMetadata('publication-date')) {
-  loadGetSocial();
-}

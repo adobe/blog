@@ -16,14 +16,16 @@
  * @param {Object} data additional data for RUM sample
  */
 
-const RUM_GENERATION = 'blog-gen-6-clicktargets';
+const RUM_GENERATION = 'blog-gen-7-highrate';
+
+const PRODUCTION_DOMAINS = ['blog.adobe.com'];
 
 export function sampleRUM(checkpoint, data = {}) {
   try {
     window.hlx = window.hlx || {};
     if (!window.hlx.rum) {
       const usp = new URLSearchParams(window.location.search);
-      const weight = (usp.get('rum') === 'on') ? 1 : 100; // with parameter, weight is 1. Defaults to 100.
+      const weight = (usp.get('rum') === 'on') ? 1 : 10; // with parameter, weight is 1. Defaults to 100.
       // eslint-disable-next-line no-bitwise
       const hashCode = (s) => s.split('').reduce((a, b) => (((a << 5) - a) + b.charCodeAt(0)) | 0, 0);
       const id = `${hashCode(window.location.href)}-${new Date().getTime()}-${Math.random().toString(16).substr(2, 14)}`;
@@ -98,7 +100,7 @@ sampleRUM.observe = ((elements) => {
 });
 
 sampleRUM.sourceselector = (element) => {
-  if (element === document.body || element === document.documentElement) {
+  if (element === document.body || element === document.documentElement || !element) {
     return undefined;
   }
   if (element.id) {
@@ -155,23 +157,27 @@ export function loadCSS(href) {
 }
 
 /**
- * Adjust all links inside the container to point to current
- * host and not to blog.adobe.com (useful on localhost and authoring host)
- * @param {Element} container The element in which links will be adusted
+ * Turns absolute links within the domain into relative links.
+ * @param {Element} main The container element
  */
-export function adjustLinks(container) {
-  if (container && window.location.host !== 'blog.adobe.com') {
-    container.querySelectorAll('a').forEach((a) => {
+export function makeLinksRelative(main) {
+  main.querySelectorAll('a').forEach((a) => {
+    // eslint-disable-next-line no-use-before-define
+    const hosts = ['hlx3.page', 'hlx.page', 'hlx.live', ...PRODUCTION_DOMAINS];
+    if (a.href) {
       try {
-        if (a.href) {
-          const u = new URL(a.href);
-          a.href = `${window.location.origin}${u.pathname}`;
+        const url = new URL(a.href);
+        const relative = hosts.some((host) => url.hostname.includes(host));
+        if (relative) {
+          a.href = `${url.pathname.replace(/\.html$/, '')}${url.search}${url.hash}`;
         }
       } catch (e) {
-        // ignore
+        // something went wrong
+        // eslint-disable-next-line no-console
+        console.log(e);
       }
-    });
-  }
+    }
+  });
 }
 
 const LANG = {
@@ -1153,6 +1159,7 @@ function decoratePictures(main) {
 export function decorateMain(main) {
   // forward compatible pictures redecoration
   decoratePictures(main);
+  makeLinksRelative(main);
   buildAutoBlocks(main);
   splitSections();
   removeEmptySections();
@@ -1217,7 +1224,7 @@ export async function getBlogArticle(path) {
 
   if (meta) {
     let title = meta['og:title'].trim();
-    const trimEndings = ['|Adobe', '| Adobe'];
+    const trimEndings = ['|Adobe', '| Adobe', '| Adobe Blog', '|Adobe Blog'];
     trimEndings.forEach((ending) => {
       if (title.endsWith(ending)) title = title.substr(0, title.length - ending.length);
     });

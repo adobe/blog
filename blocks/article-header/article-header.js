@@ -1,6 +1,8 @@
 import {
   buildFigure,
   createOptimizedPicture,
+  getMetadata,
+  fetchPlaceholders,
 } from '../../scripts/scripts.js';
 
 async function populateAuthorInfo(authorLink, imgContainer, url, name, eager = false) {
@@ -14,14 +16,12 @@ async function populateAuthorInfo(authorLink, imgContainer, url, name, eager = f
       const src = new URL(placeholderImg.getAttribute('src'), new URL(url));
       const picture = createOptimizedPicture(src, name, eager, [{ width: 200 }]);
       imgContainer.append(picture);
-
       const img = picture.querySelector('img');
       if (!img.complete) {
         img.addEventListener('load', () => {
           // remove default background image to avoid halo
           imgContainer.style.backgroundImage = 'none';
         });
-
         img.addEventListener('error', () => {
           // removing 404 img will reveal fallback background img
           img.remove();
@@ -35,6 +35,105 @@ async function populateAuthorInfo(authorLink, imgContainer, url, name, eager = f
     const p = document.createElement('p');
     p.innerHTML = authorLink.innerHTML;
     authorLink.replaceWith(p);
+  }
+}
+
+/**
+ * Creates an SVG tag using the specified ID.
+ * @param {string} id The ID
+ * @returns {element} The SVG tag
+ */
+function createSVG(id) {
+  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  const use = document.createElementNS('http://www.w3.org/2000/svg', 'use');
+  use.setAttributeNS('http://www.w3.org/1999/xlink', 'href', `/icons/icons.svg#${id}`);
+  svg.appendChild(use);
+  return svg;
+}
+
+function openPopup(e) {
+  const target = e.target.closest('a');
+  const href = target.getAttribute('data-href');
+  const type = target.getAttribute('data-type');
+  window.open(
+    href,
+    type,
+    'popup,top=233,left=233,width=700,height=467',
+  );
+}
+
+function copyToClipboard(button) {
+  navigator.clipboard.writeText(window.location.href).then(() => {
+    const copied = document.querySelector('.copied-to-clipboard');
+    if (!copied) {
+      fetchPlaceholders().then((placeholders) => {
+        button.setAttribute('title', placeholders['copied-to-clipboard']);
+        const toolTip = document.createElement('div');
+        toolTip.setAttribute('role', 'status');
+        toolTip.setAttribute('aria-live', 'polite');
+        toolTip.classList.add('copied-to-clipboard');
+        toolTip.textContent = placeholders['copied-to-clipboard'];
+        button.append(toolTip);
+        setTimeout(() => {
+          toolTip.remove();
+        }, 5000);
+      });
+    }
+    button.classList.remove('copy-failure');
+    button.classList.add('copy-success');
+  }, () => {
+    button.classList.remove('copy-success');
+    button.classList.add('copy-failure');
+  });
+}
+
+function buildSharing() {
+  const url = encodeURIComponent(window.location.href);
+  const title = encodeURIComponent(document.querySelector('h1').textContent);
+  const description = encodeURIComponent(getMetadata('description'));
+  const sharing = document.createElement('div');
+  sharing.classList.add('article-byline-sharing');
+  sharing.innerHTML = `<span>
+      <a data-type="Twitter" data-href="https://www.twitter.com/share?&url=${url}&text=${title}">
+        ${createSVG('twitter').outerHTML}
+      </a>
+    </span>
+    <span>
+      <a data-type="LinkedIn" data-href="https://www.linkedin.com/shareArticle?mini=true&url=${url}&title=${title}&summary=${description || ''}">
+        ${createSVG('linkedin').outerHTML}
+      </a>
+    </span>
+    <span>
+      <a data-type="Facebook" data-href="https://www.facebook.com/sharer/sharer.php?u=${url}">
+        ${createSVG('facebook').outerHTML}
+      </a>
+    </span>
+    <span>
+      <a id="copy-to-clipboard">
+        ${createSVG('link').outerHTML}
+      </a>
+    </span>`;
+  sharing.querySelectorAll('[data-href]').forEach((link) => {
+    link.addEventListener('click', openPopup);
+  });
+  const copyButton = sharing.querySelector('#copy-to-clipboard');
+  copyButton.addEventListener('click', () => {
+    copyToClipboard(copyButton);
+  });
+  return sharing;
+}
+
+function validateDate(date) {
+  if (date
+    && !window.location.hostname.includes('adobe.com')
+    && window.location.pathname.includes('/publish/')) {
+    // match publication date to MM-DD-YYYY format
+    if (!/[0-1]\d{1}-[0-3]\d{1}-[2]\d{3}/.test(date.textContent.trim())) {
+      date.classList.add('article-date-invalid');
+      fetchPlaceholders().then((placeholders) => {
+        date.setAttribute('title', placeholders['invalid-date']);
+      });
+    }
   }
 }
 
@@ -59,13 +158,16 @@ export default async function decorateArticleHeader(blockEl, blockName, document
   // publication date
   const date = bylineContainer.firstChild.lastChild;
   date.classList.add('article-date');
+  validateDate(date);
   // author img
   const authorImg = document.createElement('div');
   authorImg.classList = 'article-author-image';
   authorImg.style.backgroundImage = 'url(/blocks/article-header/adobe-logo.svg)';
   bylineContainer.prepend(authorImg);
-
   populateAuthorInfo(authorLink, authorImg, authorURL, authorName, eager);
+  // sharing
+  const shareBlock = buildSharing();
+  bylineContainer.append(shareBlock);
   // feature img
   const featureImgContainer = childrenEls[3];
   featureImgContainer.classList.add('article-feature-image');

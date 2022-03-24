@@ -1,4 +1,5 @@
 import {
+  createOptimizedPicture,
   normalizeHeadings,
 } from '../../scripts/scripts.js';
 
@@ -28,8 +29,13 @@ export default function decorate(block) {
           bannerText.classList.add('banner-text');
 
           // banner image content
-          const picture = responseEl.querySelector('picture');
-          bannerImage.append(picture);
+          const img = responseEl.querySelector('img');
+          const picture = img.closest('picture');
+          const newPicture = createOptimizedPicture(img.src, img.alt);
+          if (picture) {
+            picture.parentElement.replaceChild(newPicture, picture);
+            bannerImage.append(newPicture);
+          }
 
           // banner text content
           normalizeHeadings(responseEl, ['h3']);

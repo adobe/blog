@@ -44,9 +44,14 @@ const embedInstagram = (url) => {
 };
 
 const embedVimeo = (url) => {
-  const video = url.pathname.split('/')[1];
+  let src = url.href;
+  if (!src.includes('player.vimeo.com')) {
+    const video = url.pathname.split('/')[1];
+    src = `https://player.vimeo.com/video/${video}?app_id=122963`;
+  }
+
   const embedHTML = `<div style="left: 0; width: 100%; height: 0; position: relative; padding-bottom: 56.25%;">
-      <iframe src="https://player.vimeo.com/video/${video}?app_id=122963" 
+      <iframe src="${src}" 
       style="border: 0; top: 0; left: 0; width: 100%; height: 100%; position: absolute;" 
       frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen  
       title="Content from Vimeo" loading="lazy"></iframe>

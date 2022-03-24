@@ -92,6 +92,8 @@ main .article-title h1 {
 
 main .article-byline {
   display: flex;
+  flex-wrap: wrap;
+  align-items: center;
   margin-top: 40px;
   margin-bottom: 40px;
   padding: 0 2rem;
@@ -99,6 +101,7 @@ main .article-byline {
 
 main .article-byline .article-author-image,
 main .article-byline .article-author-image img {
+  flex: 0 0 64px;
   margin: 0;
   margin-right: 16px;
   height: 64px;
@@ -108,10 +111,113 @@ main .article-byline .article-author-image img {
 }
 
 main .article-byline .article-byline-info {
+  flex: 1 0 calc(100% - (64px + 16px));
   margin: 0;
   display: flex;
   flex-direction: column;
   justify-content: center;
+}
+
+@media (min-width: 600px) {
+  main .article-byline .article-byline-info {
+    flex: 1 1 auto;
+  }
+}
+
+main .article-byline .article-byline-sharing {
+  display: flex;
+  justify-content: space-around;
+  flex: 0 1 100%;
+  margin-top: 16px;
+}
+
+@media (min-width: 600px) {
+  main .article-byline .article-byline-sharing {
+    flex: 0 1 auto;
+    margin-top: 0;
+  }
+
+  main .article-byline .article-byline-sharing span:not(:last-child) {
+    margin-right: 8px;
+  }
+}
+
+main .article-byline .article-byline-sharing a {
+  text-decoration: none;
+  cursor: pointer;
+}
+
+main .article-byline .article-byline-sharing svg {
+  height: 22px;
+  width: 22px;
+}
+
+main .article-byline .article-byline-sharing a[data-href*="twitter"]:hover svg,
+main .article-byline .article-byline-sharing a[data-href*="twitter"]:focus svg {
+  fill: #1DA1F2;
+}
+
+main .article-byline .article-byline-sharing a[data-href*="linkedin"]:hover svg,
+main .article-byline .article-byline-sharing a[data-href*="linkedin"]:focus svg {
+  fill: #0077b5;
+}
+
+main .article-byline .article-byline-sharing a[data-href*="facebook"]:hover svg,
+main .article-byline .article-byline-sharing a[data-href*="facebook"]:focus svg {
+  fill: #3b5998;
+}
+
+main .article-byline .article-byline-sharing a#copy-to-clipboard {
+  position: relative;
+}
+
+main .article-byline .article-byline-sharing a#copy-to-clipboard:hover svg,
+main .article-byline .article-byline-sharing a#copy-to-clipboard:focus svg {
+  fill: var(--color-info-accent-hover);
+}
+
+main .article-byline .article-byline-sharing a#copy-to-clipboard.copy-success {
+  fill: var(--color-info-accent);
+  position: relative;
+}
+
+main .article-byline .article-byline-sharing a#copy-to-clipboard .copied-to-clipboard {
+  position: absolute;
+  top: 30px;
+  right: -8px;
+  display: flex;
+  justify-content: center;
+  width: 112px;
+  padding: 8px 4px;
+  background: var(--color-gray-800);
+  color: var(--color-white);
+  font-size: var(--body-font-size-xxs);
+  text-align: center;
+  animation: fadeOut ease 1s;
+  animation-delay: 4.1s;
+}
+
+main .article-byline .article-byline-sharing a#copy-to-clipboard .copied-to-clipboard::after {
+  content: '';
+  position: absolute;
+  bottom: 100%;
+  right: 11px;
+  margin-left: -8px;
+  border: 8px solid transparent;
+  border-bottom-color: var(--color-gray-800);
+}
+
+@keyframes fadeOut {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+main .article-byline .article-byline-sharing a#copy-to-clipboard.copy-failure {
+  fill: var(--color-gray-600);
 }
 
 main .article-byline p {
@@ -129,6 +235,13 @@ main .article-author a {
 
 main .article-date {
   font-weight: 300;
+}
+
+main .article-date.article-date-invalid {
+  position: relative;
+  padding: 0 5px;
+  border: 10px solid red;
+  background: yellow;
 }
 
 /* feature img */

@@ -2,7 +2,7 @@ import {
   loadScript,
   getHelixEnv,
   debug,
-  adjustLinks,
+  makeLinksRelative,
   getLocale,
 } from '../../scripts/scripts.js';
 import createTag from './gnav-utils.js';
@@ -54,7 +54,7 @@ class Gnav {
       nav.append(logo);
     }
 
-    adjustLinks(nav);
+    makeLinksRelative(nav);
 
     const wrapper = createTag('div', { class: 'gnav-wrapper' }, nav);
     this.el.append(this.curtain, wrapper);

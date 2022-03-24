@@ -1,4 +1,6 @@
-import { fetchBlogArticleIndex, createOptimizedPicture, getArticleTaxonomy } from '../../scripts/scripts.js';
+import {
+  fetchBlogArticleIndex, createOptimizedPicture, getArticleTaxonomy, sampleRUM,
+} from '../../scripts/scripts.js';
 import createTag from './gnav-utils.js';
 
 function decorateCard(hit) {
@@ -93,6 +95,7 @@ async function populateSearchResults(searchTerms, resultsContainer) {
 
 export default function onSearchInput(value, resultsContainer, advancedLink) {
   populateSearchResults(value, resultsContainer);
+  sampleRUM('search', { source: '.gnav-search-input', target: value });
   if (advancedLink) {
     const href = new URL(advancedLink.href);
     href.searchParams.set('q', value);
