@@ -83,10 +83,17 @@
     color: #959595;
 }
 
+.newsletter-modal-email-label input.error {
+    border-bottom: 1px #ff0000 solid;
+}
+
 .newsletter-modal-email-label input:focus {
     outline: none;
 }
 
+.newsletter-modal-email-label input.error::-webkit-input-placeholder {
+    color: #ff0000;
+}
 .newsletter-modal-email-label input::-webkit-input-placeholder {
     color: #D3D3D3;
 }
@@ -98,6 +105,7 @@
     padding: 8px 16px;
     border: none;
     margin-bottom: 15px;
+    cursor: pointer;
 }
 
 .newsletter-modal-disclaimer {

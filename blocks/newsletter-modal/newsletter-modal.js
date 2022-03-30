@@ -13,7 +13,7 @@ export default async function decorate(block) {
     const $text = createTag('p', { class: 'newsletter-modal-text' });
     const $emailLabel = createTag('label', { class: 'newsletter-modal-email-label', for: 'newsletter_email' });
     const $emailText = createTag('span', { class: 'newsletter-modal-email-text' });
-    const $email = createTag('input', { type: 'text', class: 'newsletter-modal-email'});
+    const $email = createTag('input', { type: 'email', class: 'newsletter-modal-email', required: 'required'});
     const $cta = createTag('input', { type: 'submit', class: 'newsletter-modal-cta'});
     const $disclaimer = createTag('p', { class: 'newsletter-modal-disclaimer' });
 
@@ -46,8 +46,48 @@ export default async function decorate(block) {
     block.append($emailLabel);
 
     $cta.value = 'Submit';
+
+    $cta.addEventListener('click', (e) => {
+        e.preventDefault();
+        const email = $email.value;
+
+        if (email && $email.checkValidity()) {
+            const headers = new Headers();
+            headers.append('Content-Type', 'application/json');
+
+            const body = {
+                sname: 'adbeblog',
+                email,
+                consent_notice: '<div class="disclaimer detail-spectrum-m" style="letter-spacing: 0px; padding-top: 15px;">The Adobe family of companies may keep me informed with personalized Adobe Blog newsletters. See our <a href="https://www.adobe.com/privacy/policy.html" target="_blank">Privacy Policy</a> for more details or to opt-out at any time.</div>',
+                current_url: window.location.href,
+            };
+
+            const requestOptions = {
+                method: 'POST',
+                headers,
+                body: JSON.stringify(body),
+            };
+
+            fetch('https://www.adobe.com/api2/subscribe_v1', requestOptions)
+                .then(() => {
+                    // $formHeading.textContent = 'Thanks for signing up!';
+                    // $formHeading.classList.add('success');
+                    // $formHeading.classList.remove('error');
+                    $email.classList.remove('error');
+                    $email.value = '';
+                })
+                .catch(() => {
+                    // $formHeading.textContent = 'An error occurred during subscription';
+                    // $formHeading.classList.add('error');
+                });
+        } else {
+            $email.classList.add('error');
+            $email.reportValidity();
+        }
+    });
+
     block.append($cta);
 
-    $disclaimer.innerHTML = `The Adobe family of companies may keep me informed with personalized emails about Discover content. See our <a href='https://adobe.com/privacy' target='_blank' rel='noopener'>Privacy Policy</a> for more details or to opt-out at any time.`;
+    $disclaimer.innerHTML = `The Adobe family of companies may keep me informed with personalized Adobe Blog newsletters. See our <a href='https://adobe.com/privacy' target='_blank' rel='noopener'>Privacy Policy</a> for more details or to opt-out at any time.`;
     block.append($disclaimer);
 }

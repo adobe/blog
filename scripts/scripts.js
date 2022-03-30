@@ -1356,7 +1356,7 @@ async function loadLazy() {
 
   /* load gnav */
   const header = document.querySelector('header');
-  const gnavPath = getMetadata('gnav') || `${getRootPath()}/gnav`;
+  const gnavPath = getMetadata('gnav') || `${getRootPath()}/drafts/williambsm/gnav`;
   header.setAttribute('data-block-name', 'gnav');
   header.setAttribute('data-gnav-source', gnavPath);
   loadBlock(header);
