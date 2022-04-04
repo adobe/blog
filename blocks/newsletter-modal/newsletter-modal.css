@@ -89,7 +89,7 @@
     font-size: 14px;
     padding: 4px 0 6px 0;
     color: #959595;
-    font-family: var(--body-font-family)
+    font-family: var(--body-font-family);
 }
 
 .newsletter-modal-email-label input.error {
@@ -115,6 +115,7 @@
     border: none;
     margin-bottom: 15px;
     cursor: pointer;
+    font-family: var(--body-font-family);
 }
 
 .newsletter-modal-cta:hover, .newsletter-modal-cta:active {
@@ -150,6 +151,7 @@
     border: 2px #1473E6 solid;
     margin-bottom: 15px;
     cursor: pointer;
+    font-family: var(--body-font-family);
 }
 
 .newsletter-modal-confirmation-close:hover {
