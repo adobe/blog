@@ -41,6 +41,7 @@ header .gnav {
   padding: 8px 16px;
   margin: 10px;
   border-radius: 100px;
+  font-weight: bold;
 }
 
 .gnav a.newsletter-modal-cta:hover {
