@@ -1,12 +1,28 @@
-/* eslint-disable import/named, import/extensions */
-
 import {
 } from '../../scripts/scripts.js';
 import createTag from '../gnav/gnav-utils.js';
 
+function displayConfirmation($container, $content, message) {
+    const $confirmationText = createTag('p', {class: 'newsletter-modal-confirmation'});
+    const $confirmationClose = createTag('button', { class: 'newsletter-modal-confirmation-close' });
+
+    $confirmationText.textContent = message;
+    $confirmationClose.textContent = 'Close';
+    $content.innerHTML = '';
+
+    $content.append($confirmationText);
+    $content.append($confirmationClose);
+
+    $confirmationClose.addEventListener('click', (e) => {
+        e.preventDefault();
+        $container.classList.remove('active');
+    });
+}
+
 export default async function decorate(block) {
     const $container = block.closest('.newsletter-modal-container');
     const $bannerContainer = createTag('div', { class: 'newsletter-modal-banner-container' });
+    const $content = createTag('form', { class: 'newsletter-modal-content'});
     const $banner = createTag('img', { class: 'newsletter-modal-banner', src: '/blocks/newsletter-modal/banner-header.svg' });
     const $close = createTag('a', { class: 'newsletter-modal-close' });
     const $closeIcon = createTag('img', { class: 'newsletter-modal-close-icon', src: '/blocks/newsletter-modal/close.svg' });
@@ -37,13 +53,13 @@ export default async function decorate(block) {
     block.append($bannerContainer);
 
     $text.innerText = 'Sign up for the Adobe Blog Newsletter and get access to creative news, product launches, and more — delivered to your inbox weekly.';
-    block.append($text);
+    $content.append($text);
 
     $emailText.innerText = 'Email *';
     $emailLabel.append($emailText);
     $email.placeholder = 'Enter your email';
     $emailLabel.append($email);
-    block.append($emailLabel);
+    $content.append($emailLabel);
 
     $cta.value = 'Submit';
 
@@ -70,15 +86,10 @@ export default async function decorate(block) {
 
             fetch('https://www.adobe.com/api2/subscribe_v1', requestOptions)
                 .then(() => {
-                    // $formHeading.textContent = 'Thanks for signing up!';
-                    // $formHeading.classList.add('success');
-                    // $formHeading.classList.remove('error');
-                    $email.classList.remove('error');
-                    $email.value = '';
+                    displayConfirmation($container, $content, 'Thank you for subscribing to the Adobe Blog Newsletter.');
                 })
                 .catch(() => {
-                    // $formHeading.textContent = 'An error occurred during subscription';
-                    // $formHeading.classList.add('error');
+                    displayConfirmation($container, $content, 'An error occurred during subscription. Please refresh the page and try again.');
                 });
         } else {
             $email.classList.add('error');
@@ -86,8 +97,10 @@ export default async function decorate(block) {
         }
     });
 
-    block.append($cta);
+    $content.append($cta);
 
     $disclaimer.innerHTML = `The Adobe family of companies may keep me informed with personalized Adobe Blog newsletters. See our <a href='https://adobe.com/privacy' target='_blank' rel='noopener'>Privacy Policy</a> for more details or to opt-out at any time.`;
-    block.append($disclaimer);
+    $content.append($disclaimer);
+
+    block.append($content);
 }
