@@ -1,3 +1,7 @@
+body.newsletter-no-scroll {
+    overflow: hidden;
+}
+
 .newsletter-modal-container {
     display: none;
     position: fixed;

@@ -35,11 +35,13 @@ export default async function decorate(block) {
 
     $close.addEventListener('click', (e) => {
         e.preventDefault();
+        document.body.classList.remove('newsletter-no-scroll');
         $container.classList.remove('active');
     });
 
     $container.addEventListener('click', (e) => {
         e.preventDefault();
+        document.body.classList.remove('newsletter-no-scroll');
         $container.classList.remove('active');
     });
 

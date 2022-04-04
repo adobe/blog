@@ -134,6 +134,7 @@ class Gnav {
 
           if ($modal) {
             $modal.classList.add('active');
+            document.body.classList.add('newsletter-no-scroll');
           }
         });
       }
