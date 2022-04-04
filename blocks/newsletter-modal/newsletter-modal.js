@@ -76,7 +76,7 @@ export default async function decorate(block) {
             const body = {
                 sname: 'adbeblog',
                 email,
-                consent_notice: '<div class="disclaimer detail-spectrum-m" style="letter-spacing: 0px; padding-top: 15px;">The Adobe family of companies may keep me informed with personalized Adobe Blog newsletters. See our <a href="https://www.adobe.com/privacy/policy.html" target="_blank">Privacy Policy</a> for more details or to opt-out at any time.</div>',
+                consent_notice: '<div class="disclaimer detail-spectrum-m" style="letter-spacing: 0px; padding-top: 15px;">The Adobe family of companies may keep me informed with personalized emails from the Adobe Blog team. See our <a href="https://www.adobe.com/privacy/policy.html" target="_blank">Privacy Policy</a> for more details or to opt-out at any time.</div>',
                 current_url: window.location.href,
             };
 
@@ -101,7 +101,7 @@ export default async function decorate(block) {
 
     $content.append($cta);
 
-    $disclaimer.innerHTML = `The Adobe family of companies may keep me informed with personalized Adobe Blog newsletters. See our <a href='https://adobe.com/privacy' target='_blank' rel='noopener'>Privacy Policy</a> for more details or to opt-out at any time.`;
+    $disclaimer.innerHTML = `The Adobe family of companies may keep me informed with personalized emails from the Adobe Blog team. See our <a href='https://adobe.com/privacy' target='_blank' rel='noopener'>Privacy Policy</a> for more details or to opt-out at any time.`;
     $content.append($disclaimer);
 
     block.append($content);
