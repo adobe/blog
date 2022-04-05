@@ -1,7 +1,3 @@
-import {
-    createOptimizedPicture,
-    normalizeHeadings,
-} from '../../scripts/scripts.js';
 import createTag from '../gnav/gnav-utils.js';
   
 export default function decorate(block) {
@@ -31,21 +27,10 @@ export default function decorate(block) {
 function stringCleanup(string) {
     return string.toLowerCase().replace(/[^a-zA-Z0-9]+/g, ' ').trim().replaceAll(' ', '-');
 }
-  
-function updateLinksClass(links, targetLink) {
-    for(let i = 0; i < links.length; i ++) {
-        if (links[i] != targetLink) {
-            links[i].classList.remove('active');
-        }
-    }
-
-    targetLink.classList.add('active');
-}
 
 function generateLink(links, link, targetNode, height) {
     link.addEventListener('click', () => {
         const targetOffset = targetNode.offsetTop - height - 24;
-        updateLinksClass(links, link);
         window.scrollTo({
             top: targetOffset,
             left: 0,
