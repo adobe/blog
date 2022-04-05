@@ -3,40 +3,43 @@ import createTag from '../gnav/gnav-utils.js';
 export default function decorate(block) {
     block.insertAdjacentHTML('beforebegin', '<hr/>');
     block.insertAdjacentHTML('afterend', '<hr/>');
-    const baseURL = window.location.href;
-    const links = block.querySelectorAll('li');
+
+    const url = new URL(window.location.href);
+    const baseUrl = url.origin + url.pathname;
+    const $tabs = block.querySelectorAll('li');
     const gnavHeight = parseInt(window.getComputedStyle(document.querySelector('header')).height.replace('px', ''));
 
-    for(let i = 0; i < links.length; i ++) {
-        const title = links[i].innerText;
-        const linkSlug = stringCleanup(title);
-        let anchorElement = createTag('a', {href: `${baseURL}#${linkSlug}`});
-        links[i].innerText = '';
-        links[i].append(anchorElement);
-        anchorElement.innerText = title;
+    $tabs.forEach(($tab) => {
+        const title = $tab.textContent;
+        const id = stringCleanup(title);
+        const href = `${baseUrl}#${id}`;
+        const $anchor = createTag('a', { href });
+        let target;
+
+        $tab.innerHTML = '';
+        $tab.append($anchor);
+        $anchor.textContent = title;
 
         if (title === 'Introduction') {
-            const targetNode = block.parentElement.parentElement.previousSibling;
-            generateLink(links[i], targetNode, gnavHeight);
+            target = block.parentElement.parentElement.previousSibling;
         } else {
-            const targetNode = document.getElementById(linkSlug);
-            generateLink(links[i], targetNode, gnavHeight);
+            target = document.getElementById(id);
         }
-    }
+
+        $tab.addEventListener('click', (e) => {
+            e.preventDefault();
+
+            window.scrollTo({
+                top: target.offsetTop - gnavHeight - 24,
+                left: 0,
+                behavior: 'smooth'
+            });
+
+            window.history.pushState({},'', href);
+        });
+    });
 }
 
 function stringCleanup(string) {
     return string.toLowerCase().replace(/[^a-zA-Z0-9]+/g, ' ').trim().replaceAll(' ', '-');
-}
-
-function generateLink(link, targetNode, height) {
-    link.addEventListener('click', (e) => {
-        e.preventDefault();
-        const targetOffset = targetNode.offsetTop - height - 24;
-        window.scrollTo({
-            top: targetOffset,
-            left: 0,
-            behavior: 'smooth'
-        });
-    })
 }
