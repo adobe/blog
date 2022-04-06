@@ -22,13 +22,14 @@ function displayConfirmation($container, $content, message) {
 export default async function decorate(block) {
     const $container = block.closest('.newsletter-modal-container');
     const $bannerContainer = createTag('div', { class: 'newsletter-modal-banner-container' });
-    const $content = createTag('form', { class: 'newsletter-modal-content'});
-    const $banner = createTag('img', { class: 'newsletter-modal-banner', src: '/blocks/newsletter-modal/banner-header.svg' });
+    const $content = createTag('div', { class: 'newsletter-modal-content'});
+    const $banner = createTag('img', { class: 'newsletter-modal-banner', src: '/blocks/newsletter-modal/newsletter-banner.png' });
     const $close = createTag('a', { class: 'newsletter-modal-close' });
     const $closeIcon = createTag('img', { class: 'newsletter-modal-close-icon', src: '/blocks/newsletter-modal/close.svg' });
     const $text = createTag('p', { class: 'newsletter-modal-text' });
+    const $form = createTag('form', { class: 'newsletter-modal-form' });
     const $emailLabel = createTag('label', { class: 'newsletter-modal-email-label', for: 'newsletter_email' });
-    const $emailText = createTag('span', { class: 'newsletter-modal-email-text' });
+    const $emailText = createTag('span', { class: 'newsletter-modal-email-text', id: 'newsletter_email' });
     const $email = createTag('input', { type: 'email', class: 'newsletter-modal-email', required: 'required'});
     const $cta = createTag('input', { type: 'submit', class: 'newsletter-modal-cta'});
     const $disclaimer = createTag('p', { class: 'newsletter-modal-disclaimer' });
@@ -54,14 +55,17 @@ export default async function decorate(block) {
     $close.append($closeIcon);
     block.append($bannerContainer);
 
-    $text.innerText = 'Sign up for the Adobe Blog Newsletter and get access to creative news, product launches, and more — delivered to your inbox weekly.';
+    $text.innerText = 'Let’s connect. Get the most popular Adobe Blog articles in your inbox every week.';
     $content.append($text);
+
+    $disclaimer.innerHTML = `The Adobe family of companies may keep me informed with personalized emails from the Adobe Blog team. See our <a href='https://adobe.com/privacy' target='_blank' rel='noopener'>Privacy Policy</a> for more details or to opt-out at any time.`;
+    $content.append($disclaimer);
 
     $emailText.innerText = 'Email *';
     $emailLabel.append($emailText);
     $email.placeholder = 'Enter your email';
     $emailLabel.append($email);
-    $content.append($emailLabel);
+    $form.append($emailLabel);
 
     $cta.value = 'Submit';
 
@@ -99,10 +103,7 @@ export default async function decorate(block) {
         }
     });
 
-    $content.append($cta);
-
-    $disclaimer.innerHTML = `The Adobe family of companies may keep me informed with personalized emails from the Adobe Blog team. See our <a href='https://adobe.com/privacy' target='_blank' rel='noopener'>Privacy Policy</a> for more details or to opt-out at any time.`;
-    $content.append($disclaimer);
-
+    $form.append($cta);
+    $content.append($form);
     block.append($content);
 }

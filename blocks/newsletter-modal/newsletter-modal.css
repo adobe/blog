@@ -32,9 +32,12 @@ body.newsletter-no-scroll {
     overflow: hidden;
 }
 
+.newsletter-modal-banner-container {
+    width: 100%;
+}
+
 .newsletter-modal-banner {
-    width: auto;
-    height: 200px;
+    width: 100%;
     max-width: none;
 }
 
@@ -66,11 +69,16 @@ body.newsletter-no-scroll {
 
 .newsletter-modal-text {
     width: 80%;
-    max-width: 380px;
-    font-size: 16px;
-    text-align: center;
-    margin: 30px 0 25px 0!important;
-    padding: 0 20px;
+    max-width: 420px;
+    font-size: 20px;
+    margin: 0 0 16px 0!important;
+}
+
+.newsletter-modal-form {
+    display: flex;
+    max-width: 420px;
+    width: 80%;
+    align-items: center;
 }
 
 .newsletter-modal-email-label {
@@ -117,8 +125,8 @@ body.newsletter-no-scroll {
     border-radius: 100px;
     padding: 8px 16px;
     border: none;
-    margin-bottom: 15px;
     cursor: pointer;
+    margin: 0 0 15px 15px;
     font-family: var(--body-font-family);
 }
 
@@ -130,7 +138,6 @@ body.newsletter-no-scroll {
     width: 80%;
     max-width: 360px;
     font-size: 10px;
-    text-align: center;
     color: #2C2C2C;
     margin-bottom: 40px;
 }
@@ -165,26 +172,13 @@ body.newsletter-no-scroll {
 
 @media (min-width: 600px) {
     .newsletter-modal {
-        max-width: 480px;
+        max-width: 440px;
         border-radius: 12px;
         height: auto;
     }
 
     .newsletter-modal-content {
         flex: auto;
-        min-height: 350px;
-    }
-
-    .newsletter-modal-banner {
-        width: 100%;
-        height: auto;
-    }
-
-    .newsletter-modal-text {
-        font-size: 18px;
-    }
-
-    .newsletter-modal-disclaimer {
-        font-size: 13px;
+        min-height: 320px;
     }
 }
