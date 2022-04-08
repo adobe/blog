@@ -769,10 +769,10 @@ function buildSocialLinks(mainEl) {
 }
 
 function buildNewsletterModal(mainEl) {
-  const div = document.createElement('div');
+  const $div = document.createElement('div');
   const $newsletterModal = buildBlock('newsletter-modal', []);
-  div.append($newsletterModal);
-  mainEl.append(div);
+  $div.append($newsletterModal);
+  mainEl.append($div);
 }
 
 function buildArticleFeed(mainEl, type) {
