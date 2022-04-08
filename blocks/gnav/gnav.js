@@ -124,7 +124,7 @@ class Gnav {
       menu.querySelector('h2').remove();
       navItem.appendChild(navLink);
 
-      if (navLink.href.match('newsletter-modal.com')) {
+      if (navLink.href.match('#subscribe')) {
         navLink.classList.add('newsletter-modal-cta');
         navLink.href = '/';
 
