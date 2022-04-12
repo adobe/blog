@@ -35,6 +35,7 @@ header .gnav {
   align-self: center;
   justify-self: center;
   cursor: pointer;
+  background-color: #1473E6;
   color: white;
   font-size: 14px;
   width: auto;
