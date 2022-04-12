@@ -119,7 +119,7 @@ main .newsletter-modal-email-label input:focus {
     color: #D3D3D3;
 }
 
-.newsletter-modal-cta {
+main .newsletter-modal .newsletter-modal-cta {
     background-color: #1473E6;
     color: white;
     border-radius: 100px;
@@ -128,6 +128,7 @@ main .newsletter-modal-email-label input:focus {
     cursor: pointer;
     margin: 0 0 15px 15px;
     font-family: var(--body-font-family);
+    min-height: 32px;
 }
 
 .newsletter-modal-cta:hover, .newsletter-modal-cta:active {
@@ -174,7 +175,7 @@ main .newsletter-modal-email-label input:focus {
     .newsletter-modal {
         max-width: 440px;
         border-radius: 12px;
-        height: auto;
+        height: auto!important;
     }
 
     .newsletter-modal-content {
