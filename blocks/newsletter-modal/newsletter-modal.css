@@ -174,7 +174,7 @@ main .newsletter-modal-email-label input:focus {
     .newsletter-modal {
         max-width: 440px;
         border-radius: 12px;
-        height: auto;
+        height: auto!important;
     }
 
     .newsletter-modal-content {
