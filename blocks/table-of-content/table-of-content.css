@@ -1,3 +1,7 @@
+main .--with-scroll-margin-top {
+    scroll-margin-top: 88px;
+}
+
 main .table-of-content-container hr {
     opacity: 0.5;
 }
