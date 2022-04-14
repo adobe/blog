@@ -1,7 +1,23 @@
 /* above the fold CSS goes here */
 
-/* default content */
+/* Size adjust to better match Adobe Clean */
+@font-face {
+  font-family: 'Trebuchet MS';
+  size-adjust: 95%;
+  src: local('Trebuchet MS'),
+       local('TrebuchetMS');
+       font-weight: 700;
+}
 
+@font-face {
+  font-family: 'Trebuchet MS';
+  size-adjust: 87%;
+  src: local('Trebuchet MS'),
+       local('TrebuchetMS');
+       font-weight: 400;
+}
+
+/* default content */
 :root {
   --color-white: #FFF;
   --color-gray-100: #F8F8F8;

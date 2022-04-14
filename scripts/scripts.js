@@ -768,6 +768,13 @@ function buildSocialLinks(mainEl) {
   }
 }
 
+function buildNewsletterModal(mainEl) {
+  const $div = document.createElement('div');
+  const $newsletterModal = buildBlock('newsletter-modal', []);
+  $div.append($newsletterModal);
+  mainEl.append($div);
+}
+
 function buildArticleFeed(mainEl, type) {
   const div = document.createElement('div');
   const title = mainEl.querySelector('h1, h2').textContent.trim();
@@ -832,6 +839,7 @@ function buildAutoBlocks(mainEl) {
       }
     }
     buildImageBlocks(mainEl);
+    buildNewsletterModal(mainEl);
   } catch (error) {
     // eslint-disable-next-line no-console
     console.error('Auto Blocking failed', error);
@@ -1282,6 +1290,13 @@ export function loadScript(url, callback, type) {
   return script;
 }
 
+function loadGoogleAdsPixel() {
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'AW-10845783271');
+}
+
 function loadPrivacy() {
   function getOtDomainId() {
     const domains = {
@@ -1376,6 +1391,10 @@ async function loadLazy() {
       addPublishDependencies(`/${getLanguage()}/query-index.json?limit=${limit}&offset=${offset}`);
       offset += limit;
     }
+  }
+
+  if (getLanguage() === 'es' || getLanguage() === 'br') {
+    loadScript('https://www.googletagmanager.com/gtag/js?id=AW-10845783271', loadGoogleAdsPixel);
   }
 }
 
