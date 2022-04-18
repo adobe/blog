@@ -390,6 +390,11 @@ main .recommended-articles-small-container {
   visibility: hidden;
 }
 
+/* MWPW-108414 */
+main .embed a {
+  word-break: break-all;
+}
+
 main .featured-article {
   min-height: 320px;
   margin-bottom: 24px;
