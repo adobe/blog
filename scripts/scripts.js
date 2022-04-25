@@ -613,7 +613,7 @@ export function decorateBlock(block) {
   if (section) {
     section.classList.add(`${blockName}-container`.replace(/--/g, '-'));
   }
-  const blocksWithVariants = ['recommended-articles'];
+  const blocksWithVariants = ['recommended-articles', 'video'];
   blocksWithVariants.forEach((b) => {
     if (blockName.startsWith(`${b}-`)) {
       const options = blockName.substring(b.length + 1).split('-').filter((opt) => !!opt);
@@ -876,7 +876,7 @@ function unwrapBlock(block) {
 
 function splitSections() {
   document.querySelectorAll('main > div > div').forEach((block) => {
-    const blocksToSplit = ['article-header', 'article-feed', 'recommended-articles'];
+    const blocksToSplit = ['article-header', 'article-feed', 'recommended-articles', 'video'];
     if (blocksToSplit.includes(block.className)) {
       unwrapBlock(block);
     }
@@ -1292,7 +1292,7 @@ export function loadScript(url, callback, type) {
 
 function loadGoogleAdsPixel() {
   window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
+  function gtag() { dataLayer.push(arguments); }
   gtag('js', new Date());
   gtag('config', 'AW-10845783271');
 }
