@@ -73,10 +73,10 @@ function buildCarousel($imgs, $block, height = null) {
   $controls.appendChild($dots);
 
   [...$imgs].forEach(($img, index) => {
-    const $slide = createTag('div', { class: `carousel-slide carousel-slide-${index + 1}` });
+    const $slide = createTag('div', { class: 'carousel-slide' });
     $slide.appendChild($img);
     $slideswrapper.appendChild($slide);
-    const $dot = createTag('button', { class: `carousel-dot carousel-dot-${index + 1}`, 'aria-label': `Slide ${index + 1}` });
+    const $dot = createTag('button', { class: 'carousel-dot', 'aria-label': `Slide ${index + 1}` });
     $dots.appendChild($dot);
   });
 
