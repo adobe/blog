@@ -1,0 +1,149 @@
+.section-wrapper.carousel-container > div {
+  max-width: 1000px;
+}
+
+.carousel {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  padding-bottom: 20px;
+}
+
+.carousel-wrapper {
+  width: 100%;
+  height: 502px;
+  margin: 0 auto;
+  white-space: nowrap;
+  overflow: hidden;
+  position: relative;
+  user-select: none;
+}
+
+.carousel-slides {
+  background-color: #FFF;
+  height: 480px;
+  width: 919px;
+  overflow: hidden;
+  position: absolute; 
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+}
+
+.carousel-slides > div {
+  position: relative;
+  width: 800px;
+  height: 100%;
+  margin: 0 auto;
+}
+
+.carousel-slide {
+  background-color: #FFF;
+  position: absolute;
+  top: 0;
+  left: 200%;
+  width: auto;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: left 0.3s;
+  padding: 0 10px;
+  background: white;
+  box-sizing: border-box;
+  width: 800px;
+}
+.carousel-slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: brightness(0.2);
+}
+
+.carousel-slide.slide-active {
+  left: 0;
+  z-index: 2;
+}
+
+.carousel-slide.slide-active img {
+  filter: none;
+}
+
+.carousel-slide.slide-prev {
+  left: -800px;
+}
+
+.carousel-slide.slide-next {
+  left: 800px;
+  z-index: 1;
+}
+
+.carousel-controls {
+  position: absolute;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  z-index: 3;
+}
+
+.carousel-arrow {
+  height: auto;
+  width: auto;
+  padding: 4px;
+  background-color: white;
+  transition: border 0.2s;
+  user-select: none;
+  cursor: pointer;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 2px solid rgb(116, 116, 116, 0.3);
+  color: #747474;
+}
+
+.carousel-arrow svg {
+  height: 18px;
+  width: 18px;
+}
+
+.carousel-previous {
+  order: -2;
+}
+
+.carousel-previous svg {
+  transform: rotate(180deg)
+}
+
+.carousel-arrow:hover {
+  border: 2px solid rgb(116, 116, 116, 0.8);
+  transition: border 0.5s;
+}
+
+.carousel-dots {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  align-self: flex-end;
+  order: -1;
+}
+
+.carousel-dot {
+  background-color: #E8E8E8;
+  border: none;
+  display: block;
+  width: 8px;
+  height: 8px;
+  border-radius: 100%;
+  transition: background-color 0.5s;
+  padding: 0;
+  cursor: pointer;
+  margin: 0 8px;
+}
+
+.carousel-dot.dot-active {
+  background-color: #6E6E6E;
+}

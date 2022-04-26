@@ -4,7 +4,6 @@
  * @param {string} type The nodeName to be set for el.
  * @returns newEl Updated Element
  */
-// eslint-disable-next-line import/prefer-default-export
 export const replaceElementType = (el, type) => {
   // If they are same, no need to replace.
   if (el === null || el.nodeName === type.toUpperCase()) {
@@ -17,3 +16,33 @@ export const replaceElementType = (el, type) => {
   [...el.attributes].forEach((attr) => newEl.setAttribute(attr.nodeName, attr.nodeValue));
   return newEl;
 };
+
+/**
+ * Create element with attributes
+ * @param {string} name The tag of the element, ex) <div>
+ * @param {object} attrs The attributes to add to the element, ex) {class: 'class-name'}
+ * @returns el Created Element
+ */
+export function createTag(name, attrs) {
+  const el = document.createElement(name);
+  if (typeof attrs === 'object') {
+    // eslint-disable-next-line no-restricted-syntax
+    for (const [key, value] of Object.entries(attrs)) {
+      el.setAttribute(key, value);
+    }
+  }
+  return el;
+}
+
+/**
+ * Creates an SVG tag using the specified ID.
+ * @param {string} id The ID
+ * @returns {element} The SVG tag
+ */
+export function createSVG(id) {
+  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  const use = document.createElementNS('http://www.w3.org/2000/svg', 'use');
+  use.setAttributeNS('http://www.w3.org/1999/xlink', 'href', `/icons/icons.svg#${id}`);
+  svg.appendChild(use);
+  return svg;
+}

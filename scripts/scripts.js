@@ -876,7 +876,7 @@ function unwrapBlock(block) {
 
 function splitSections() {
   document.querySelectorAll('main > div > div').forEach((block) => {
-    const blocksToSplit = ['article-header', 'article-feed', 'recommended-articles', 'video'];
+    const blocksToSplit = ['article-header', 'article-feed', 'recommended-articles', 'video', 'carousel'];
     if (blocksToSplit.includes(block.className)) {
       unwrapBlock(block);
     }
