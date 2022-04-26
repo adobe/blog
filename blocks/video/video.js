@@ -48,17 +48,18 @@ function lazyLoadVideo($block, $a, $img) {
 
 export default function decorate($block) {
   const $a = $block.querySelector('a');
-  const $img = $block.querySelector('img');
+  let $img = $block.querySelector('img');
   $block.innerHTML = '';
+  const $section = $block.closest('.section-wrapper');
+  if ($section.previousElementSibling.classList.contains('article-header-container')) {
+    if (!$img) $img = $section.previousElementSibling.querySelector('.article-feature-image img');
+    $section.previousElementSibling.querySelector('.article-feature-image').remove();
+  }
   if (document.readyState === 'complete') {
     lazyLoadVideo($block, $a, $img);
   } else {
     window.addEventListener('load', () => {
       lazyLoadVideo($block, $a, $img);
     });
-  }
-  const $section = $block.closest('.section-wrapper');
-  if ($section.previousElementSibling.classList.contains('article-header-container')) {
-    $section.previousElementSibling.querySelector('.article-feature-image').remove();
   }
 }
