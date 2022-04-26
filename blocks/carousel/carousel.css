@@ -15,7 +15,7 @@
   box-sizing: border-box;
   padding-bottom: 60%;
   max-height: 824px;
-  min-height: 424px;
+  min-height: 224px;
   margin: 0 auto;
   white-space: nowrap;
   position: relative;
@@ -35,7 +35,7 @@
 .carousel-slides > div {
   background-color: #FFF;
   max-height: 800px;
-  min-height: 400px;
+  min-height: 200px;
   padding-bottom: 60%;
   box-sizing: border-box;
   position: relative;
@@ -190,11 +190,7 @@
     padding-left: 8px;
     padding-right: 8px;
   }
-
-  .carousel-slide img {
-    filter: none;
-  }
-
+  
   .carousel-controls {
     padding-left: 4px;
     padding-right: 4px;
@@ -206,13 +202,5 @@
   .carousel-slide {
     padding-left: 4px;
     padding-right: 4px;
-  }
-
-  .carousel-wrapper {
-    min-height: 224px;
-  }
-
-  .carousel-slides > div {
-    min-height: 200px;
   }
 }
