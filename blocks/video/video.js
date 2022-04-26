@@ -16,7 +16,7 @@ function decorateVideoBlock($block, $a, $img) {
     } else if ($a.href.endsWith('.mp4')) {
       attrs = 'playsinline controls';
       if ($block.classList.contains('autoplay')) attrs = 'playsinline controls muted autoplay loop';
-      const poster = $img ? `poster="${$block.querySelector('img').src}"` : '';
+      const poster = $img ? `poster="${$img.src}"` : '';
       $block.innerHTML = /* html */`
         <div class="vid-wrapper">
           <video ${attrs} ${poster} name="media"><source src="${$a.href}" type="video/mp4"></video>
@@ -56,5 +56,9 @@ export default function decorate($block) {
     window.addEventListener('load', () => {
       lazyLoadVideo($block, $a, $img);
     });
+  }
+  const $section = $block.closest('.section-wrapper');
+  if ($section.previousElementSibling.classList.contains('article-header-container')) {
+    $section.previousElementSibling.querySelector('.article-feature-image').remove();
   }
 }
