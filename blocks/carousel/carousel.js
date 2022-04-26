@@ -49,7 +49,7 @@ function carouselFunctionality($block) {
   });
 }
 
-function buildCarousel($imgs, $block) {
+function buildCarousel($imgs, $block, height = null) {
   $block.innerHTML = '';
   const $wrapper = createTag('div', { class: 'carousel-wrapper' });
   const $slides = createTag('div', { class: 'carousel-slides' });
@@ -59,6 +59,10 @@ function buildCarousel($imgs, $block) {
   const $slideswrapper = createTag('div');
   $slides.appendChild($slideswrapper);
   $block.appendChild($wrapper);
+  if (height) {
+    $slides.style.height = `${height}px`;
+    $wrapper.style.height = `${height + 24}px`;
+  }
   const $dots = createTag('div', { class: 'carousel-dots' });
   const $prev = createTag('button', { class: 'carousel-arrow carousel-previous', 'aria-label': 'Previous slide' });
   const $next = createTag('button', { class: 'carousel-arrow carousel-next', 'aria-label': 'Next slide' });
@@ -81,6 +85,10 @@ function buildCarousel($imgs, $block) {
 
 export default function decorate($block) {
   const $imgs = $block.querySelectorAll('img');
+  const heights = [];
+  [...$imgs].forEach(($img) => {
+    heights.push($img.offsetHeight);
+  });
   $block.innerHTML = '';
-  buildCarousel($imgs, $block);
+  buildCarousel($imgs, $block, Math.min(...heights));
 }
