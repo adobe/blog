@@ -52,7 +52,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  transition: left 0.3s;
+  transition: left 0.3s ease-out;
   padding: 0 10px;
   background: white;
   box-sizing: border-box;
@@ -76,6 +76,7 @@
 
 .carousel-slide.slide-prev {
   left: -800px;
+  z-index: 1;
 }
 
 .carousel-slide.slide-next {
