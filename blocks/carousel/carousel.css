@@ -185,6 +185,11 @@
     left: 100%;
   }
 
+  .carousel-slide {
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+
   .carousel-slide img {
     filter: none;
   }
@@ -193,5 +198,12 @@
     padding-left: 4px;
     padding-right: 4px;
     box-sizing: border-box;
+  }
+}
+
+@media screen and (max-width: 1085px) {
+  .carousel-slide {
+    padding-left: 4px;
+    padding-right: 4px;
   }
 }
