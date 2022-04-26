@@ -60,8 +60,8 @@ function buildCarousel($imgs, $block, height = null) {
   $slides.appendChild($slideswrapper);
   $block.appendChild($wrapper);
   if (height) {
-    $slides.style.height = `${height}px`;
-    $wrapper.style.height = `${height + 24}px`;
+    $slideswrapper.style.paddingBottom = `${(100 / 800) * height}%`;
+    $wrapper.style.paddingBottom = `${((100 / 800) * height)}%`;
   }
   const $dots = createTag('div', { class: 'carousel-dots' });
   const $prev = createTag('button', { class: 'carousel-arrow carousel-previous', 'aria-label': 'Previous slide' });
