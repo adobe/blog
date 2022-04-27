@@ -3,11 +3,11 @@ import {
   createSVG,
 } from '../block-helpers.js';
 
-function carouselFunctionality($block) {
-  const prevBTN = $block.querySelector('.carousel-previous');
-  const nextBTN = $block.querySelector('.carousel-next');
-  const $slides = $block.querySelectorAll('.carousel-slide');
-  const $dots = $block.querySelectorAll('.carousel-dot');
+function carouselFunctionality($wrapper) {
+  const prevBTN = $wrapper.querySelector('.carousel-previous');
+  const nextBTN = $wrapper.querySelector('.carousel-next');
+  const $slides = $wrapper.querySelectorAll('.carousel-slide');
+  const $dots = $wrapper.querySelectorAll('.carousel-dot');
   let carouselIndex = 0;
   const updateCarousel = (index) => {
     const current = $slides[index];
@@ -83,7 +83,7 @@ function buildCarousel($imgs, $block, aspectRatio) {
     $dots.appendChild($dot);
   });
 
-  carouselFunctionality($block);
+  carouselFunctionality($wrapper);
 }
 
 export default function decorate($block) {

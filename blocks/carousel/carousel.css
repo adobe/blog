@@ -27,7 +27,7 @@
 }
 
 .carousel-slides > div {
-  background-color: #FFF;
+  background-color: #ffffff;
   max-height: 800px;
   min-height: 200px;
   box-sizing: border-box;
@@ -40,7 +40,7 @@
 }
 
 .carousel-slide {
-  background-color: #FFF;
+  background-color: #ffffff;
   position: absolute;
   top: 0;
   left: 200%;
@@ -51,7 +51,7 @@
   align-items: center;
   transition: left 0.3s ease-out;
   padding: 10px;
-  background: white;
+  background: #ffffff;
   box-sizing: border-box;
   width: 800px;
 }
@@ -97,7 +97,7 @@
   height: auto;
   width: auto;
   padding: 5px;
-  background-color: white;
+  background-color: #ffffff;
   transition: border 0.2s;
   user-select: none;
   cursor: pointer;
@@ -107,6 +107,10 @@
   align-items: center;
   border: 1px solid rgb(116, 116, 116, 0.3);
   color: #747474;
+}
+
+.carousel-arrow:active {
+  background-color: #fafafa;
 }
 
 .carousel-arrow svg {
