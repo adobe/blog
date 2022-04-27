@@ -1,0 +1,7 @@
+main .article-header .article-feature-image {
+  max-width: none;
+}
+
+main .full-width-header {
+  display: none;
+}
