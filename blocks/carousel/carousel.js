@@ -49,7 +49,13 @@ function carouselFunctionality($block) {
   });
 }
 
-function buildCarousel($imgs, $block, height = null) {
+/**
+ * Builds the carousel html
+ * @param {NodeList} $imgs The images to fill the carousel
+ * @param {element} $block The container/block of the carousel
+ * @param {string} aspectRatio height ÷ width percentage of the carousel, ex: 50%;
+ */
+function buildCarousel($imgs, $block, aspectRatio) {
   $block.innerHTML = '';
   const $wrapper = createTag('div', { class: 'carousel-wrapper' });
   const $slides = createTag('div', { class: 'carousel-slides' });
@@ -59,9 +65,7 @@ function buildCarousel($imgs, $block, height = null) {
   const $slideswrapper = createTag('div');
   $slides.appendChild($slideswrapper);
   $block.appendChild($wrapper);
-  if (height) {
-    $wrapper.style.paddingBottom = `${((100 / $slideswrapper.offsetWidth) * height)}%`;
-  }
+  if (aspectRatio) $slideswrapper.style.paddingBottom = aspectRatio;
   const $dots = createTag('div', { class: 'carousel-dots' });
   const $prev = createTag('button', { class: 'carousel-arrow carousel-previous', 'aria-label': 'Previous slide' });
   const $next = createTag('button', { class: 'carousel-arrow carousel-next', 'aria-label': 'Next slide' });
@@ -84,10 +88,14 @@ function buildCarousel($imgs, $block, height = null) {
 
 export default function decorate($block) {
   const $imgs = $block.querySelectorAll('img');
-  const heights = [];
+  let aspectRatio;
+  // Find the aspect ratio of the shortest image:
   [...$imgs].forEach(($img) => {
-    heights.push($img.offsetHeight);
+    const ratio = $img.offsetHeight / $img.offsetWidth;
+    if (aspectRatio === undefined || ratio < aspectRatio) {
+      aspectRatio = ratio;
+    }
   });
   $block.innerHTML = '';
-  buildCarousel($imgs, $block, Math.min(...heights));
+  buildCarousel($imgs, $block, `${(aspectRatio * 100)}%`);
 }
