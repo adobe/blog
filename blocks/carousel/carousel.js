@@ -3,6 +3,10 @@ import {
   createSVG,
 } from '../block-helpers.js';
 
+/**
+ * The carousel's navigation
+ * @param {element} $wrapper The container of the carousel
+ */
 function carouselFunctionality($wrapper) {
   const prevBTN = $wrapper.querySelector('.carousel-previous');
   const nextBTN = $wrapper.querySelector('.carousel-next');
@@ -52,7 +56,7 @@ function carouselFunctionality($wrapper) {
 /**
  * Builds the carousel html
  * @param {NodeList} $imgs The images to fill the carousel
- * @param {element} $block The container/block of the carousel
+ * @param {element} $block The container of the carousel
  * @param {string} aspectRatio height ÷ width percentage of the carousel, ex: 50%;
  */
 function buildCarousel($imgs, $block, aspectRatio) {
@@ -74,7 +78,6 @@ function buildCarousel($imgs, $block, aspectRatio) {
   $controls.appendChild($prev);
   $controls.appendChild($next);
   $controls.appendChild($dots);
-
   [...$imgs].forEach(($img, index) => {
     const $slide = createTag('div', { class: 'carousel-slide' });
     $slide.appendChild($img);
@@ -82,20 +85,18 @@ function buildCarousel($imgs, $block, aspectRatio) {
     const $dot = createTag('button', { class: 'carousel-dot', 'aria-label': `Slide ${index + 1}` });
     $dots.appendChild($dot);
   });
-
   carouselFunctionality($wrapper);
 }
 
 export default function decorate($block) {
   const $imgs = $block.querySelectorAll('img');
-  let aspectRatio;
   // Find the aspect ratio of the shortest image:
+  let aspectRatio;
   [...$imgs].forEach(($img) => {
     const ratio = $img.offsetHeight / $img.offsetWidth;
-    if (aspectRatio === undefined || ratio < aspectRatio) {
-      aspectRatio = ratio;
-    }
+    if (aspectRatio === undefined || ratio < aspectRatio) aspectRatio = ratio;
   });
+  // Build the carousel:
   $block.innerHTML = '';
   buildCarousel($imgs, $block, `${(aspectRatio * 100)}%`);
 }
