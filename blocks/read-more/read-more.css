@@ -66,6 +66,6 @@ main .section-wrapper.read-more-container:not(.read-more-expanded) .read-more ~ 
   overflow: hidden;
 }
 
-main .section-wrapper.read-more-container:not(.read-more-expanded) + * {
+main .section-wrapper.read-more-container:not(.read-more-expanded) ~ .recommended-articles-container {
   margin-top: 0;
 }
