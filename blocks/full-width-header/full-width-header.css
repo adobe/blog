@@ -7,7 +7,3 @@ main .article-header .article-feature-image img {
   width: 100%;
   object-fit: cover;
 }
-
-main .full-width-header {
-  display: none;
-}
