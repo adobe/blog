@@ -8,6 +8,8 @@ main .carousel {
   max-height: 700px;
   overflow: hidden;
   padding-bottom: 20px;
+  max-width: 1000px;
+  margin: 0 auto;
 }
 
 main .carousel-wrapper {
@@ -30,7 +32,6 @@ main .carousel-slides > div {
   width: 800px;
 }
 
-main .carousel-controls,
 main .carousel-wrapper,
 main .carousel-slide ,
 main .carousel-slides,
@@ -60,12 +61,22 @@ main .carousel-slide {
   background: #ffffff;
 }
 
-main .carousel-slide img {
+main .carousel-slide img,
+main .carousel-slide picture {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  line-height: 0;
+}
+
+main .carousel-slide picture {
   filter: brightness(0.2);
   transition: filter 0.3s;
+}
+
+main .no-animation .carousel-slide,
+main .no-animation .carousel-slide picture {
+  transition: none;
 }
 
 main .carousel-slide.slide-active {
@@ -73,7 +84,7 @@ main .carousel-slide.slide-active {
   z-index: 2;
 }
 
-main .carousel-slide.slide-active img {
+main .carousel-slide.slide-active picture {
   filter: none;
 }
 
@@ -89,6 +100,9 @@ main .carousel-slide.slide-next {
 
 main .carousel-controls {
   position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -97,9 +111,6 @@ main .carousel-controls {
 }
 
 main .carousel-arrow {
-  height: auto;
-  width: auto;
-  padding: 5px;
   background-color: #ffffff;
   transition: border 0.2s;
   user-select: none;
@@ -110,6 +121,16 @@ main .carousel-arrow {
   align-items: center;
   border: 1px solid rgb(116, 116, 116, 0.3);
   color: #747474;
+  height: 30px;
+  width: 30px;
+  min-height: 30px;
+  min-width: 30px;
+  box-sizing: border-box;
+}
+
+main .carousel-arrow:hover {
+  border: 1px solid rgb(116, 116, 116, 0.8);
+  transition: border 0.5s;
 }
 
 main .carousel-arrow:active {
@@ -129,12 +150,9 @@ main .carousel-previous svg {
   transform: rotate(180deg)
 }
 
-main .carousel-arrow:hover {
-  border: 1px solid rgb(116, 116, 116, 0.8);
-  transition: border 0.5s;
-}
-
 main .carousel-dots {
+  position: absolute;
+  bottom: 0;
   display: flex;
   justify-content: center;
   width: 100%;
@@ -156,8 +174,156 @@ main .carousel-dot {
   margin: 0 8px;
 }
 
+main .no-animation .carousel-dot {
+  transition: none;
+}
+
 main .carousel-dot.dot-active {
   background-color: #6E6E6E;
+}
+
+main .carousel-expand {
+  background-color: #ffffff;
+  transition: background 0.2s;
+  user-select: none;
+  border-radius: 4px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid rgb(116, 116, 116, 0.3);
+  color: #747474;
+  box-sizing: border-box;
+  padding: 3px;
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  cursor: pointer;
+  display: none;
+}
+
+main .carousel-expand svg {
+  height: 16px;
+  width: 16px;
+}
+
+main .carousel-expand:hover {
+  background: #fafafa;
+}
+
+main .carousel-slide.slide-active .carousel-expand {
+  display: flex;
+}
+
+main .carousel-lightbox {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%;
+  max-height: none;
+  width: 100%;
+  background: rgba(0,0,0,0.9);
+  z-index: 10;
+  display: none;
+}
+
+main .carousel-lightbox .carousel-dots {
+  transform: none;
+  bottom: 3rem;
+}
+
+main .carousel-lightbox .carousel-slide .carousel-expand,
+main .carousel-lightbox .carousel-slide.slide-active .carousel-expand {
+  display: none;
+}
+
+main .carousel.lightbox .carousel-lightbox {
+  display: block;
+}
+
+main .carousel-lightbox .carousel-close-lightbox {
+  padding: 4px;
+  background: transparent;
+  border: none;
+  color: white;
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  cursor: pointer;
+}
+
+main .carousel-lightbox .carousel-close-lightbox svg {
+  height: 18px;
+  width: 18px;
+}
+
+main .carousel-lightbox .carousel-slide,
+main .carousel-lightbox .carousel-slide.slide-active,
+main .carousel-lightbox .carousel-slide.slide-prev,
+main .carousel-lightbox .carousel-slide.slide-next {
+  left: 0;
+  background: transparent;
+  width: 100%;
+  max-width: none;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+}
+
+main .carousel-lightbox .carousel-slide.slide-active {
+  opacity: 1;
+  pointer-events: all
+}
+
+main .carousel-lightbox .carousel-slides > div {
+  background: transparent;
+  width: 90%;
+  max-width: none;
+}
+
+main .carousel-lightbox .carousel-slide img,
+main .carousel-lightbox .carousel-slide picture {
+  height: auto;
+  width: auto;
+}
+
+main .carousel-lightbox .carousel-slides {
+  width: 100%;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+main .carousel-lightbox .carousel-slide picture {
+  filter: none;
+}
+
+main .carousel-lightbox .carousel-controls {
+  padding: 16px;
+  box-sizing: border-box;
+}
+
+main .carousel-lightbox .carousel-dot {
+  height: 50px;
+  max-height: 50px;
+  width: auto;
+  background: transparent;
+  border: none;
+  padding: 0;
+  border-radius: 5px;
+  overflow: hidden;
+  margin: 0 4px;
+  box-sizing: content-box;
+}
+
+main .carousel-lightbox .carousel-dot.dot-active {
+  outline: 2px solid #E8E8E8;
+  outline-offset: -2px;
+}
+
+main .carousel-lightbox .carousel-dot img,
+main .carousel-lightbox .carousel-dot picture {
+  height: 100%;
+  width: auto;
 }
 
 @media screen and (max-width: 1085px) {
@@ -209,5 +375,14 @@ main .carousel-dot.dot-active {
 @media screen and (max-width: 600px) {
   main .carousel-slide {
     padding: 4px;
+  }
+
+  main .carousel-expand {
+    top: 10px;
+    right: 10px;
+  }
+
+  main .carousel-lightbox .carousel-controls {
+    padding: 2px;
   }
 }
