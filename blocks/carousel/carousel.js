@@ -111,7 +111,8 @@ function carouselAndLightbox($block) {
     && e.target.tagName.toLowerCase() !== 'button'
     && e.target.tagName.toLowerCase() !== 'svg'
     && e.target.tagName.toLowerCase() !== 'use'
-    && e.target.tagName.toLowerCase() !== 'path')) {
+    && e.target.tagName.toLowerCase() !== 'path'
+    && !e.target.classList.contains('carousel-controls'))) {
       closeLightbox();
     }
   });
