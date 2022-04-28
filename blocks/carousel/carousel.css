@@ -313,6 +313,7 @@ main .carousel-lightbox .carousel-slides > div {
   height: 90%;
   max-width: none;
   max-height: none;
+  padding: none;
 }
 
 main .carousel-lightbox .carousel-slide {
