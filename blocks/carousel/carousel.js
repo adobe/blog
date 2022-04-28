@@ -109,7 +109,6 @@ function carouselAndLightbox($block) {
     // Close lightbox when click on background=
     if ((e.target.tagName.toLowerCase() !== 'img'
     && e.target.tagName.toLowerCase() !== 'button'
-    && e.target.tagName.toLowerCase() !== 'picture'
     && e.target.tagName.toLowerCase() !== 'svg'
     && e.target.tagName.toLowerCase() !== 'use'
     && e.target.tagName.toLowerCase() !== 'path')) {
