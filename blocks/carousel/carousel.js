@@ -106,15 +106,13 @@ function carouselAndLightbox($block) {
   };
   $closeLightbox.addEventListener('click', closeLightbox);
   $lightbox.addEventListener('click', (e) => {
-    // Close lightbox when click on background
-    if (e.target.tagName.toLowerCase() !== 'img'
+    // Close lightbox when click on background=
+    if ((e.target.tagName.toLowerCase() !== 'img'
     && e.target.tagName.toLowerCase() !== 'button'
     && e.target.tagName.toLowerCase() !== 'picture'
     && e.target.tagName.toLowerCase() !== 'svg'
     && e.target.tagName.toLowerCase() !== 'use'
-    && e.target.tagName.toLowerCase() !== 'path'
-    && !e.target.classList.contains('carousel-controls')
-    && !e.target.classList.contains('carousel-dots')) {
+    && e.target.tagName.toLowerCase() !== 'path')) {
       closeLightbox();
     }
   });
