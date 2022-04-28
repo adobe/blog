@@ -64,6 +64,8 @@ main .section-wrapper.read-more-container:not(.read-more-expanded) .read-more ~ 
   padding: 0;
   box-sizing: border-box;
   overflow: hidden;
+  pointer-events: none;
+  user-select: none;
 }
 
 main .section-wrapper.read-more-container:not(.read-more-expanded) ~ .recommended-articles-container {

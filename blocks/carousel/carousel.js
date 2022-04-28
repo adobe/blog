@@ -43,12 +43,14 @@ function carouselFunctionality($wrapper) {
   });
   [...$dots].forEach(($dot, index) => {
     $dot.addEventListener('click', () => {
-      carouselIndex = index;
-      updateCarousel(carouselIndex);
-      $dots.forEach((otherDot) => {
-        otherDot.classList.remove('dot-active');
-      });
-      $dot.classList.add('dot-active');
+      if (index !== carouselIndex) {
+        carouselIndex = index;
+        updateCarousel(carouselIndex);
+        $dots.forEach((otherDot) => {
+          otherDot.classList.remove('dot-active');
+        });
+        $dot.classList.add('dot-active');
+      }
     });
   });
 }
