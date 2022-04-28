@@ -299,7 +299,9 @@ main .carousel-lightbox .carousel-slides {
 }
 
 main .carousel-lightbox .carousel-controls {
-  top: 50%;
+  top: 49%;
+  left: 0;
+  transform: translateY(-50%);
   padding: 16px;
   box-sizing: border-box;
 }
