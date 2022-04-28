@@ -47,6 +47,7 @@ main .carousel-slides > div {
   display: flex;
   position: relative;
   margin: 0 auto;
+  padding-bottom: 50%;
 }
 
 main .carousel-slide {
