@@ -1,4 +1,4 @@
-import createTag from '../gnav/gnav-utils.js';
+import { createTag } from '../block-helpers.js';
 
 function stringCleanup(string) {
   return string.toLowerCase().replace(/[^a-zA-Z0-9]+/g, ' ').trim().replaceAll(' ', '-');

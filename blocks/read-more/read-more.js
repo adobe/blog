@@ -1,6 +1,4 @@
-import {
-  createTag,
-} from '../block-helpers.js';
+import { createTag } from '../block-helpers.js';
 
 export default function decorate(block) {
   const container = block.closest('.read-more-container');

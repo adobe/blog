@@ -1,5 +1,5 @@
 import { getHelixEnv } from '../../scripts/scripts.js';
-import createTag from './gnav-utils.js';
+import { createTag } from '../block-helpers.js';
 
 function decorateEmail(email) {
   const MAX_CHAR = 12;

@@ -5,7 +5,7 @@ import {
   makeLinksRelative,
   getLocale,
 } from '../../scripts/scripts.js';
-import createTag from './gnav-utils.js';
+import { createTag } from '../block-helpers.js';
 
 const BRAND_IMG = '<img loading="lazy" alt="Adobe" src="/blocks/gnav/adobe-logo.svg">';
 const SEARCH_ICON = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" focusable="false">
