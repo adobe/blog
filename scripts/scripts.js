@@ -976,7 +976,7 @@ export async function loadBlock(block, eager = false) {
       });
       await Promise.all([cssLoaded, decorationComplete]);
     } catch (err) {
-      debug(`failed to load block ${blockName}`, err);
+      debug(`failed to load module for ${blockName}`, err);
     }
     block.setAttribute('data-block-status', 'loaded');
   }
