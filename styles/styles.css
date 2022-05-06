@@ -427,3 +427,11 @@ body {
 body.appear {
   visibility: unset;
 }
+
+main .block {
+  visibility: visible;
+}
+
+main .block[data-block-status='loading'], main .block[data-block-status='initialized'] {
+  visibility: hidden;
+}
