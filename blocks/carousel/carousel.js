@@ -5,7 +5,7 @@ import {
 
 /**
  * The carousel's navigation
- * @param {element} $wrapper The container of the carousel
+ * @param {element} $block The container of the carousel
  */
 function carouselAndLightbox($block) {
   const $wrapper = $block.querySelector('.carousel-wrapper');
