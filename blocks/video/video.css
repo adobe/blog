@@ -1,7 +1,38 @@
-main .block.video {
-    max-height: 600px;
-    width: unset;
-    text-align: center;
-    max-width: 800px;
-    margin: 0 auto 64px;
+main .video-container > div,
+main .video-autoplay-container > div {
+    max-width: 1000px;
+}
+
+main .video div {
+    width: 100%;
+    padding: 0;
+    margin: 0;
+}
+
+main .video .vid-wrapper {
+    left: 0;
+    width: 100%;
+    height: 0;
+    position: relative;
+    padding-bottom: 56.25%;
+}
+
+main .video iframe,
+main .video video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    border: 0;
+    height: 100%;
+    width: 100%;
+}
+
+main .video video[poster] {
+    object-fit: cover;
+}
+
+@media (min-width: 1080px) {
+    main .video {
+        min-height: 562.5px;
+    }
 }

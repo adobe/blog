@@ -145,14 +145,18 @@ window.onerror = (event, source, line) => {
  * Loads a CSS file.
  * @param {string} href The path to the CSS file
  */
-export function loadCSS(href) {
+export function loadCSS(href, callback) {
   if (!document.querySelector(`head > link[href="${href}"]`)) {
     const link = document.createElement('link');
     link.setAttribute('rel', 'stylesheet');
     link.setAttribute('href', href);
-    link.onload = () => { };
-    link.onerror = () => { };
+    if (typeof callback === 'function') {
+      link.onload = (e) => callback(e.type);
+      link.onerror = (e) => callback(e.type);
+    }
     document.head.appendChild(link);
+  } else if (typeof callback === 'function') {
+    callback('noop');
   }
 }
 
@@ -613,7 +617,7 @@ export function decorateBlock(block) {
   if (section) {
     section.classList.add(`${blockName}-container`.replace(/--/g, '-'));
   }
-  const blocksWithVariants = ['recommended-articles'];
+  const blocksWithVariants = ['recommended-articles', 'video'];
   blocksWithVariants.forEach((b) => {
     if (blockName.startsWith(`${b}-`)) {
       const options = blockName.substring(b.length + 1).split('-').filter((opt) => !!opt);
@@ -625,6 +629,7 @@ export function decorateBlock(block) {
 
   block.classList.add('block');
   block.setAttribute('data-block-name', blockName);
+  block.setAttribute('data-block-status', 'initialized');
 }
 
 /**
@@ -876,7 +881,7 @@ function unwrapBlock(block) {
 
 function splitSections() {
   document.querySelectorAll('main > div > div').forEach((block) => {
-    const blocksToSplit = ['article-header', 'article-feed', 'recommended-articles'];
+    const blocksToSplit = ['article-header', 'article-feed', 'recommended-articles', 'video', 'carousel'];
     if (blocksToSplit.includes(block.className)) {
       unwrapBlock(block);
     }
@@ -949,18 +954,31 @@ export function buildFigure(blockEl) {
  * @param {Element} block The block element
  */
 export async function loadBlock(block, eager = false) {
-  if (!block.getAttribute('data-block-loaded')) {
-    block.setAttribute('data-block-loaded', true);
+  if (!(block.getAttribute('data-block-status') === 'loading' || block.getAttribute('data-block-status') === 'loaded')) {
+    block.setAttribute('data-block-status', 'loading');
     const blockName = block.getAttribute('data-block-name');
     try {
-      loadCSS(`/blocks/${blockName}/${blockName}.css`);
-      const mod = await import(`/blocks/${blockName}/${blockName}.js`);
-      if (mod.default) {
-        await mod.default(block, blockName, document, eager);
-      }
+      const cssLoaded = new Promise((resolve) => {
+        loadCSS(`/blocks/${blockName}/${blockName}.css`, resolve);
+      });
+      const decorationComplete = new Promise((resolve) => {
+        (async () => {
+          try {
+            const mod = await import(`/blocks/${blockName}/${blockName}.js`);
+            if (mod.default) {
+              await mod.default(block, blockName, document, eager);
+            }
+          } catch (err) {
+            debug(`failed to load module for ${blockName}`, err);
+          }
+          resolve();
+        })();
+      });
+      await Promise.all([cssLoaded, decorationComplete]);
     } catch (err) {
       debug(`failed to load module for ${blockName}`, err);
     }
+    block.setAttribute('data-block-status', 'loaded');
   }
 }
 
@@ -969,9 +987,9 @@ export async function loadBlock(block, eager = false) {
  * @param {Element} main The container element
  */
 function loadBlocks(main) {
-  main
-    .querySelectorAll('div.section-wrapper > div > .block')
-    .forEach(async (block) => loadBlock(block));
+  const blockPromises = [...main.querySelectorAll('div.section-wrapper > div > .block')]
+    .map((block) => loadBlock(block));
+  return blockPromises;
 }
 
 /**
@@ -1325,23 +1343,20 @@ async function loadEager() {
   const main = document.querySelector('main');
   if (main) {
     decorateMain(main);
-    document.querySelector('body').classList.add('appear');
     const lcpBlocks = ['featured-article', 'article-header'];
     const block = document.querySelector('.block');
     const hasLCPBlock = (block && lcpBlocks.includes(block.getAttribute('data-block-name')));
     if (hasLCPBlock) await loadBlock(block, true);
+    document.querySelector('body').classList.add('appear');
     const lcpCandidate = document.querySelector('main img');
-    const loaded = {
-      then: (resolve) => {
-        if (lcpCandidate && !lcpCandidate.complete) {
-          lcpCandidate.addEventListener('load', () => resolve());
-          lcpCandidate.addEventListener('error', () => resolve());
-        } else {
-          resolve();
-        }
-      },
-    };
-    await loaded;
+    await new Promise((resolve) => {
+      if (lcpCandidate && !lcpCandidate.complete) {
+        lcpCandidate.addEventListener('load', () => resolve());
+        lcpCandidate.addEventListener('error', () => resolve());
+      } else {
+        resolve();
+      }
+    });
   }
 }
 

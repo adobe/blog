@@ -1,4 +1,4 @@
-import createTag from '../gnav/gnav-utils.js';
+import { createTag } from '../block-helpers.js';
 
 function displayConfirmation($container, $content, message) {
   const $confirmationText = createTag('p', { class: 'newsletter-modal-confirmation' });

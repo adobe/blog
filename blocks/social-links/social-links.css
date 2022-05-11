@@ -4,10 +4,6 @@ main .social-links {
   margin: 0 auto 30px 0;
 }
 
-main .social-links[data-block-loaded=true] {
-  visibility: unset;
-}
-
 main p.social-links-text {
   margin: 8px 0;
   font-weight: var(--detail-font-weight);

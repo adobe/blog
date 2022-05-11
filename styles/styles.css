@@ -377,19 +377,6 @@ main .figure .caption {
   }
 }
 
-/* CLS and FOUC protection for lazy loaded content/styles */
-
-header .gnav,
-main .recommended-articles,
-main .featured-article,
-main .article-feed,
-main .article-header,
-main .author-header-container,
-main .tag-header-container,
-main .recommended-articles-small-container {
-  visibility: hidden;
-}
-
 /* MWPW-108414 */
 main .embed a {
   word-break: break-all;
@@ -426,4 +413,8 @@ body {
 
 body.appear {
   visibility: unset;
+}
+
+main .block[data-block-status='loading'], main .block[data-block-status='initialized'] {
+  visibility: hidden;
 }
