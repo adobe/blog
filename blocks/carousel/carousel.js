@@ -94,6 +94,8 @@ function carouselAndLightbox($block) {
     && e.target.tagName.toLowerCase() !== 'svg'
     && e.target.tagName.toLowerCase() !== 'use'
     && e.target.tagName.toLowerCase() !== 'path'
+    && e.target.tagName.toLowerCase() !== 'p'
+    && e.target.tagName.toLowerCase() !== 'a'
     && !e.target.classList.contains('carousel-controls'))) {
       closeLightbox();
     }
@@ -115,11 +117,11 @@ function carouselAndLightbox($block) {
 
 /**
  * Builds the carousel html
- * @param {NodeList} $imgs The images to fill the carousel
+ * @param {array} $imgSlides Array of objects, ex: [{img: $imgElement, caption: $pElement}, {...}]
  * @param {element} $block The container of the carousel
  * @param {string} aspectRatio height ÷ width percentage of the carousel, ex: 50%;
  */
-function buildCarousel($imgs, $block, aspectRatio) {
+function buildCarousel($imgSlides, $block, aspectRatio = '50%', $captions = null) {
   $block.innerHTML = '';
   const $wrapper = createTag('div', { class: 'carousel-wrapper' });
   const $controls = createTag('div', { class: 'carousel-controls' });
@@ -137,15 +139,16 @@ function buildCarousel($imgs, $block, aspectRatio) {
   $next.appendChild(createSVG('chevron'));
   $controls.appendChild($prev);
   $controls.appendChild($next);
-  [...$imgs].forEach(($img, index) => {
+  $imgSlides.forEach(($imgSlide, index) => {
     const $slide = createTag('div', { class: 'carousel-slide' });
-    $slide.appendChild($img);
+    $slide.appendChild($imgSlide.img);
     const $expandButton = createTag('button', { class: 'carousel-expand', 'aria-label': 'Open in full screen' });
     $expandButton.appendChild(createSVG('expand'));
     $slide.appendChild($expandButton);
     $slideswrapper.appendChild($slide);
     const $dot = createTag('button', { class: 'carousel-dot', 'aria-label': `Slide ${index + 1}` });
     $dots.appendChild($dot);
+    if ($imgSlide.caption !== null) $slide.appendChild($imgSlide.caption);
   });
   const $lightbox = $wrapper.cloneNode(true);
   $lightbox.classList.add('carousel-lightbox');
@@ -155,7 +158,7 @@ function buildCarousel($imgs, $block, aspectRatio) {
   $block.appendChild($lightbox);
   const $lightboxThumbnails = $lightbox.querySelectorAll('.carousel-dot');
   [...$lightboxThumbnails].forEach(($thumbnail, index) => {
-    $thumbnail.appendChild($imgs[index].cloneNode(true));
+    $thumbnail.appendChild($imgSlides[index].img.cloneNode(true));
   });
   if (aspectRatio) $slideswrapper.style.paddingBottom = aspectRatio;
   carouselAndLightbox($block);
@@ -163,14 +166,31 @@ function buildCarousel($imgs, $block, aspectRatio) {
 
 export default function decorate($block) {
   const $imgs = $block.querySelectorAll('picture');
-  // Find the aspect ratio of the shortest image:
+  const $imgSlides = [];
   let aspectRatio;
   [...$imgs].forEach(($picture) => {
+    // unwrap picture if wrapped in p tag
+    if ($picture.parentElement.tagName === 'P') {
+      const $parentDiv = $picture.closest('div');
+      const $parentParagraph = $picture.parentNode;
+      $parentDiv.insertBefore($picture, $parentParagraph);
+    }
+    // Find the caption if there is one
+    let $caption = null;
+    let nextElement = $picture.nextElementSibling;
+    if (nextElement && !nextElement.tagName.toLowerCase() !== 'picture') {
+      while (nextElement.tagName.toLowerCase() !== 'picture' && (nextElement.childNodes.length === 0 || nextElement.textContent === '')) {
+        nextElement = nextElement.nextElementSibling;
+      }
+      if (nextElement.childNodes.length !== 0 && nextElement.textContent !== '') $caption = nextElement;
+    }
+    $imgSlides.push({ img: $picture, caption: $caption });
+    // Find the aspect ratio of the shortest image
     const $img = $picture.querySelector('img');
     const ratio = $img.offsetHeight / $img.offsetWidth;
     if (aspectRatio === undefined || ratio < aspectRatio) aspectRatio = ratio;
   });
   // Build the carousel:
   $block.innerHTML = '';
-  buildCarousel($imgs, $block, `${(aspectRatio * 100)}%`);
+  buildCarousel($imgSlides, $block, `${(aspectRatio * 100)}%`);
 }
