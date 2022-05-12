@@ -32,9 +32,7 @@ function carouselAndLightbox($block) {
     current.classList.add('slide-active');
     prev.classList.add('slide-prev');
     next.classList.add('slide-next');
-    $navDots.forEach((otherDot) => {
-      otherDot.classList.remove('dot-active');
-    });
+    $navDots.forEach((otherDot) => { otherDot.classList.remove('dot-active'); });
     $navDots[index].classList.add('dot-active');
   };
   let carouselIndex = 0;
