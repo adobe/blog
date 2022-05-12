@@ -121,7 +121,7 @@ function carouselAndLightbox($block) {
  * @param {element} $block The container of the carousel
  * @param {string} aspectRatio height ÷ width percentage of the carousel, ex: 50%;
  */
-function buildCarousel($imgSlides, $block, aspectRatio = '50%', $captions = null) {
+function buildCarousel($imgSlides, $block, aspectRatio = '50%') {
   $block.innerHTML = '';
   const $wrapper = createTag('div', { class: 'carousel-wrapper' });
   const $controls = createTag('div', { class: 'carousel-controls' });
