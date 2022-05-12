@@ -123,7 +123,7 @@ function buildCarousel($imgs, $block, aspectRatio) {
   const $controls = createTag('div', { class: 'carousel-controls' });
   const $slides = createTag('div', { class: 'carousel-slides' });
   const $dots = createTag('div', { class: 'carousel-dots' });
-  const $slideswrapper = createTag('div');
+  const $slideswrapper = createTag('div', { tabIndex: '0' });
   $wrapper.appendChild($controls);
   $wrapper.appendChild($slides);
   $wrapper.appendChild($dots);
