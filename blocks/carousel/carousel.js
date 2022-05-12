@@ -77,6 +77,7 @@ function carouselAndLightbox($block) {
     $btn.addEventListener('click', () => {
       updateCarousel($lightboxSlides, $lightboxThumbnails, carouselIndex);
       $wrapper.closest('.block.carousel').classList.add('lightbox');
+      $lightboxThumbnails[carouselIndex].focus({ preventScroll: true });
     });
   });
   const closeLightbox = () => {
