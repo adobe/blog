@@ -53,7 +53,6 @@ function carouselAndLightbox($block) {
       carouselIndex -= 1;
       if (carouselIndex < 0) carouselIndex = [...$slides].length - 1;
     }
-    $navDots[carouselIndex].focus({ preventScroll: true });
     updateCarousel($slides, $navDots, carouselIndex);
   };
   $carouselNext.addEventListener('click', () => { incrementCurrentCarousel(true); });
@@ -101,12 +100,16 @@ function carouselAndLightbox($block) {
     }
   });
   $block.addEventListener('keydown', (e) => {
+    const $navDots = ($wrapper.closest('.block.carousel').classList.contains('lightbox')) ? $lightboxThumbnails : $dots;
     if (e.key === 'ArrowLeft') {
       incrementCurrentCarousel(false);
+      $navDots[carouselIndex].focus({ preventScroll: true });
     } else if (e.key === 'ArrowRight') {
       incrementCurrentCarousel(true);
+      $navDots[carouselIndex].focus({ preventScroll: true });
     } else if (e.key === 'Escape' && $wrapper.closest('.block.carousel').classList.contains('lightbox')) {
       closeLightbox();
+      $navDots[carouselIndex].focus({ preventScroll: true });
     }
   });
 }
