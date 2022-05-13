@@ -56,10 +56,30 @@ main .carousel-slide {
   left: 200%;
   padding: 10px;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   transition: left 0.3s ease-out;
   background: #ffffff;
+}
+
+main .carousel-slide p {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  width: calc(100% - 20px);
+  margin: 0;
+  padding: 1rem;
+  font-weight: 600;
+  font-size: var(--body-font-size-s);
+  box-sizing: border-box;
+  background: linear-gradient(0deg, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 100%);
+  color: var(--color-white);
+  font-style: italic;
+}
+
+main .carousel-slide a {
+  color: white;
 }
 
 main .carousel-slide img,
@@ -68,6 +88,8 @@ main .carousel-slide picture {
   height: 100%;
   object-fit: cover;
   line-height: 0;
+  padding: 0;
+  margin: 0;
 }
 
 main .carousel-slide picture {
@@ -227,6 +249,17 @@ main .carousel-lightbox {
   display: none;
 }
 
+main .carousel-lightbox .carousel-slide p {
+  position: unset;
+  bottom: unset;
+  left: unset;
+  margin: 0;
+  padding: 0.75rem 0 2.5rem;
+  width: auto;
+  background: none;
+  font-size: var(--body-font-size-m);
+}
+
 main .carousel-lightbox .carousel-dots {
   transform: none;
   bottom: 3rem;
@@ -326,7 +359,7 @@ main .carousel-lightbox .carousel-slide {
 
 main .carousel-lightbox .carousel-slide picture {
   filter: none;
-  height: 100%;
+  height: auto;
   width: 100%;
 }
 
@@ -385,6 +418,13 @@ main .carousel-lightbox .carousel-dot picture {
   main .carousel-slide {
     padding: 8px;
   }
+
+  main .carousel-slide p {
+    position: absolute;
+    bottom: 8px;
+    left: 8px;
+    width: calc(100% - 16px);
+  }
   
   main .carousel-controls {
     padding-left: 4px;
@@ -406,6 +446,13 @@ main .carousel-lightbox .carousel-dot picture {
     padding: 4px;
   }
 
+  main .carousel-slide p {
+    position: absolute;
+    bottom: 4px;
+    left: 4px;
+    width: calc(100% - 8px);
+  }
+
   main .carousel-expand {
     top: 10px;
     right: 10px;
@@ -423,9 +470,5 @@ main .carousel-lightbox .carousel-dot picture {
 
   main .carousel-lightbox .carousel-slides {
     height: calc(100% - 58px);
-  }
-
-  main .carousel-lightbox .carousel-slides > div {
-    height: 100%;
   }
 }

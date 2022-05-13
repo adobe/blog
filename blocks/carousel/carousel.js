@@ -18,13 +18,13 @@ function carouselAndLightbox($block) {
   const $carouselNext = $wrapper.querySelector('.carousel-next');
   const $lightboxPrevious = $lightbox.querySelector('.carousel-previous');
   const $lightboxNext = $lightbox.querySelector('.carousel-next');
-  const $thumbnails = $lightbox.querySelectorAll('.carousel-dot');
+  const $lightboxThumbnails = $lightbox.querySelectorAll('.carousel-dot');
   const $closeLightbox = $lightbox.querySelector('.carousel-close-lightbox');
-  const updateCarousel = (index) => {
-    const current = $carouselSlides[index];
-    const prev = $carouselSlides[index - 1] ?? $carouselSlides[[...$carouselSlides].length - 1];
-    const next = $carouselSlides[index + 1] ?? $carouselSlides[0];
-    $carouselSlides.forEach((slide) => {
+  const updateCarousel = ($slides, $navDots, index) => {
+    const current = $slides[index];
+    const prev = $slides[index - 1] ?? $slides[[...$slides].length - 1];
+    const next = $slides[index + 1] ?? $slides[0];
+    $slides.forEach((slide) => {
       slide.classList.remove('slide-active');
       slide.classList.remove('slide-prev');
       slide.classList.remove('slide-next');
@@ -32,75 +32,57 @@ function carouselAndLightbox($block) {
     current.classList.add('slide-active');
     prev.classList.add('slide-prev');
     next.classList.add('slide-next');
-    $dots.forEach((otherDot) => {
-      otherDot.classList.remove('dot-active');
-    });
-    $dots[index].classList.add('dot-active');
-  };
-  const updateLightbox = (index) => {
-    const current = $lightboxSlides[index];
-    const prev = $lightboxSlides[index - 1] ?? $lightboxSlides[[...$lightboxSlides].length - 1];
-    const next = $lightboxSlides[index + 1] ?? $lightboxSlides[0];
-    $lightboxSlides.forEach((slide) => {
-      slide.classList.remove('slide-active');
-      slide.classList.remove('slide-prev');
-      slide.classList.remove('slide-next');
-    });
-    current.classList.add('slide-active');
-    prev.classList.add('slide-prev');
-    next.classList.add('slide-next');
-    $thumbnails.forEach((otherDot) => {
-      otherDot.classList.remove('dot-active');
-    });
-    $thumbnails[index].classList.add('dot-active');
+    $navDots.forEach((otherDot) => { otherDot.classList.remove('dot-active'); });
+    $navDots[index].classList.add('dot-active');
   };
   let carouselIndex = 0;
-  updateCarousel(carouselIndex);
-  $carouselNext.addEventListener('click', () => {
-    carouselIndex += 1;
-    if (carouselIndex > [...$carouselSlides].length - 1) carouselIndex = 0;
-    updateCarousel(carouselIndex);
-  });
-  $carouselPrevious.addEventListener('click', () => {
-    carouselIndex -= 1;
-    if (carouselIndex < 0) carouselIndex = [...$carouselSlides].length - 1;
-    updateCarousel(carouselIndex);
-  });
+  updateCarousel($carouselSlides, $dots, carouselIndex);
+  const incrementCurrentCarousel = (next = true) => {
+    let $slides = $carouselSlides;
+    let $navDots = $dots;
+    if ($wrapper.closest('.block.carousel').classList.contains('lightbox')) {
+      $slides = $lightboxSlides;
+      $navDots = $lightboxThumbnails;
+    }
+    if (next) {
+      carouselIndex += 1;
+      if (carouselIndex > [...$slides].length - 1) carouselIndex = 0;
+    } else {
+      carouselIndex -= 1;
+      if (carouselIndex < 0) carouselIndex = [...$slides].length - 1;
+    }
+    updateCarousel($slides, $navDots, carouselIndex);
+  };
+  $carouselNext.addEventListener('click', () => { incrementCurrentCarousel(true); });
+  $carouselPrevious.addEventListener('click', () => { incrementCurrentCarousel(false); });
+  $lightboxNext.addEventListener('click', () => { incrementCurrentCarousel(true); });
+  $lightboxPrevious.addEventListener('click', () => { incrementCurrentCarousel(false); });
   [...$dots].forEach(($dot, index) => {
     $dot.addEventListener('click', () => {
       if (index !== carouselIndex) {
         carouselIndex = index;
-        updateCarousel(carouselIndex);
+        updateCarousel($carouselSlides, $dots, carouselIndex);
       }
     });
   });
-  $lightboxNext.addEventListener('click', () => {
-    carouselIndex += 1;
-    if (carouselIndex > [...$lightboxSlides].length - 1) carouselIndex = 0;
-    updateLightbox(carouselIndex);
-  });
-  $lightboxPrevious.addEventListener('click', () => {
-    carouselIndex -= 1;
-    if (carouselIndex < 0) carouselIndex = [...$lightboxSlides].length - 1;
-    updateLightbox(carouselIndex);
-  });
-  [...$thumbnails].forEach(($thumbnail, index) => {
+  [...$lightboxThumbnails].forEach(($thumbnail, index) => {
     $thumbnail.addEventListener('click', () => {
       if (index !== carouselIndex) {
         carouselIndex = index;
-        updateLightbox(carouselIndex);
+        updateCarousel($lightboxSlides, $lightboxThumbnails, carouselIndex);
       }
     });
   });
   [...$expandButtons].forEach(($btn) => {
     $btn.addEventListener('click', () => {
-      updateLightbox(carouselIndex);
+      updateCarousel($lightboxSlides, $lightboxThumbnails, carouselIndex);
       $wrapper.closest('.block.carousel').classList.add('lightbox');
+      $lightboxThumbnails[carouselIndex].focus({ preventScroll: true });
     });
   });
   const closeLightbox = () => {
     $wrapper.classList.add('no-animation');
-    updateCarousel(carouselIndex);
+    updateCarousel($carouselSlides, $dots, carouselIndex);
     $wrapper.closest('.block.carousel').classList.remove('lightbox');
     setTimeout(() => { $wrapper.classList.remove('no-animation'); }, 300);
   };
@@ -112,25 +94,40 @@ function carouselAndLightbox($block) {
     && e.target.tagName.toLowerCase() !== 'svg'
     && e.target.tagName.toLowerCase() !== 'use'
     && e.target.tagName.toLowerCase() !== 'path'
+    && e.target.tagName.toLowerCase() !== 'p'
+    && e.target.tagName.toLowerCase() !== 'a'
     && !e.target.classList.contains('carousel-controls'))) {
       closeLightbox();
+    }
+  });
+  $block.addEventListener('keydown', (e) => {
+    const $navDots = ($wrapper.closest('.block.carousel').classList.contains('lightbox')) ? $lightboxThumbnails : $dots;
+    if (e.key === 'ArrowLeft') {
+      incrementCurrentCarousel(false);
+      $navDots[carouselIndex].focus({ preventScroll: true });
+    } else if (e.key === 'ArrowRight') {
+      incrementCurrentCarousel(true);
+      $navDots[carouselIndex].focus({ preventScroll: true });
+    } else if (e.key === 'Escape' && $wrapper.closest('.block.carousel').classList.contains('lightbox')) {
+      closeLightbox();
+      $navDots[carouselIndex].focus({ preventScroll: true });
     }
   });
 }
 
 /**
  * Builds the carousel html
- * @param {NodeList} $imgs The images to fill the carousel
+ * @param {array} $imgSlides Array of objects, ex: [{img: $imgElement, caption: $pElement}, {...}]
  * @param {element} $block The container of the carousel
  * @param {string} aspectRatio height ÷ width percentage of the carousel, ex: 50%;
  */
-function buildCarousel($imgs, $block, aspectRatio) {
+function buildCarousel($imgSlides, $block, aspectRatio = '50%') {
   $block.innerHTML = '';
   const $wrapper = createTag('div', { class: 'carousel-wrapper' });
   const $controls = createTag('div', { class: 'carousel-controls' });
   const $slides = createTag('div', { class: 'carousel-slides' });
   const $dots = createTag('div', { class: 'carousel-dots' });
-  const $slideswrapper = createTag('div');
+  const $slideswrapper = createTag('div', { tabIndex: '0' });
   $wrapper.appendChild($controls);
   $wrapper.appendChild($slides);
   $wrapper.appendChild($dots);
@@ -142,15 +139,16 @@ function buildCarousel($imgs, $block, aspectRatio) {
   $next.appendChild(createSVG('chevron'));
   $controls.appendChild($prev);
   $controls.appendChild($next);
-  [...$imgs].forEach(($img, index) => {
+  $imgSlides.forEach(($imgSlide, index) => {
     const $slide = createTag('div', { class: 'carousel-slide' });
-    $slide.appendChild($img);
+    $slide.appendChild($imgSlide.img);
     const $expandButton = createTag('button', { class: 'carousel-expand', 'aria-label': 'Open in full screen' });
     $expandButton.appendChild(createSVG('expand'));
     $slide.appendChild($expandButton);
     $slideswrapper.appendChild($slide);
     const $dot = createTag('button', { class: 'carousel-dot', 'aria-label': `Slide ${index + 1}` });
     $dots.appendChild($dot);
+    if ($imgSlide.caption !== null) $slide.appendChild($imgSlide.caption);
   });
   const $lightbox = $wrapper.cloneNode(true);
   $lightbox.classList.add('carousel-lightbox');
@@ -158,9 +156,9 @@ function buildCarousel($imgs, $block, aspectRatio) {
   $closeButton.appendChild(createSVG('close'));
   $lightbox.appendChild($closeButton);
   $block.appendChild($lightbox);
-  const $thumbnails = $lightbox.querySelectorAll('.carousel-dot');
-  [...$thumbnails].forEach(($thumbnail, index) => {
-    $thumbnail.appendChild($imgs[index].cloneNode(true));
+  const $lightboxThumbnails = $lightbox.querySelectorAll('.carousel-dot');
+  [...$lightboxThumbnails].forEach(($thumbnail, index) => {
+    $thumbnail.appendChild($imgSlides[index].img.cloneNode(true));
   });
   if (aspectRatio) $slideswrapper.style.paddingBottom = aspectRatio;
   carouselAndLightbox($block);
@@ -168,14 +166,31 @@ function buildCarousel($imgs, $block, aspectRatio) {
 
 export default function decorate($block) {
   const $imgs = $block.querySelectorAll('picture');
-  // Find the aspect ratio of the shortest image:
+  const $imgSlides = [];
   let aspectRatio;
   [...$imgs].forEach(($picture) => {
+    // unwrap picture if wrapped in p tag
+    if ($picture.parentElement.tagName === 'P') {
+      const $parentDiv = $picture.closest('div');
+      const $parentParagraph = $picture.parentNode;
+      $parentDiv.insertBefore($picture, $parentParagraph);
+    }
+    // Find the caption if there is one
+    let $caption = null;
+    let nextElement = $picture.nextElementSibling;
+    if (nextElement && !nextElement.tagName.toLowerCase() !== 'picture') {
+      while (nextElement.tagName.toLowerCase() !== 'picture' && (nextElement.childNodes.length === 0 || nextElement.textContent === '')) {
+        nextElement = nextElement.nextElementSibling;
+      }
+      if (nextElement.childNodes.length !== 0 && nextElement.textContent !== '') $caption = nextElement;
+    }
+    $imgSlides.push({ img: $picture, caption: $caption });
+    // Find the aspect ratio of the shortest image
     const $img = $picture.querySelector('img');
     const ratio = $img.offsetHeight / $img.offsetWidth;
     if (aspectRatio === undefined || ratio < aspectRatio) aspectRatio = ratio;
   });
   // Build the carousel:
   $block.innerHTML = '';
-  buildCarousel($imgs, $block, `${(aspectRatio * 100)}%`);
+  buildCarousel($imgSlides, $block, `${(aspectRatio * 100)}%`);
 }
