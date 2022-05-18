@@ -61,7 +61,7 @@ main div.carousel-container + div a:any-link:not([class]) {
 }
 
 main div.article-header-container + div a:hover:not([class]),
-main div.article-header-container + div a:focus:not([class])
+main div.article-header-container + div a:focus:not([class]),
 main div.carousel-container + div a:hover:not([class]),
 main div.carousel-container + div a:focus:not([class]) {
   color: var(--color-info-accent-hover);
