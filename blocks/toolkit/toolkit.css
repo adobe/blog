@@ -57,6 +57,10 @@ main .toolkit .container .row-content a.button {
     margin: 0;
 }
 
+main .toolkit .container .row-image {
+    display: flex;
+}
+
 main .toolkit .container .row-image img {
     max-width: 100px;
     display: block;
