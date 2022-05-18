@@ -53,14 +53,17 @@
 .tk-adobe-clean { font-family: "adobe-clean", "Trebuchet MS", sans-serif; }
 .tk-adobe-clean-serif { font-family: "adobe-clean-serif", "Times New Roman", Times, serif; }
 
-main div.article-header-container + div a:any-link:not([class]) {
+main div.article-header-container + div a:any-link:not([class]),
+main div.carousel-container + div a:any-link:not([class]) {
   color: var(--color-info-accent);
   text-decoration: underline;
   text-decoration-thickness: 2px;
 }
 
 main div.article-header-container + div a:hover:not([class]),
-main div.article-header-container + div a:focus:not([class]) {
+main div.article-header-container + div a:focus:not([class]),
+main div.carousel-container + div a:hover:not([class]),
+main div.carousel-container + div a:focus:not([class]) {
   color: var(--color-info-accent-hover);
 }
 
