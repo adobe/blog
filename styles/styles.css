@@ -69,6 +69,16 @@
   --detail-font-size-l: 1.25rem; /* 20px */
   --detail-font-size-m: 1rem; /* 16px */
   --detail-font-size-s: 0.75rem; /* 12px */
+
+  /* Consonant */
+  /* Spacing */
+  --spacing-xxs: 8px;
+  --spacing-xs: 16px;
+  --spacing-s: 24px;
+  --spacing-m: 32px;
+  --spacing-l: 48px;
+  --spacing-xl: 56px;
+  --spacing-xxl: 80px;
 }
 
 
