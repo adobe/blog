@@ -1325,6 +1325,7 @@ async function loadLibs() {
       const { default: list } = await import(`${window.milo.libs.base}/blocks/list.js`);
       window.milo.libs.blocks = { list };
     } catch (e) {
+      window.milo.libs.blocks = {};
       console.log('Couldn\'t load libs list');
     }
   }
