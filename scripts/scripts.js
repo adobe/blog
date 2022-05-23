@@ -1326,6 +1326,7 @@ async function loadLibs() {
       window.milo.libs.blocks = { list };
     } catch (e) {
       window.milo.libs.blocks = {};
+      // eslint-disable-next-line no-console
       console.log('Couldn\'t load libs list');
     }
   }
