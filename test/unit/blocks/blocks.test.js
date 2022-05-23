@@ -16,6 +16,7 @@
 import {
   decorateBlock,
   loadBlock,
+  loadLibs,
 } from '../../../scripts/scripts.js';
 
 const ROOT_PATH = '/blocks-test';
@@ -74,6 +75,7 @@ describe('Block tests', () => {
         block = block.querySelector(':scope > div > div');
       }
 
+      await loadLibs();
       decorateBlock(block);
       await loadBlock(block);
 

@@ -1310,7 +1310,7 @@ export function loadScript(url, callback, type) {
   return script;
 }
 
-async function loadLibs() {
+export async function loadLibs() {
   window.milo = window.milo || {};
   if (!window.milo.libs) {
     let domain = `https://${PRODUCTION_DOMAINS[0]}`;
