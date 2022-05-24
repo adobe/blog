@@ -31,17 +31,14 @@ main .table-of-content ol {
 }
 
 main .table-of-content ol > li {
-    counter-increment: customlistcounter;
+    counter-increment: li;
 }
 
 main .table-of-content ol > li:before {
-    content: counter(customlistcounter) " ";
+    content: counter(li) ".";
     font-weight: bold;
     margin-right: 10px;
-}
-
-main .table-of-content ol:first-child {
-    counter-reset: customlistcounter;
+    color: #4646C6;
 }
 
 main .table-of-content li {
