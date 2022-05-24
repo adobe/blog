@@ -7,8 +7,11 @@ main .table-of-content-container hr {
 }
 
 main .table-of-content {
+    background-color: #F5F5F5;
     max-width: 600px;
-    margin: auto;
+    margin: 40px auto;
+    padding: 20px 0;
+    border-radius: 9px;
 }
 
 main .table-of-content>div {
@@ -21,10 +24,24 @@ main .table-of-content h3 {
     margin-bottom: 0;
 }
 
-main .table-of-content ul {
-    list-style: none;
+main .table-of-content ol {
+    list-style-type: none;
     padding-left: 0;
     margin-top: 12px;
+}
+
+main .table-of-content ol > li {
+    counter-increment: customlistcounter;
+}
+
+main .table-of-content ol > li:before {
+    content: counter(customlistcounter) " ";
+    font-weight: bold;
+    margin-right: 10px;
+}
+
+main .table-of-content ol:first-child {
+    counter-reset: customlistcounter;
 }
 
 main .table-of-content li {
@@ -35,7 +52,7 @@ main .table-of-content li {
 
 main .table-of-content li a {
     font-weight: 400;
-    text-decoration: none;
+    text-decoration: none!important;
     font-size: 18px;
     line-height: 31px;
     color: #4646C6;

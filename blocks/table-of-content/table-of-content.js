@@ -4,15 +4,13 @@ function stringCleanup(string) {
   return string.toLowerCase().replace(/[^a-zA-Z0-9]+/g, ' ').trim().replaceAll(' ', '-');
 }
 
-export default function decorate(block) {
-  block.insertAdjacentHTML('beforebegin', '<hr/>');
-  block.insertAdjacentHTML('afterend', '<hr/>');
-
+export default function decorate($block) {
   const url = new URL(window.location.href);
   const baseUrl = url.origin + url.pathname;
-  const $tabs = block.querySelectorAll('li');
+  const $list = createTag('ol', { }, null);
+  const $content = $block.querySelector('ul');
 
-  $tabs.forEach(($tab) => {
+  Array.from($content.children).forEach(($tab) => {
     const title = $tab.textContent;
     const id = stringCleanup(title);
     const href = `${baseUrl}#${id}`;
@@ -22,9 +20,10 @@ export default function decorate(block) {
     $tab.innerHTML = '';
     $tab.append($anchor);
     $anchor.textContent = title;
+    $list.append($tab);
 
     if (title === 'Introduction') {
-      target = block.parentElement.parentElement.previousSibling;
+      target = $block.parentElement.parentElement.previousSibling;
       target.id = id;
     } else {
       target = document.getElementById(id);
@@ -32,4 +31,7 @@ export default function decorate(block) {
 
     target.classList.add('--with-scroll-margin-top');
   });
+
+  $content.after($list);
+  $content.remove();
 }
