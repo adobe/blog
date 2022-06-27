@@ -960,12 +960,7 @@ export async function loadBlock(block, eager = false) {
     const { list } = window.milo?.libs?.blocks;
     // Determine if block should be loaded from milo libs
     const isMiloBlock = !!(list && list.includes(blockName));
-    let base;
-    if (isMiloBlock) {
-      base = window.milo.libs.base;
-    } else {
-      base = window.hlx.codeBasePath;
-    }
+    const base = isMiloBlock ? window.milo.libs.base : '';
     try {
       const cssLoaded = new Promise((resolve) => {
         loadCSS(`${base}/blocks/${blockName}/${blockName}.css`, resolve);
