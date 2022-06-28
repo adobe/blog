@@ -1,0 +1,17 @@
+{
+  "project": "Blog",
+  "host": "blog.adobe.com",
+  "plugins": [
+    {
+      "id": "test1",
+      "title": "English title",
+      "title_i18n": {
+        "de": "Deutscher Titel",
+        "fr": "Titre français"
+      },
+      "url": "/tools/test/index.html",
+      "environments": [ "edit", "preview" ]
+    }
+  ]
+}
+  
