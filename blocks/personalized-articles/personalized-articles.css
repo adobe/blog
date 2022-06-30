@@ -4,6 +4,7 @@ main .section-wrapper.personalized-articles-small-container {
   visibility: unset;
   background: var(--color-info-accent-light);
   padding-bottom: 1rem;
+  display: none;
 }
 
 main .section-wrapper.personalized-articles-container.appear,
