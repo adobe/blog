@@ -1,4 +1,4 @@
-import { fetchBlogArticleIndex, buildArticleCard, getLocale } from '../../scripts/scripts.js';
+import { fetchBlogArticleIndex, buildArticleCard, getLocale, readBlockConfig } from '../../scripts/scripts.js';
 
 export default async function decorate(block) {
   let matches = 0;
@@ -7,6 +7,11 @@ export default async function decorate(block) {
   const history = JSON.parse(localStorage.getItem(key) || '[]');
   const tags = new Set();
   const paths = [];
+
+  const blockConfig = readBlockConfig(block);
+  const limit = blockConfig.limit || 3;
+  block.textContent = '';
+
   history.forEach((item) => {
     paths.push(item.path);
     item.tags.split(',').forEach((e) => tags.add(e.trim()))
@@ -40,7 +45,7 @@ export default async function decorate(block) {
     console.log(matchedArticles);
   
     if (matchedArticles.length >= 3) {
-      for (let i = 0; i < 3; i += 1) {
+      for (let i = 0; i < limit && i < matchedArticles.length; i += 1) {
         const article = matchedArticles[i].article;
         const card = buildArticleCard(article);
         articleCardsContainer.append(card);

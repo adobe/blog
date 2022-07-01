@@ -2,7 +2,7 @@ main .section-wrapper.personalized-articles-container,
 main .section-wrapper.personalized-articles-small-container {
   margin-top: 0;
   visibility: unset;
-  background: var(--color-info-accent-light);
+  background: var(--color-gray-100);
   padding-bottom: 1rem;
   display: none;
 }
@@ -35,6 +35,7 @@ main .personalized-articles .article-cards {
   padding-bottom: 0;
   justify-content: center;
   width: 100%;
+  max-width: 1200px;
 }
 
 @media (min-width: 600px) {
