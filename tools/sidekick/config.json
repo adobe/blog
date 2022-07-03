@@ -27,6 +27,10 @@
       "environments": [ "dev", "preview" ],
       "container": "tools",
       "event": "predicted-url"
+    },
+    {
+      "id": "publish",
+      "exclude_paths": [ "**/drafts/**"]
     }
   ]
 }
