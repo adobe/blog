@@ -23,7 +23,8 @@ const removeCardPreview = () => {
   window.removeEventListener('keydown', cardPreviewEscListener);
 };
 
-const toggleCardPreview = async () => {
+const toggleCardPreview = async ({ detail }) => {
+  const { status } = detail.data;
   if (document.getElementById('hlx-sk-card-preview')) {
     removeCardPreview();
   } else {
@@ -51,7 +52,7 @@ const toggleCardPreview = async () => {
       getBlogArticle,
       buildArticleCard,
     } = await import(`${window.location.origin}/scripts/scripts.js`);
-    $modal.append(buildArticleCard(await getBlogArticle(window.location.pathname)));
+    $modal.append(buildArticleCard(await getBlogArticle(status.webPath)));
 
     const $overlay = document.createElement('div');
     $overlay.id = 'hlx-sk-card-preview';
@@ -121,8 +122,9 @@ const createBanner = (id) => {
   return banner;
 };
 
-const getPredictedUrl = async () => {
-  const url = await predictUrl('blog.adobe.com', window.location.pathname);
+const getPredictedUrl = async ({ detail }) => {
+  const { status } = detail.data;
+  const url = await predictUrl('blog.adobe.com', status.webPath);
   let urlBanner = document.getElementById('hlx-sk-predicted-url');
   if (!urlBanner) {
     urlBanner = createBanner('hlx-sk-predicted-url');
