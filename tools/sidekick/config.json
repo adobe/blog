@@ -1,17 +1,32 @@
 {
-  "project": "Blog",
+  "project": "Adobe Blog",
   "host": "blog.adobe.com",
   "plugins": [
     {
-      "id": "test1",
-      "title": "English title",
-      "title_i18n": {
-        "de": "Deutscher Titel",
-        "fr": "Titre français"
-      },
-      "url": "/tools/test/index.html",
-      "environments": [ "edit", "preview" ]
+      "id": "tools",
+      "title": "Tools",
+      "is_container": true,
+      "environments": [ "dev", "preview" ]
+    },
+    {
+      "id": "card-preview",
+      "title": "Card Preview",
+      "container": "tools",
+      "event": "card-preview",
+      "environments": [ "dev", "preview" ]
+    },
+    {
+      "id": "tagger",
+      "title": "Tagger",
+      "url": "/tools/tagger/index.html",
+      "environments": [ "edit" ]
+    },
+    {
+      "id": "predicted-url",
+      "title": "Predicted URL",
+      "environments": [ "dev", "preview" ],
+      "container": "tools",
+      "event": "predicted-url"
     }
   ]
 }
-  

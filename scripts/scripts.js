@@ -1425,6 +1425,9 @@ async function loadLazy() {
       offset += limit;
     }
   }
+  if (window.location.hostname.endsWith('hlx.page') || window.location.hostname === ('localhost')) {
+    import('../tools/preview/preview.js');
+  }
 }
 
 /**
