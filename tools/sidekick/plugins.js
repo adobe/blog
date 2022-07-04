@@ -75,7 +75,7 @@ const removeCardPreview = () => {
   window.removeEventListener('keydown', cardPreviewEscListener);
 };
 
-export const toggleCardPreview = async ({ detail }) => {
+const toggleCardPreview = async ({ detail }) => {
   const { status } = detail.data;
   if (document.getElementById('hlx-sk-card-preview')) {
     removeCardPreview();
@@ -134,7 +134,7 @@ const predictUrl = async (host, path) => {
   return `${host ? `https://${host}/` : ''}${pathsplits[1]}${publishPath}/${filename}`;
 };
 
-export const getPredictedUrl = async ({ detail }) => {
+const getPredictedUrl = async ({ detail }) => {
   const { status } = detail.data;
   const url = await predictUrl('blog.adobe.com', status.webPath);
   const banner = new BlogSidekickBanner('hlx-sk-predicted-url');
@@ -156,7 +156,7 @@ export const getPredictedUrl = async ({ detail }) => {
   });
 };
 
-export const copyArticleData = async ({ detail }) => {
+const copyArticleData = async ({ detail }) => {
   const {
     getBlogArticle,
   } = await import(`${window.location.origin}/scripts/scripts.js`);
@@ -252,7 +252,7 @@ const generateFeed = (
 
 const hasFeed = () => !!document.querySelector('link[type="application/xml+atom"]');
 
-export const updateFeed = async ({ detail }) => {
+const updateFeed = async ({ detail }) => {
   const feedBanner = new BlogSidekickBanner('update-feed');
   if (!hasFeed) {
     feedBanner.write('No feed defined for this page', 5);
