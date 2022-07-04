@@ -1383,6 +1383,9 @@ async function loadEager() {
       }
     });
   }
+  document.addEventListener('helix-sidekick-ready', () => {
+    import('../tools/sidekick/plugins.js');
+  });
 }
 
 /**
@@ -1424,9 +1427,6 @@ async function loadLazy() {
       addPublishDependencies(`/${getLanguage()}/query-index.json?limit=${limit}&offset=${offset}`);
       offset += limit;
     }
-  }
-  if (window.location.hostname.endsWith('hlx.page') || window.location.hostname === ('localhost')) {
-    import('../tools/preview/preview.js');
   }
 }
 
