@@ -1385,7 +1385,7 @@ async function loadEager() {
   }
   document.addEventListener('helix-sidekick-ready', () => {
     import('../tools/sidekick/plugins.js');
-  });
+  }, { once: true });
 }
 
 /**
