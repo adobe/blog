@@ -1383,9 +1383,13 @@ async function loadEager() {
       }
     });
   }
-  document.addEventListener('helix-sidekick-ready', () => {
+  if (document.querySelector('helix-sidekick')) {
     import('../tools/sidekick/plugins.js');
-  }, { once: true });
+  } else {
+    document.addEventListener('helix-sidekick-ready', () => {
+      import('../tools/sidekick/plugins.js');
+    }, { once: true });
+  }
 }
 
 /**
