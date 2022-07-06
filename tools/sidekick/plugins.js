@@ -295,6 +295,3 @@ sk.addEventListener('custom:card-preview', toggleCardPreview);
 sk.addEventListener('custom:predicted-url', getPredictedUrl);
 sk.addEventListener('custom:copy-article-data', copyArticleData);
 sk.addEventListener('custom:update-feed', updateFeed);
-
-sk.addEventListener('shown', () => console.log('sidekick shown'));
-sk.addEventListener('hidden', () => console.log('sidekick hidden'));
