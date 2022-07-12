@@ -11,48 +11,48 @@
     {
       "id": "tools",
       "title": "Tools",
-      "is_container": true,
+      "isContainer": true,
       "environments": [ "dev", "preview" ]
     },
     {
       "id": "card-preview",
       "title": "Card Preview",
       "environments": [ "dev", "preview" ],
-      "container": "tools",
+      "containerId": "tools",
       "event": "card-preview",
-      "exclude_paths": [ "/**" ],
-      "include_paths": [ "**/publish/**", "**/drafts/**" ]
+      "excludePaths": [ "/**" ],
+      "includePaths": [ "**/publish/**", "**/drafts/**" ]
     },
     {
       "id": "predicted-url",
       "title": "Predicted URL",
       "environments": [ "dev", "preview" ],
-      "container": "tools",
+      "containerId": "tools",
       "event": "predicted-url",
-      "exclude_paths": [ "/**" ],
-      "include_paths": [ "**/drafts/**" ]
+      "excludePaths": [ "/**" ],
+      "includePaths": [ "**/drafts/**" ]
     },
     {
       "id": "copy-article-data",
       "title": "Copy Article Data",
       "environments": [ "dev", "preview" ],
-      "container": "tools",
+      "containerId": "tools",
       "event": "copy-article-data",
-      "exclude_paths": [ "/**" ],
-      "include_paths": [ "**/publish/**", "**/drafts/**" ]
+      "excludePaths": [ "/**" ],
+      "includePaths": [ "**/publish/**", "**/drafts/**" ]
     },
     {
       "id": "update-feed",
       "title": "Update Feed",
       "environments": [ "dev", "preview" ],
-      "container": "tools",
+      "containerId": "tools",
       "event": "update-feed",
-      "exclude_paths": [ "/**" ],
-      "include_paths": [ "/", "/jp/", "/jp/topics/**" ]
+      "excludePaths": [ "/**" ],
+      "includePaths": [ "/", "/jp/", "/jp/topics/**" ]
     },
     {
       "id": "publish",
-      "exclude_paths": [ "**/drafts/**" ]
+      "excludePaths": [ "**/drafts/**" ]
     }
   ]
 }
