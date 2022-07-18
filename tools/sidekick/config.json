@@ -1,0 +1,58 @@
+{
+  "project": "Adobe Blog",
+  "host": "blog.adobe.com",
+  "plugins": [
+    {
+      "id": "tagger",
+      "title": "Tagger",
+      "environments": [ "edit" ],
+      "url": "/tools/tagger/index.html"
+    },
+    {
+      "id": "tools",
+      "title": "Tools",
+      "isContainer": true,
+      "environments": [ "dev", "preview" ]
+    },
+    {
+      "id": "card-preview",
+      "title": "Card Preview",
+      "environments": [ "dev", "preview" ],
+      "containerId": "tools",
+      "event": "card-preview",
+      "excludePaths": [ "/**" ],
+      "includePaths": [ "**/publish/**", "**/drafts/**" ]
+    },
+    {
+      "id": "predicted-url",
+      "title": "Predicted URL",
+      "environments": [ "dev", "preview" ],
+      "containerId": "tools",
+      "event": "predicted-url",
+      "excludePaths": [ "/**" ],
+      "includePaths": [ "**/drafts/**" ]
+    },
+    {
+      "id": "copy-article-data",
+      "title": "Copy Article Data",
+      "environments": [ "dev", "preview" ],
+      "containerId": "tools",
+      "event": "copy-article-data",
+      "excludePaths": [ "/**" ],
+      "includePaths": [ "**/publish/**", "**/drafts/**" ]
+    },
+    {
+      "id": "update-feed",
+      "title": "Update Feed",
+      "environments": [ "dev", "preview" ],
+      "containerId": "tools",
+      "event": "update-feed",
+      "excludePaths": [ "/**" ],
+      "includePaths": [ "/", "/jp/", "/jp/topics/**" ]
+    },
+    {
+      "id": "publish",
+      "excludePaths": [ "**/drafts/**" ]
+    }
+  ]
+}

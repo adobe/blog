@@ -611,25 +611,25 @@ function wrapSections(sections) {
  */
 export function decorateBlock(block) {
   const classes = Array.from(block.classList.values());
-  let blockName = classes[0];
+  const blockName = classes[0];
   if (!blockName) return;
   const section = block.closest('.section-wrapper');
   if (section) {
     section.classList.add(`${blockName}-container`.replace(/--/g, '-'));
   }
-  const blocksWithVariants = ['recommended-articles', 'video'];
-  blocksWithVariants.forEach((b) => {
-    if (blockName.startsWith(`${b}-`)) {
-      const options = blockName.substring(b.length + 1).split('-').filter((opt) => !!opt);
-      blockName = b;
-      block.classList.add(b);
-      block.classList.add(...options);
-    }
-  });
+  const trimDashes = (str) => str.replace(/(^\s*-)|(-\s*$)/g, '');
+  const blockWithVariants = blockName.split('--');
+  const shortBlockName = trimDashes(blockWithVariants.shift());
+  const variants = blockWithVariants.map((v) => trimDashes(v));
+  block.classList.add(shortBlockName);
+  block.classList.add(...variants);
 
   block.classList.add('block');
-  block.setAttribute('data-block-name', blockName);
+  block.setAttribute('data-block-name', shortBlockName);
   block.setAttribute('data-block-status', 'initialized');
+
+  const blockWrapper = block.parentElement;
+  blockWrapper.classList.add(`${shortBlockName}-wrapper`);
 }
 
 /**
@@ -1387,6 +1387,13 @@ async function loadEager() {
         resolve();
       }
     });
+  }
+  if (document.querySelector('helix-sidekick')) {
+    import('../tools/sidekick/plugins.js');
+  } else {
+    document.addEventListener('helix-sidekick-ready', () => {
+      import('../tools/sidekick/plugins.js');
+    }, { once: true });
   }
 }
 
