@@ -627,7 +627,7 @@ export function decorateBlock(block) {
   block.classList.add('block');
   block.setAttribute('data-block-name', shortBlockName);
   block.setAttribute('data-block-status', 'initialized');
-  
+
   const blockWrapper = block.parentElement;
   blockWrapper.classList.add(`${shortBlockName}-wrapper`);
 }
