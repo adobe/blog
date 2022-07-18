@@ -617,19 +617,19 @@ export function decorateBlock(block) {
   if (section) {
     section.classList.add(`${blockName}-container`.replace(/--/g, '-'));
   }
-  const blocksWithVariants = ['recommended-articles', 'video'];
-  blocksWithVariants.forEach((b) => {
-    if (blockName.startsWith(`${b}-`)) {
-      const options = blockName.substring(b.length + 1).split('-').filter((opt) => !!opt);
-      blockName = b;
-      block.classList.add(b);
-      block.classList.add(...options);
-    }
-  });
+  const trimDashes = (str) => str.replace(/(^\s*-)|(-\s*$)/g, '');
+  const blockWithVariants = blockName.split('--');
+  const shortBlockName = trimDashes(blockWithVariants.shift());
+  const variants = blockWithVariants.map((v) => trimDashes(v));
+  block.classList.add(shortBlockName);
+  block.classList.add(...variants);
 
   block.classList.add('block');
-  block.setAttribute('data-block-name', blockName);
+  block.setAttribute('data-block-name', shortBlockName);
   block.setAttribute('data-block-status', 'initialized');
+  
+  const blockWrapper = block.parentElement;
+  blockWrapper.classList.add(`${shortBlockName}-wrapper`);
 }
 
 /**
