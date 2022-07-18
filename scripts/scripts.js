@@ -611,7 +611,7 @@ function wrapSections(sections) {
  */
 export function decorateBlock(block) {
   const classes = Array.from(block.classList.values());
-  let blockName = classes[0];
+  const blockName = classes[0];
   if (!blockName) return;
   const section = block.closest('.section-wrapper');
   if (section) {
