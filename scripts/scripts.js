@@ -958,10 +958,15 @@ export async function loadBlock(block, eager = false) {
     block.setAttribute('data-block-status', 'loading');
     const blockName = block.getAttribute('data-block-name');
     const { list } = window.milo?.libs?.blocks;
-    const base = list && list.includes(blockName) ? window.milo.libs.base : '';
+    // Determine if block should be loaded from milo libs
+    const isMiloBlock = !!(list && list.includes(blockName));
+    const base = isMiloBlock ? window.milo.libs.base : '';
     try {
       const cssLoaded = new Promise((resolve) => {
         loadCSS(`${base}/blocks/${blockName}/${blockName}.css`, resolve);
+        if (isMiloBlock) {
+          loadCSS(`${base}/styles/variables.css`, resolve);
+        }
       });
       const decorationComplete = new Promise((resolve) => {
         (async () => {
