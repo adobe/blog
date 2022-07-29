@@ -591,6 +591,51 @@ export function toClassName(name) {
 }
 
 /**
+ * Extracts the config from a block.
+ * @param {Element} block The block element
+ * @returns {object} The block config
+ */
+export function readBlockConfig(block) {
+  const config = {};
+  block.querySelectorAll(':scope>div').forEach((row) => {
+    if (row.children) {
+      const cols = [...row.children];
+      if (cols[1]) {
+        const valueEl = cols[1];
+        const name = toClassName(cols[0].textContent);
+        let value = '';
+        if (valueEl.querySelector('a')) {
+          const aArr = [...valueEl.querySelectorAll('a')];
+          if (aArr.length === 1) {
+            value = aArr[0].href;
+          } else {
+            value = aArr.map((a) => a.href);
+          }
+        } else if (valueEl.querySelector('p')) {
+          const pArr = [...valueEl.querySelectorAll('p')];
+          if (pArr.length === 1) {
+            value = pArr[0].textContent;
+          } else {
+            value = pArr.map((p) => p.textContent);
+          }
+        } else value = row.children[1].textContent;
+        config[name] = value;
+      }
+    }
+  });
+  return config;
+}
+
+/*
+ * Sanitizes a name for use as a js property name.
+ * @param {string} name The unsanitized name
+ * @returns {string} The camelCased name
+ */
+export function toCamelCase(name) {
+  return toClassName(name).replace(/-([a-z])/g, (g) => g[1].toUpperCase());
+}
+
+/**
  * Wraps each section in an additional {@code div}.
  * @param {[Element]} sections The sections
  */
@@ -601,6 +646,18 @@ function wrapSections(sections) {
       wrapper.className = 'section-wrapper';
       div.parentNode.appendChild(wrapper);
       wrapper.appendChild(div);
+
+      /* process section metadata */
+      const sectionMeta = div.querySelector('div.section-metadata');
+      if (sectionMeta) {
+        const meta = readBlockConfig(sectionMeta);
+        const keys = Object.keys(meta);
+        keys.forEach((key) => {
+          if (key === 'style') div.classList.add(toClassName(meta.style));
+          else div.dataset[toCamelCase(key)] = meta[key];
+        });
+        sectionMeta.remove();
+      }
     }
   });
 }
@@ -997,42 +1054,6 @@ function loadBlocks(main) {
   const blockPromises = [...main.querySelectorAll('div.section-wrapper > div > .block')]
     .map((block) => loadBlock(block));
   return blockPromises;
-}
-
-/**
- * Extracts the config from a block.
- * @param {Element} block The block element
- * @returns {object} The block config
- */
-export function readBlockConfig(block) {
-  const config = {};
-  block.querySelectorAll(':scope>div').forEach((row) => {
-    if (row.children) {
-      const cols = [...row.children];
-      if (cols[1]) {
-        const valueEl = cols[1];
-        const name = toClassName(cols[0].textContent);
-        let value = '';
-        if (valueEl.querySelector('a')) {
-          const aArr = [...valueEl.querySelectorAll('a')];
-          if (aArr.length === 1) {
-            value = aArr[0].href;
-          } else {
-            value = aArr.map((a) => a.href);
-          }
-        } else if (valueEl.querySelector('p')) {
-          const pArr = [...valueEl.querySelectorAll('p')];
-          if (pArr.length === 1) {
-            value = pArr[0].textContent;
-          } else {
-            value = pArr.map((p) => p.textContent);
-          }
-        } else value = row.children[1].textContent;
-        config[name] = value;
-      }
-    }
-  });
-  return config;
 }
 
 /**
