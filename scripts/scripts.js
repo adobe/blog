@@ -684,7 +684,7 @@ function removeStylingFromImages(mainEl) {
 function getImageCaption(picture) {
   const parentEl = picture.parentNode;
   const parentSiblingEl = parentEl.nextElementSibling;
-  return (parentSiblingEl && parentSiblingEl.firstChild.nodeName === 'EM' ? parentSiblingEl : undefined);
+  return (parentSiblingEl && parentSiblingEl.firstElementChild.nodeName === 'EM' ? parentSiblingEl : undefined);
 }
 
 /**
@@ -705,7 +705,7 @@ function buildImageBlocks(mainEl) {
       lastImagesBlock = imagesBlockEl;
     } else {
       // same parent, add image to last images block
-      lastImagesBlock.firstChild.append(imagesBlockEl.firstChild.firstChild);
+      lastImagesBlock.firstElementChild.append(imagesBlockEl.firstElementChild.firstElementChild);
     }
   });
 }
@@ -801,10 +801,10 @@ function buildTagsBlock(mainEl) {
     ]);
     const recBlock = mainEl.querySelector('.recommended-articles-container');
     if (recBlock) {
-      recBlock.previousElementSibling.firstChild.append(tagsBlock);
-    } else if (mainEl.lastElementChild.firstChild) {
+      recBlock.previousElementSibling.firstElementChild.append(tagsBlock);
+    } else if (mainEl.lastElementChild.firstElementChild) {
       // insert in div of the last element
-      mainEl.lastElementChild.firstChild.append(tagsBlock);
+      mainEl.lastElementChild.firstElementChild.append(tagsBlock);
     }
     decorateBlock(tagsBlock);
   }
@@ -927,7 +927,7 @@ export function buildCaption(pEl) {
 export function buildFigure(blockEl) {
   const figEl = document.createElement('figure');
   figEl.classList.add('figure');
-  blockEl.childNodes.forEach((child) => {
+  [...blockEl.children].forEach((child) => {
     const clone = child.cloneNode(true);
     // picture, video, or embed link is NOT wrapped in P tag
     if (clone.nodeName === 'PICTURE' || clone.nodeName === 'VIDEO' || clone.nodeName === 'A') {
