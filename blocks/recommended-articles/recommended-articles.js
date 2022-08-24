@@ -42,4 +42,10 @@ export default function decorate(blockEl) {
   blockEl.innerHTML = '';
   const paths = anchors.map((a) => new URL(a.href).pathname);
   decorateRecommendedArticles(blockEl, paths);
+
+  if (blockEl.classList.contains('small')) {
+    const section = blockEl.closest('.section-wrapper');
+    section.classList.add('recommended-articles-small-container');
+    section.classList.remove('recommended-articles-container');
+  }
 }
