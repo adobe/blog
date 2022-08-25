@@ -1,0 +1,20 @@
+main .section-wrapper.walls-io-container > div {
+    max-width: 100%;
+    text-align: center;
+    padding-top: 16px;
+}
+
+@media (min-width: 700px) {
+    main .section-wrapper.walls-io-container > div {
+        width: calc(100% - 64px);
+        min-width: 568px;
+        max-width: 790px;
+    }
+}
+
+@media (min-width: 1200px) {
+    main .section-wrapper.walls-io-container > div {
+        width: calc(100% - 64px);
+        max-width: 1200px;
+    }
+}
