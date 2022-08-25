@@ -55,4 +55,10 @@ export default async function decorate(block) {
     }
     block.append(articleCardsContainer);
   }
+
+  if (block.classList.contains('small')) {
+    const section = block.closest('.section-wrapper');
+    section.classList.add('personalized-articles-small-container');
+    section.classList.remove('personalized-articles-container');
+  }
 }
