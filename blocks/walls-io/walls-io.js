@@ -10,6 +10,37 @@
  * governing permissions and limitations under the License.
  */
 
+function injectScript(placeholderScript, block) {
+    const script = document.createElement('script');
+    if (placeholderScript.dataset) {
+        const dataset = { ...placeholderScript.dataset };
+        for (const [key, value] of Object.entries(dataset)) {
+            script.dataset[key] = value.toString();
+        }
+    }
+
+    if (placeholderScript.src) {
+        script.src = placeholderScript.src;
+    }
+
+    if (placeholderScript.async) {
+        script.async = placeholderScript.async;
+    }
+
+    block.append(script);
+}
+
 export default function decorate($block) {
-    $block.innerHTML = $block.textContent;
+    const scriptHolder = document.createElement('div');
+    scriptHolder.innerHTML = $block.textContent;
+
+    const javascriptVersion = scriptHolder.querySelector('script');
+    const iframeVersion = scriptHolder.querySelector('iframe');
+    if (javascriptVersion) {
+        $block.innerHTML = '';
+        injectScript(javascriptVersion, $block);
+    } else if (iframeVersion) {
+        $block.innerHTML = $block.textContent;
+    }
+    scriptHolder.remove();
 }
