@@ -821,6 +821,18 @@ function decorateBlocks(main) {
 }
 
 /**
+ * Add Article to article history for personalization
+ */
+
+function addArticleToHistory() {
+  const locale = getLocale();
+  const key = `blog-${locale}-history`;
+  const history = JSON.parse(localStorage.getItem(key) || '[]');
+  history.unshift({ path: window.location.pathname, tags: getMetadata('article:tag') });
+  localStorage.setItem(key, JSON.stringify(history.slice(0, 5)));
+}
+
+/**
  * Builds all synthetic blocks in a container element.
  * @param {Element} main The container element
  */
@@ -829,6 +841,7 @@ function buildAutoBlocks(mainEl) {
   try {
     if (getMetadata('publication-date') && !mainEl.querySelector('.article-header')) {
       buildArticleHeader(mainEl);
+      addArticleToHistory();
     }
     if (window.location.pathname.includes('/topics/')) {
       buildTagHeader(mainEl);
