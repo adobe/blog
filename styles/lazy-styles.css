@@ -81,7 +81,7 @@
 main div.article-header-container+div a:any-link:not([class]),
 main li a:any-link:not([class]),
 main div.carousel-container+div a:any-link:not([class]),
-main div.section-wrapper+div a:any-link:not([class]) {
+main div.section-wrapper+p a:any-link:not([class]) {
     color: var(--color-info-accent);
     text-decoration: underline;
     text-decoration-thickness: 2px;
@@ -93,8 +93,8 @@ main li a:hover:not([class]),
 main li a:focus:not([class]),
 main div.carousel-container+div a:hover:not([class]),
 main div.carousel-container+div a:focus:not([class]),
-main div.section-wrapper+div a:hover:not([class]),
-main div.section-wrapper+div a:focus:not([class]) {
+main div.section-wrapper+p a:hover:not([class]),
+main div.section-wrapper+p a:focus:not([class]) {
     color: var(--color-info-accent-hover);
 }
 
