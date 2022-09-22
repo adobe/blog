@@ -37,6 +37,12 @@ function extractWallParameters($block) {
     if (parameterTitle === 'Title') {
       parameters['data-title'] = parameterValue;
     }
+
+    if (parameterTitle === 'Load more') {
+      parameters['data-injectloadmorebutton'] = 1;
+      // eslint-disable-next-line radix
+      parameters['data-loadmorecount'] = parseInt(parameterValue);
+    }
   });
 
   return parameters;
