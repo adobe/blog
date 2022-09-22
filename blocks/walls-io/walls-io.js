@@ -9,38 +9,68 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
+import { createTag } from '../block-helpers.js';
 
 function injectScript(placeholderScript, block) {
-    const script = document.createElement('script');
-    if (placeholderScript.dataset) {
-        const dataset = { ...placeholderScript.dataset };
-        for (const [key, value] of Object.entries(dataset)) {
-            script.dataset[key] = value.toString();
-        }
+  const script = document.createElement('script');
+  if (placeholderScript.dataset) {
+    const dataset = { ...placeholderScript.dataset };
+    for (const [key, value] of Object.entries(dataset)) {
+      script.dataset[key] = value.toString();
+    }
+  }
+
+  if (placeholderScript.src) {
+    script.src = placeholderScript.src;
+  }
+
+  if (placeholderScript.async) {
+    script.async = placeholderScript.async;
+  }
+
+  block.append(script);
+}
+
+function extractWallParameters($block) {
+  const $parameterContainers = Array.from($block.children);
+
+  const parameters = {
+      src: 'https://walls.io/js/wallsio-widget-1.2.js',
+      async: true,
+      'data-width': '100%',
+      'data-autoheight': 1,
+      'data-lazyload': 1,
+  };
+
+  $parameterContainers.forEach(($parameterContainer) => {
+    const parameterTitle = $parameterContainer.children[0].textContent;
+    const parameterValue = $parameterContainer.children[1].textContent;
+
+    if (parameterTitle === 'Walls.io URL' && parameterValue.includes('https://my.walls.io')) {
+      parameters['data-wallurl'] = parameterValue;
     }
 
-    if (placeholderScript.src) {
-        script.src = placeholderScript.src;
+    if (parameterTitle === 'Height (px)') {
+      parameters['data-height'] = parameterValue.replace('px', '');
     }
 
-    if (placeholderScript.async) {
-        script.async = placeholderScript.async;
+    if (parameterTitle === 'Title') {
+      parameters['data-title'] = parameterValue;
     }
+  });
 
-    block.append(script);
+  return parameters;
 }
 
 export default function decorate($block) {
-    const scriptHolder = document.createElement('div');
-    scriptHolder.innerHTML = $block.textContent;
+  const parameters = extractWallParameters($block);
 
-    const javascriptVersion = scriptHolder.querySelector('script');
-    const iframeVersion = scriptHolder.querySelector('iframe');
-    if (javascriptVersion) {
-        $block.innerHTML = '';
-        injectScript(javascriptVersion, $block);
-    } else if (iframeVersion) {
-        $block.innerHTML = $block.textContent;
-    }
-    scriptHolder.remove();
+  $block.innerHTML = '';
+
+  if (parameters['data-wallurl']) {
+    const script = createTag('script', parameters, null);
+    $block.appendChild(script);
+  } else {
+    $block.innerHTML = 'The Walls.io block requires a valid Walls.io URL to function.';
+  }
 }
