@@ -11,35 +11,15 @@
  */
 import { createTag } from '../block-helpers.js';
 
-function injectScript(placeholderScript, block) {
-  const script = document.createElement('script');
-  if (placeholderScript.dataset) {
-    const dataset = { ...placeholderScript.dataset };
-    for (const [key, value] of Object.entries(dataset)) {
-      script.dataset[key] = value.toString();
-    }
-  }
-
-  if (placeholderScript.src) {
-    script.src = placeholderScript.src;
-  }
-
-  if (placeholderScript.async) {
-    script.async = placeholderScript.async;
-  }
-
-  block.append(script);
-}
-
 function extractWallParameters($block) {
   const $parameterContainers = Array.from($block.children);
 
   const parameters = {
-      src: 'https://walls.io/js/wallsio-widget-1.2.js',
-      async: true,
-      'data-width': '100%',
-      'data-autoheight': 1,
-      'data-lazyload': 1,
+    src: 'https://walls.io/js/wallsio-widget-1.2.js',
+    async: true,
+    'data-width': '100%',
+    'data-autoheight': 1,
+    'data-lazyload': 1,
   };
 
   $parameterContainers.forEach(($parameterContainer) => {
