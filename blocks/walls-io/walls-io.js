@@ -26,22 +26,21 @@ function extractWallParameters($block) {
     const parameterTitle = $parameterContainer.children[0].textContent;
     const parameterValue = $parameterContainer.children[1].textContent;
 
-    if (parameterTitle === 'Walls.io URL' && parameterValue.includes('https://my.walls.io')) {
+    if (parameterTitle.toLowerCase() === 'url' && parameterValue.includes('https://my.walls.io')) {
       parameters['data-wallurl'] = parameterValue;
     }
 
-    if (parameterTitle === 'Height (px)') {
+    if (parameterTitle.toLowerCase() === 'height') {
       parameters['data-height'] = parameterValue.replace('px', '');
     }
 
-    if (parameterTitle === 'Title') {
+    if (parameterTitle.toLowerCase() === 'title') {
       parameters['data-title'] = parameterValue;
     }
 
-    if (parameterTitle === 'Load more') {
+    if (parameterTitle.toLowerCase() === 'load more') {
       parameters['data-injectloadmorebutton'] = 1;
-      // eslint-disable-next-line radix
-      parameters['data-loadmorecount'] = parseInt(parameterValue);
+      parameters['data-loadmorecount'] = parseInt(parameterValue, 10);
     }
   });
 
