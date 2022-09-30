@@ -18,6 +18,8 @@
 
 const RUM_GENERATION = 'blog-gen-7-highrate';
 
+const PRODUCTION_DOMAINS = ['blog.adobe.com'];
+
 export function sampleRUM(checkpoint, data = {}) {
   try {
     window.hlx = window.hlx || {};
@@ -37,7 +39,7 @@ export function sampleRUM(checkpoint, data = {}) {
       const sendPing = () => {
         // eslint-disable-next-line object-curly-newline, max-len
         const body = JSON.stringify({ weight, id, referer: window.location.href, generation: RUM_GENERATION, checkpoint, ...data });
-        const url = `https://rum.hlx3.page/.rum/${weight}`;
+        const url = `https://rum.hlx.page/.rum/${weight}`;
         // eslint-disable-next-line no-unused-expressions
         navigator.sendBeacon(url, body);
       };
@@ -98,7 +100,7 @@ sampleRUM.observe = ((elements) => {
 });
 
 sampleRUM.sourceselector = (element) => {
-  if (element === document.body || element === document.documentElement) {
+  if (element === document.body || element === document.documentElement || !element) {
     return undefined;
   }
   if (element.id) {
@@ -143,35 +145,43 @@ window.onerror = (event, source, line) => {
  * Loads a CSS file.
  * @param {string} href The path to the CSS file
  */
-export function loadCSS(href) {
+export function loadCSS(href, callback) {
   if (!document.querySelector(`head > link[href="${href}"]`)) {
     const link = document.createElement('link');
     link.setAttribute('rel', 'stylesheet');
     link.setAttribute('href', href);
-    link.onload = () => { };
-    link.onerror = () => { };
+    if (typeof callback === 'function') {
+      link.onload = (e) => callback(e.type);
+      link.onerror = (e) => callback(e.type);
+    }
     document.head.appendChild(link);
+  } else if (typeof callback === 'function') {
+    callback('noop');
   }
 }
 
 /**
- * Adjust all links inside the container to point to current
- * host and not to blog.adobe.com (useful on localhost and authoring host)
- * @param {Element} container The element in which links will be adusted
+ * Turns absolute links within the domain into relative links.
+ * @param {Element} main The container element
  */
-export function adjustLinks(container) {
-  if (container && window.location.host !== 'blog.adobe.com') {
-    container.querySelectorAll('a').forEach((a) => {
+export function makeLinksRelative(main) {
+  main.querySelectorAll('a').forEach((a) => {
+    // eslint-disable-next-line no-use-before-define
+    const hosts = ['hlx3.page', 'hlx.page', 'hlx.live', ...PRODUCTION_DOMAINS];
+    if (a.href) {
       try {
-        if (a.href) {
-          const u = new URL(a.href);
-          a.href = `${window.location.origin}${u.pathname}`;
+        const url = new URL(a.href);
+        const relative = hosts.some((host) => url.hostname.includes(host));
+        if (relative) {
+          a.href = `${url.pathname.replace(/\.html$/, '')}${url.search}${url.hash}`;
         }
       } catch (e) {
-        // ignore
+        // something went wrong
+        // eslint-disable-next-line no-console
+        console.log(e);
       }
-    });
-  }
+    }
+  });
 }
 
 const LANG = {
@@ -601,24 +611,25 @@ function wrapSections(sections) {
  */
 export function decorateBlock(block) {
   const classes = Array.from(block.classList.values());
-  let blockName = classes[0];
+  const blockName = classes[0];
   if (!blockName) return;
   const section = block.closest('.section-wrapper');
   if (section) {
     section.classList.add(`${blockName}-container`.replace(/--/g, '-'));
   }
-  const blocksWithVariants = ['recommended-articles'];
-  blocksWithVariants.forEach((b) => {
-    if (blockName.startsWith(`${b}-`)) {
-      const options = blockName.substring(b.length + 1).split('-').filter((opt) => !!opt);
-      blockName = b;
-      block.classList.add(b);
-      block.classList.add(...options);
-    }
-  });
+  const trimDashes = (str) => str.replace(/(^\s*-)|(-\s*$)/g, '');
+  const blockWithVariants = blockName.split('--');
+  const shortBlockName = trimDashes(blockWithVariants.shift());
+  const variants = blockWithVariants.map((v) => trimDashes(v));
+  block.classList.add(shortBlockName);
+  block.classList.add(...variants);
 
   block.classList.add('block');
-  block.setAttribute('data-block-name', blockName);
+  block.setAttribute('data-block-name', shortBlockName);
+  block.setAttribute('data-block-status', 'initialized');
+
+  const blockWrapper = block.parentElement;
+  blockWrapper.classList.add(`${shortBlockName}-wrapper`);
 }
 
 /**
@@ -762,6 +773,13 @@ function buildSocialLinks(mainEl) {
   }
 }
 
+function buildNewsletterModal(mainEl) {
+  const $div = document.createElement('div');
+  const $newsletterModal = buildBlock('newsletter-modal', []);
+  $div.append($newsletterModal);
+  mainEl.append($div);
+}
+
 function buildArticleFeed(mainEl, type) {
   const div = document.createElement('div');
   const title = mainEl.querySelector('h1, h2').textContent.trim();
@@ -803,6 +821,18 @@ function decorateBlocks(main) {
 }
 
 /**
+ * Add Article to article history for personalization
+ */
+
+function addArticleToHistory() {
+  const locale = getLocale();
+  const key = `blog-${locale}-history`;
+  const history = JSON.parse(localStorage.getItem(key) || '[]');
+  history.unshift({ path: window.location.pathname, tags: getMetadata('article:tag') });
+  localStorage.setItem(key, JSON.stringify(history.slice(0, 5)));
+}
+
+/**
  * Builds all synthetic blocks in a container element.
  * @param {Element} main The container element
  */
@@ -811,6 +841,7 @@ function buildAutoBlocks(mainEl) {
   try {
     if (getMetadata('publication-date') && !mainEl.querySelector('.article-header')) {
       buildArticleHeader(mainEl);
+      addArticleToHistory();
     }
     if (window.location.pathname.includes('/topics/')) {
       buildTagHeader(mainEl);
@@ -826,6 +857,7 @@ function buildAutoBlocks(mainEl) {
       }
     }
     buildImageBlocks(mainEl);
+    buildNewsletterModal(mainEl);
   } catch (error) {
     // eslint-disable-next-line no-console
     console.error('Auto Blocking failed', error);
@@ -862,7 +894,7 @@ function unwrapBlock(block) {
 
 function splitSections() {
   document.querySelectorAll('main > div > div').forEach((block) => {
-    const blocksToSplit = ['article-header', 'article-feed', 'recommended-articles'];
+    const blocksToSplit = ['article-header', 'article-feed', 'recommended-articles', 'video', 'carousel'];
     if (blocksToSplit.includes(block.className)) {
       unwrapBlock(block);
     }
@@ -935,18 +967,38 @@ export function buildFigure(blockEl) {
  * @param {Element} block The block element
  */
 export async function loadBlock(block, eager = false) {
-  if (!block.getAttribute('data-block-loaded')) {
-    block.setAttribute('data-block-loaded', true);
+  if (!(block.getAttribute('data-block-status') === 'loading' || block.getAttribute('data-block-status') === 'loaded')) {
+    block.setAttribute('data-block-status', 'loading');
     const blockName = block.getAttribute('data-block-name');
+    const { list } = window.milo?.libs?.blocks;
+    // Determine if block should be loaded from milo libs
+    const isMiloBlock = !!(list && list.includes(blockName));
+    const base = isMiloBlock ? window.milo.libs.base : '';
     try {
-      loadCSS(`/blocks/${blockName}/${blockName}.css`);
-      const mod = await import(`/blocks/${blockName}/${blockName}.js`);
-      if (mod.default) {
-        await mod.default(block, blockName, document, eager);
-      }
+      const cssLoaded = new Promise((resolve) => {
+        loadCSS(`${base}/blocks/${blockName}/${blockName}.css`, resolve);
+        if (isMiloBlock) {
+          loadCSS(`${base}/styles/variables.css`, resolve);
+        }
+      });
+      const decorationComplete = new Promise((resolve) => {
+        (async () => {
+          try {
+            const mod = await import(`${base}/blocks/${blockName}/${blockName}.js`);
+            if (mod.default) {
+              await mod.default(block, blockName, document, eager);
+            }
+          } catch (err) {
+            debug(`failed to load module for ${blockName}`, err);
+          }
+          resolve();
+        })();
+      });
+      await Promise.all([cssLoaded, decorationComplete]);
     } catch (err) {
       debug(`failed to load module for ${blockName}`, err);
     }
+    block.setAttribute('data-block-status', 'loaded');
   }
 }
 
@@ -955,9 +1007,9 @@ export async function loadBlock(block, eager = false) {
  * @param {Element} main The container element
  */
 function loadBlocks(main) {
-  main
-    .querySelectorAll('div.section-wrapper > div > .block')
-    .forEach(async (block) => loadBlock(block));
+  const blockPromises = [...main.querySelectorAll('div.section-wrapper > div > .block')]
+    .map((block) => loadBlock(block));
+  return blockPromises;
 }
 
 /**
@@ -1153,6 +1205,7 @@ function decoratePictures(main) {
 export function decorateMain(main) {
   // forward compatible pictures redecoration
   decoratePictures(main);
+  makeLinksRelative(main);
   buildAutoBlocks(main);
   splitSections();
   removeEmptySections();
@@ -1217,7 +1270,7 @@ export async function getBlogArticle(path) {
 
   if (meta) {
     let title = meta['og:title'].trim();
-    const trimEndings = ['|Adobe', '| Adobe'];
+    const trimEndings = ['|Adobe', '| Adobe', '| Adobe Blog', '|Adobe Blog'];
     trimEndings.forEach((ending) => {
       if (title.endsWith(ending)) title = title.substr(0, title.length - ending.length);
     });
@@ -1275,6 +1328,28 @@ export function loadScript(url, callback, type) {
   return script;
 }
 
+export async function loadLibs() {
+  window.milo = window.milo || {};
+  if (!window.milo.libs) {
+    let domain = `https://${PRODUCTION_DOMAINS[0]}`;
+    const isProd = window.location.hostname === PRODUCTION_DOMAINS[0];
+    if (!isProd) {
+      const milolibs = new URLSearchParams(window.location.search).get('milolibs');
+      const libStore = milolibs || 'main';
+      domain = libStore === 'local' ? 'http://localhost:6456' : `https://${libStore}.milo.pink`;
+    }
+    window.milo.libs = { base: `${domain}/libs` };
+    try {
+      const { default: list } = await import(`${window.milo.libs.base}/blocks/list.js`);
+      window.milo.libs.blocks = { list };
+    } catch (e) {
+      window.milo.libs.blocks = {};
+      // eslint-disable-next-line no-console
+      console.log('Couldn\'t load libs list');
+    }
+  }
+}
+
 function loadPrivacy() {
   function getOtDomainId() {
     const domains = {
@@ -1309,24 +1384,29 @@ loadPrivacy();
 async function loadEager() {
   const main = document.querySelector('main');
   if (main) {
+    await loadLibs();
     decorateMain(main);
-    document.querySelector('body').classList.add('appear');
     const lcpBlocks = ['featured-article', 'article-header'];
     const block = document.querySelector('.block');
     const hasLCPBlock = (block && lcpBlocks.includes(block.getAttribute('data-block-name')));
     if (hasLCPBlock) await loadBlock(block, true);
+    document.querySelector('body').classList.add('appear');
     const lcpCandidate = document.querySelector('main img');
-    const loaded = {
-      then: (resolve) => {
-        if (lcpCandidate && !lcpCandidate.complete) {
-          lcpCandidate.addEventListener('load', () => resolve());
-          lcpCandidate.addEventListener('error', () => resolve());
-        } else {
-          resolve();
-        }
-      },
-    };
-    await loaded;
+    await new Promise((resolve) => {
+      if (lcpCandidate && !lcpCandidate.complete) {
+        lcpCandidate.addEventListener('load', () => resolve());
+        lcpCandidate.addEventListener('error', () => resolve());
+      } else {
+        resolve();
+      }
+    });
+  }
+  if (document.querySelector('helix-sidekick')) {
+    import('../tools/sidekick/plugins.js');
+  } else {
+    document.addEventListener('helix-sidekick-ready', () => {
+      import('../tools/sidekick/plugins.js');
+    }, { once: true });
   }
 }
 

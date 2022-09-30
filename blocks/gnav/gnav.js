@@ -2,10 +2,10 @@ import {
   loadScript,
   getHelixEnv,
   debug,
-  adjustLinks,
+  makeLinksRelative,
   getLocale,
 } from '../../scripts/scripts.js';
-import createTag from './gnav-utils.js';
+import { createTag } from '../block-helpers.js';
 
 const BRAND_IMG = '<img loading="lazy" alt="Adobe" src="/blocks/gnav/adobe-logo.svg">';
 const SEARCH_ICON = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" focusable="false">
@@ -54,7 +54,7 @@ class Gnav {
       nav.append(logo);
     }
 
-    adjustLinks(nav);
+    makeLinksRelative(nav);
 
     const wrapper = createTag('div', { class: 'gnav-wrapper' }, nav);
     this.el.append(this.curtain, wrapper);
@@ -124,6 +124,21 @@ class Gnav {
       menu.querySelector('h2').remove();
       navItem.appendChild(navLink);
 
+      if (navLink.href.match('#subscribe')) {
+        navLink.classList.add('newsletter-modal-cta');
+        navLink.href = '/';
+
+        navLink.addEventListener('click', (e) => {
+          e.preventDefault();
+          const $modal = document.querySelector('.newsletter-modal-container');
+
+          if ($modal) {
+            $modal.classList.add('active');
+            document.body.classList.add('newsletter-no-scroll');
+          }
+        });
+      }
+
       if (menu.childElementCount > 0) {
         const id = `navmenu-${idx}`;
         menu.id = id;
@@ -137,6 +152,7 @@ class Gnav {
       }
       mainNav.appendChild(navItem);
     });
+
     return mainNav;
   }
 

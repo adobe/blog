@@ -1,7 +1,23 @@
 /* above the fold CSS goes here */
 
-/* default content */
+/* Size adjust to better match Adobe Clean */
+@font-face {
+  font-family: 'Trebuchet MS';
+  size-adjust: 95%;
+  src: local('Trebuchet MS'),
+       local('TrebuchetMS');
+       font-weight: 700;
+}
 
+@font-face {
+  font-family: 'Trebuchet MS';
+  size-adjust: 87%;
+  src: local('Trebuchet MS'),
+       local('TrebuchetMS');
+       font-weight: 400;
+}
+
+/* default content */
 :root {
   --color-white: #FFF;
   --color-gray-100: #F8F8F8;
@@ -53,6 +69,16 @@
   --detail-font-size-l: 1.25rem; /* 20px */
   --detail-font-size-m: 1rem; /* 16px */
   --detail-font-size-s: 0.75rem; /* 12px */
+
+  /* Consonant */
+  /* Spacing */
+  --spacing-xxs: 8px;
+  --spacing-xs: 16px;
+  --spacing-s: 24px;
+  --spacing-m: 32px;
+  --spacing-l: 48px;
+  --spacing-xl: 56px;
+  --spacing-xxl: 80px;
 }
 
 
@@ -361,17 +387,9 @@ main .figure .caption {
   }
 }
 
-/* CLS and FOUC protection for lazy loaded content/styles */
-
-header .gnav,
-main .recommended-articles,
-main .featured-article,
-main .article-feed,
-main .article-header,
-main .author-header-container,
-main .tag-header-container,
-main .recommended-articles-small-container {
-  visibility: hidden;
+/* MWPW-108414 */
+main .embed a {
+  word-break: break-all;
 }
 
 main .featured-article {
@@ -405,4 +423,8 @@ body {
 
 body.appear {
   visibility: unset;
+}
+
+main .block[data-block-status='loading'], main .block[data-block-status='initialized'] {
+  visibility: hidden;
 }

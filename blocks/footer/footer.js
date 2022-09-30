@@ -1,9 +1,9 @@
 import {
   fetchPlaceholders,
   debug,
-  adjustLinks,
+  makeLinksRelative,
 } from '../../scripts/scripts.js';
-import createTag from '../gnav/gnav-utils.js';
+import { createTag } from '../block-helpers.js';
 
 const GLOBE_IMG = '<img class="footer-region-img" loading="lazy" src="/blocks/footer/globe.svg">';
 const ADCHOICE_IMG = '<img class="footer-link-img" loading="lazy" src="/blocks/footer/adchoices-small.svg">';
@@ -34,7 +34,7 @@ class Footer {
       infoRow.classList.add('has-region');
     }
 
-    adjustLinks(region);
+    makeLinksRelative(region);
 
     const social = this.decorateSocial();
     if (social) {

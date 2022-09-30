@@ -5,6 +5,10 @@ import {
   fetchPlaceholders,
 } from '../../scripts/scripts.js';
 
+import {
+  createSVG,
+} from '../block-helpers.js';
+
 async function populateAuthorInfo(authorLink, imgContainer, url, name, eager = false) {
   const resp = await fetch(`${url}.plain.html`);
   if (resp.ok) {
@@ -36,19 +40,6 @@ async function populateAuthorInfo(authorLink, imgContainer, url, name, eager = f
     p.innerHTML = authorLink.innerHTML;
     authorLink.replaceWith(p);
   }
-}
-
-/**
- * Creates an SVG tag using the specified ID.
- * @param {string} id The ID
- * @returns {element} The SVG tag
- */
-function createSVG(id) {
-  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-  const use = document.createElementNS('http://www.w3.org/2000/svg', 'use');
-  use.setAttributeNS('http://www.w3.org/1999/xlink', 'href', `/icons/icons.svg#${id}`);
-  svg.appendChild(use);
-  return svg;
 }
 
 function openPopup(e) {

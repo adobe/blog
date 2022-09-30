@@ -30,6 +30,25 @@ header .gnav {
   text-decoration: none;
 }
 
+.gnav a.newsletter-modal-cta {
+  display: inline-flex;
+  align-self: center;
+  justify-self: center;
+  cursor: pointer;
+  background-color: #1473E6;
+  color: white;
+  font-size: 14px;
+  width: auto;
+  padding: 8px 16px;
+  margin: 10px;
+  border-radius: 100px;
+  font-weight: bold;
+}
+
+.gnav a.newsletter-modal-cta:hover {
+  background-color: #0F66D0;
+}
+
 .gnav.is-Open {
   position: fixed;
   left: 0;

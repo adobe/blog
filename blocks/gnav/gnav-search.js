@@ -1,7 +1,7 @@
 import {
   fetchBlogArticleIndex, createOptimizedPicture, getArticleTaxonomy, sampleRUM,
 } from '../../scripts/scripts.js';
-import createTag from './gnav-utils.js';
+import { createTag } from '../block-helpers.js';
 
 function decorateCard(hit) {
   const {

@@ -10,10 +10,6 @@
   }
 }
 
-main .featured-article {
-  visibility: unset;
-}
-
 main .featured-article-card {
   display: flex;
   flex-direction: column;

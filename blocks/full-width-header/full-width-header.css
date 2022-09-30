@@ -1,0 +1,9 @@
+main .article-header .article-feature-image {
+  max-width: none;
+}
+
+main .article-header .article-feature-image img {
+  min-height: 180px;
+  width: 100%;
+  object-fit: cover;
+}

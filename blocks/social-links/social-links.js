@@ -2,18 +2,9 @@ import {
   fetchPlaceholders,
 } from '../../scripts/scripts.js';
 
-/**
- * Creates an SVG tag using the specified ID.
- * @param {string} id The ID
- * @returns {element} The SVG tag
- */
-function createSVG(id) {
-  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-  const use = document.createElementNS('http://www.w3.org/2000/svg', 'use');
-  use.setAttributeNS('http://www.w3.org/1999/xlink', 'href', `/icons/icons.svg#${id}`);
-  svg.appendChild(use);
-  return svg;
-}
+import {
+  createSVG,
+} from '../block-helpers.js';
 
 /**
  * Returns social link details based on the specified URL.
