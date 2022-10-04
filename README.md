@@ -1,7 +1,7 @@
 # Adobe Experience Cloud Website
 
 Inner CDN:
-- https://main--blog--adobe.hlx3.page/
+- https://main--blog--adobe.hlx.page/
 
 Outer CDN:
 - https://main--blog--adobe.hlx.live/

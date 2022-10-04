@@ -272,11 +272,11 @@ const updateFeed = async ({ detail }) => {
       try {
         const feedXml = new Blob([generateFeed()], { type: 'application/atom+xml' });
         await saveFile(feedXml, feedPath);
-        let resp = await fetch(`https://admin.hlx3.page/preview/${owner}/${repo}/${ref}${feedPath}`, { method: 'POST' });
+        let resp = await fetch(`https://admin.hlx.page/preview/${owner}/${repo}/${ref}${feedPath}`, { method: 'POST' });
         if (!resp.ok) {
           throw new Error(`Failed to update preview for ${feedPath}`);
         }
-        resp = await fetch(`https://admin.hlx3.page/live/${owner}/${repo}/${ref}${feedPath}`, { method: 'POST' });
+        resp = await fetch(`https://admin.hlx.page/live/${owner}/${repo}/${ref}${feedPath}`, { method: 'POST' });
         if (!resp.ok) {
           throw new Error(`Failed to publish ${feedPath}`);
         }
