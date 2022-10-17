@@ -24,12 +24,7 @@
 .block.sticky-header .button {
     display: block;
     margin: 0;
-    background-color: #1473E6;
     font-weight: normal;
     font-size: 14px;
     user-select: none;
-}
-
-.block.sticky-header .button:hover {
-    background-color: #0F66D0;
 }
