@@ -7,6 +7,7 @@ import {
   getTaxonomy,
   stamp,
   sampleRUM,
+  getBlogArticle,
 } from '../../scripts/scripts.js';
 
 function isCardOnPage(article) {
@@ -289,6 +290,20 @@ async function filterArticles(config, feed, limit, offset) {
     const beforeLoading = new Date();
     // eslint-disable-next-line no-await-in-loop
     const index = await fetchBlogArticleIndex();
+    if (config.pinned) {
+      const params = new URLSearchParams(window.location.search);
+      const articleFeedOverride = params.get('article-feed');
+      for (let i = config.pinned.length - 1; i >= 0; i -= 1) {
+        const pin = config.pinned[i];
+        const path = new URL(pin).pathname;
+        // eslint-disable-next-line no-await-in-loop
+        const article = articleFeedOverride ? await getBlogArticle(path) : index.byPath[path];
+        if (article) {
+          index.data.unshift(article);
+        }
+      }
+    }
+
     const indexChunk = index.data.slice(feed.cursor);
 
     const beforeFiltering = new Date();
