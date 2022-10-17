@@ -1,0 +1,48 @@
+.secondary-header-contents {
+height: 48px;
+width: auto;
+position: sticky;
+top: 64px;
+}
+
+.content-wrapper {
+    display: flex;
+}
+
+.secondary-header-image {
+    grid-area: logo;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-width: 20px;
+    margin-right: 14px;
+    box-sizing: border-box;
+}
+
+.secondary-header-text-bold {
+    font-size: 16px;
+    line-height: 20px;
+    letter-spacing: -0.06px;
+    margin-right: 8px;
+    color: #2C2C2C;
+    font-weight: bold;
+}
+
+.secondary-header-text {
+    font-size: 16px;
+    line-height: 20px;
+    letter-spacing: -0.06px;
+    margin-right: 18px;
+    color: #2C2C2C;
+}
+
+.secondary-header-cta {
+    cursor: pointer;
+    background-color: #1473E6;
+    color: white;
+    font-size: 14px;
+    width: auto;
+    padding: 6px 14px;
+    border-radius: 100px;
+    font-weight: bold;
+}
