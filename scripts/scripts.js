@@ -1376,8 +1376,6 @@ function loadPrivacy() {
   loadScript(`https://www.${env}adobe.com/etc.clientlibs/globalnav/clientlibs/base/privacy-standalone.js`);
 }
 
-loadPrivacy();
-
 /**
  * Loads everything needed to get to LCP.
  */
@@ -1400,6 +1398,7 @@ async function loadEager() {
         resolve();
       }
     });
+    loadPrivacy();
   }
   if (document.querySelector('helix-sidekick')) {
     import('../tools/sidekick/plugins.js');
