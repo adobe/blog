@@ -18,7 +18,7 @@
 
 window.RUM_GENERATION = 'blog-gen-8-adaptiverate';
 window.RUM_LOW_SAMPLE_RATE = 10;
-window.RUM_HIGH_SAMPLE_RATE = 2;
+window.RUM_HIGH_SAMPLE_RATE = 10;
 
 const PRODUCTION_DOMAINS = ['blog.adobe.com'];
 
