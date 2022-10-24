@@ -59,6 +59,7 @@ function copyToClipboard(button) {
     if (!copied) {
       fetchPlaceholders().then((placeholders) => {
         button.setAttribute('title', placeholders['copied-to-clipboard']);
+        button.setAttribute('aria-label', placeholders['copied-to-clipboard']);
         const toolTip = document.createElement('div');
         toolTip.setAttribute('role', 'status');
         toolTip.setAttribute('aria-live', 'polite');
@@ -85,22 +86,22 @@ function buildSharing() {
   const sharing = document.createElement('div');
   sharing.classList.add('article-byline-sharing');
   sharing.innerHTML = `<span>
-      <a data-type="Twitter" data-href="https://www.twitter.com/share?&url=${url}&text=${title}">
+      <a data-type="Twitter" data-href="https://www.twitter.com/share?&url=${url}&text=${title}" alt="Share post on Twitter" aria-label="Share post on Twitter">
         ${createSVG('twitter').outerHTML}
       </a>
     </span>
     <span>
-      <a data-type="LinkedIn" data-href="https://www.linkedin.com/shareArticle?mini=true&url=${url}&title=${title}&summary=${description || ''}">
+      <a data-type="LinkedIn" data-href="https://www.linkedin.com/shareArticle?mini=true&url=${url}&title=${title}&summary=${description || ''}" aria-label="Share post on LinkedIn" alt="Share post on LinkedIn">
         ${createSVG('linkedin').outerHTML}
       </a>
     </span>
     <span>
-      <a data-type="Facebook" data-href="https://www.facebook.com/sharer/sharer.php?u=${url}">
+      <a data-type="Facebook" data-href="https://www.facebook.com/sharer/sharer.php?u=${url}" alt="Share post on Facebook" aria-label="Share post on Facebook">
         ${createSVG('facebook').outerHTML}
       </a>
     </span>
     <span>
-      <a id="copy-to-clipboard">
+      <a id="copy-to-clipboard" alt="Copy link to clipboard" aria-label="Copy link to clipboard">
         ${createSVG('link').outerHTML}
       </a>
     </span>`;
