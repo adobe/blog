@@ -5,7 +5,7 @@ import {
 } from '../../scripts/scripts.js';
 import { createTag } from '../block-helpers.js';
 
-const GLOBE_IMG = '<img class="footer-region-img" loading="lazy" src="/blocks/footer/globe.svg">';
+const GLOBE_IMG = '<img class="footer-region-img" loading="lazy" src="/blocks/footer/globe.svg" alt="">';
 const ADCHOICE_IMG = '<img class="footer-link-img" loading="lazy" src="/blocks/footer/adchoices-small.svg">';
 
 class Footer {
