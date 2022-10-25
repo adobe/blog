@@ -1,0 +1,97 @@
+.section-metadata {
+    display: none;
+}
+
+.section-wrapper.darkest {
+    background-color: rgb(0 0 0);
+    color: rgb(255 255 255);
+}
+
+.section-wrapper.dark {
+    background-color: rgb(29 29 29);
+    color: rgb(235 235 235);
+}
+
+.section-wrapper.light {
+    background-color: rgb(255 255 255);
+    color: rgb(34 34 34);
+}
+
+.section-wrapper.has-background {
+    position: relative;
+    background-color: unset;
+}
+
+.section-wrapper.xxl-spacing {
+    padding: var(--spacing-xxl) 0;
+}
+
+.section-wrapper.xl-spacing {
+    padding: var(--spacing-xl) 0;
+}
+
+.section-wrapper.l-spacing {
+    padding: var(--spacing-l) 0;
+}
+
+.section-wrapper.m-spacing {
+    padding: var(--spacing-m) 0;
+}
+
+.section-wrapper.s-spacing {
+    padding: var(--spacing-s) 0;
+}
+
+.section-wrapper.xs-spacing {
+    padding: var(--spacing-xs) 0;
+}
+
+.section-wrapper picture.section-background {
+    display: block;
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+}
+
+.section-wrapper .section-background img {
+    object-fit: cover;
+    height: 100%;
+    width: 100%;
+}
+
+.section-wrapper.center h1,
+.section-wrapper.center h2,
+.section-wrapper.center h3,
+.section-wrapper.center h4,
+.section-wrapper.center h5,
+.section-wrapper.center h6,
+.section-wrapper.center p {
+    text-align: center;
+}
+
+.section-wrapper.divider {
+    border-bottom: 1px solid #d8d8d8;
+}
+
+.section-wrapper.two-up .grid,
+.section-wrapper.three-up .grid,
+.section-wrapper.four-up .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(276px, 1fr));
+}
+
+@media screen and (min-width: 1200px) {
+
+    .section-wrapper.two-up .grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .section-wrapper.three-up .grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .section-wrapper.four-up .grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+
+}
