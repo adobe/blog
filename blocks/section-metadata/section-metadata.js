@@ -14,6 +14,7 @@ function handleBackground(div, section) {
 
 function handleStyle(div, section) {
   const value = div.textContent.toLowerCase();
+  console.log(value);
   const styles = value.split(', ').map((style) => style.replaceAll(' ', '-'));
   if (section) {
     section.classList.add(...styles);
@@ -25,6 +26,7 @@ export default function decorate(el) {
   if (!section) return;
   const keyDivs = el.querySelectorAll(':scope > div > div:first-child');
   keyDivs.forEach((div) => {
+    console.log(div.textContent);
     const valueDiv = div.nextElementSibling;
     if (div.textContent === 'style' && valueDiv.textContent) {
       handleStyle(valueDiv, section);

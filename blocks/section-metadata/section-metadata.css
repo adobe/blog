@@ -18,6 +18,7 @@
 }
 
 .section-wrapper.has-background {
+    position: relative;
     background-color: unset;
 }
 
@@ -58,13 +59,13 @@
     width: 100%;
 }
 
-.section-wrapper.center .content>h1,
-.section-wrapper.center .content>h2,
-.section-wrapper.center .content>h3,
-.section-wrapper.center .content>h4,
-.section-wrapper.center .content>h5,
-.section-wrapper.center .content>h6,
-.section-wrapper.center .content>p {
+.section-wrapper.center h1,
+.section-wrapper.center h2,
+.section-wrapper.center h3,
+.section-wrapper.center h4,
+.section-wrapper.center h5,
+.section-wrapper.center h6,
+.section-wrapper.center p {
     text-align: center;
 }
 
