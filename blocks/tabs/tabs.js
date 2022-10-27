@@ -125,7 +125,6 @@ export default function decorate(e) {
       tabListContent.setAttribute('aria-labelledby', `tab-${initCount}-${tabName}`);
       if (i > 0) tabListContent.setAttribute('hidden', '');
       tabContentContainer.append(tabListContent);
-      console.log(tabListContent);
     });
     tabListItems[0].parentElement.remove();
   }
