@@ -5,7 +5,7 @@
 import { createTag } from '../block-helpers.js';
 
 function getStringKeyName(str) {
-  return str.trim().replace(' ', '-').toLowerCase();
+  return str.trim().replaceAll(' ', '-').toLowerCase();
 }
 
 const isElementInContainerView = (targetEl) => {
