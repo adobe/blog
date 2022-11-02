@@ -59,6 +59,8 @@ function copyToClipboard(button) {
     if (!copied) {
       fetchPlaceholders().then((placeholders) => {
         button.setAttribute('title', placeholders['copied-to-clipboard']);
+        button.setAttribute('alt', placeholders['copied-to-clipboard']);
+        button.setAttribute('aria-label', placeholders['copied-to-clipboard']);
         const toolTip = document.createElement('div');
         toolTip.setAttribute('role', 'status');
         toolTip.setAttribute('aria-live', 'polite');
@@ -78,29 +80,30 @@ function copyToClipboard(button) {
   });
 }
 
-function buildSharing() {
+async function buildSharing() {
   const url = encodeURIComponent(window.location.href);
   const title = encodeURIComponent(document.querySelector('h1').textContent);
   const description = encodeURIComponent(getMetadata('description'));
   const sharing = document.createElement('div');
+  const placeholders = await fetchPlaceholders();
   sharing.classList.add('article-byline-sharing');
   sharing.innerHTML = `<span>
-      <a data-type="Twitter" data-href="https://www.twitter.com/share?&url=${url}&text=${title}">
+      <a data-type="Twitter" data-href="https://www.twitter.com/share?&url=${url}&text=${title}" alt="${placeholders['share-twitter']}" aria-label="${placeholders['share-twitter']}">
         ${createSVG('twitter').outerHTML}
       </a>
     </span>
     <span>
-      <a data-type="LinkedIn" data-href="https://www.linkedin.com/shareArticle?mini=true&url=${url}&title=${title}&summary=${description || ''}">
+      <a data-type="LinkedIn" data-href="https://www.linkedin.com/shareArticle?mini=true&url=${url}&title=${title}&summary=${description || ''}" alt="${placeholders['share-linkedin']}" aria-label="${placeholders['share-linkedin']}">
         ${createSVG('linkedin').outerHTML}
       </a>
     </span>
     <span>
-      <a data-type="Facebook" data-href="https://www.facebook.com/sharer/sharer.php?u=${url}">
+      <a data-type="Facebook" data-href="https://www.facebook.com/sharer/sharer.php?u=${url}" alt="${placeholders['share-facebook']}" aria-label="${placeholders['share-facebook']}">
         ${createSVG('facebook').outerHTML}
       </a>
     </span>
     <span>
-      <a id="copy-to-clipboard">
+      <a id="copy-to-clipboard" alt="${placeholders['copy-to-clipboard']}" aria-label="${placeholders['copy-to-clipboard']}">
         ${createSVG('link').outerHTML}
       </a>
     </span>`;
@@ -157,7 +160,7 @@ export default async function decorateArticleHeader(blockEl, blockName, document
   bylineContainer.prepend(authorImg);
   populateAuthorInfo(authorLink, authorImg, authorURL, authorName, eager);
   // sharing
-  const shareBlock = buildSharing();
+  const shareBlock = await buildSharing();
   bylineContainer.append(shareBlock);
   // feature img
   const featureImgContainer = childrenEls[3];
