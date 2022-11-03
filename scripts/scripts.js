@@ -16,7 +16,7 @@
  * @param {Object} data additional data for RUM sample
  */
 
-window.RUM_GENERATION = 'blog-gen-9-eedge';
+window.RUM_GENERATION = 'blog-gen-8-adaptiverate';
 window.RUM_LOW_SAMPLE_RATE = 10;
 window.RUM_HIGH_SAMPLE_RATE = 10;
 
@@ -62,7 +62,7 @@ export function sampleRUM(checkpoint, data = {}) {
         }
         // eslint-disable-next-line object-curly-newline, max-len, no-use-before-define
         const body = JSON.stringify({ weight: window.hlx.rum.weight, id, referer: window.location.href, generation: window.RUM_GENERATION, checkpoint, ...data });
-        const url = `https://helix-rum-collector-eedge.hlx3.one/.rum/${window.hlx.rum.weight}`;
+        const url = `https://rum.hlx.page/.rum/${window.hlx.rum.weight}`;
         // eslint-disable-next-line no-unused-expressions
         navigator.sendBeacon(url, body);
         // eslint-disable-next-line no-console
