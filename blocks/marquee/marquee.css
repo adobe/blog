@@ -1,3 +1,8 @@
+main .section-wrapper .marquee-wrapper {
+    max-width: none;
+    padding: 0;
+}
+
 .marquee {
     position: relative;
     color: #FFF;
@@ -19,6 +24,10 @@
 
 .marquee.centered {
     text-align: center;
+}
+
+.marquee .foreground {
+    margin: 0 auto;
 }
 
 .marquee.centered .foreground,
