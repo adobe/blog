@@ -34,6 +34,7 @@
   --color-info-accent-hover: #4646C6;
   --color-info-accent-down: #3D3DB4;
   --color-info-accent-light: #DEDEF9;
+  --text-color: #2c2c2c;
 
   /* body */
   --body-background-color: var(--color-white);
@@ -61,7 +62,7 @@
   --heading-font-size-m: 1.5rem; /* 24px */
   --heading-font-size-s: 1.25rem; /* 20px */
   --heading-font-size-xs: 1.125rem; /* 18px */
-  
+
   /* details */
   --detail-font-weight: 700;
   --detail-color: var(--color-gray-600);
@@ -79,6 +80,10 @@
   --spacing-l: 48px;
   --spacing-xl: 56px;
   --spacing-xxl: 80px;
+
+  /* grid sizes */
+  --grid-container-width: 83.4%;
+  --grid-column-width: calc(var(--grid-container-width) / 12);
 }
 
 
@@ -91,6 +96,12 @@
 @media (min-width: 1200px) {
   :root {
     --heading-font-size-xxxl: 2.75rem; /* 44px */
+  }
+}
+
+@media (max-width: 1440px) {
+  :root {
+    --grid-container-width: 1200px;
   }
 }
 
@@ -113,7 +124,7 @@ a.button:any-link {
   /* outline: none; (keep outline for a11n) */
   text-align: center;
   font-size: var(--body-font-size-s);
-  font-style: normal; 
+  font-style: normal;
   font-weight: 600;
   cursor: pointer;
   color: var(--color-white);
@@ -414,7 +425,7 @@ main .featured-article-container div h1 {
 }
 
 main .article-feed {
-  min-height: 900px;  
+  min-height: 900px;
 }
 
 body {
