@@ -2,6 +2,7 @@
     --color-accent: rgb(20, 115, 230);
     --color-accent-hover: rgb(13, 102, 208);
     --link-color: #035fe6;
+    --grid-container-width: 83.4%;
 }
 
 main .container {
@@ -527,6 +528,10 @@ main .section-wrapper .marquee-wrapper {
 }
 
 @media screen and (min-width: 1440px) {
+    :root main .marquee {
+        --grid-container-width: 1200px;
+    }
+
     .marquee.large .foreground.container {
         max-width: var(--grid-container-width);
     }
