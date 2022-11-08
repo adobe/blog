@@ -1,3 +1,100 @@
+:root main .marquee {
+    --color-accent: rgb(20, 115, 230);
+    --color-accent-hover: rgb(13, 102, 208);
+    --link-color: #035fe6;
+}
+
+main .container {
+    width: var(--grid-container-width);
+    margin: 0 auto;
+}
+
+main .marquee a {
+    color: var(--link-color);
+    text-decoration: none;
+}
+
+main .marquee .con-button {
+    color: #FFF;
+    border: 2px solid;
+    background-color: transparent;
+    border-radius: 16px;
+    display: inline-block;
+    padding: 5px 14px;
+    text-decoration: none;
+    font-size: 14px;
+    line-height: 16px;
+    font-style: normal;
+    font-weight: 700;
+}
+
+main .marquee .con-button.button-L {
+    padding: 7px 18px 8px;
+    line-height: 20px;
+    border-radius: 20px;
+    font-size: 17px;
+    min-height: 21px;
+}
+
+main .marquee .con-button.button-XL {
+    padding: 10px 24px 8px;
+    line-height: 24px;
+    border-radius: 25px;
+    font-size: 19px;
+    min-height: 28px;
+}
+
+main .marquee .con-button.button-justified {
+    display: block;
+    text-align: center;
+    width: 100%;
+}
+
+main .marquee.light .con-button {
+    color: #000;
+}
+
+main .marquee .con-button.blue {
+    color: #FFF;
+    background: var(--color-accent);
+    border: 2px solid var(--color-accent);
+}
+
+main .marquee .con-button.blue:hover,
+.con-button.blue:active {
+    background: var(--color-accent-hover);
+    border-color: var(--color-accent-hover);
+}
+
+main .marquee .con-button.blue:hover {
+    text-decoration: none;
+}
+
+main .marquee .con-button.outline {
+    border: 2px solid #000;
+    color: #000;
+}
+
+main .marquee .con-button.outline:hover {
+    background-color: #000;
+    color: #fff;
+    text-decoration: none;
+}
+
+main .marquee.dark .con-button.outline {
+    border: 2px solid #fff;
+    color: #fff;
+}
+
+main .marquee.dark .con-button.outline:hover {
+    background-color: #fff;
+    color: #000;
+}
+
+main .dark a:any-link {
+    color: #FFF;
+}
+
 main .section-wrapper .marquee-wrapper {
     max-width: none;
     padding: 0;
@@ -24,15 +121,6 @@ main .section-wrapper .marquee-wrapper {
 
 .marquee.centered {
     text-align: center;
-}
-
-.marquee .foreground {
-    margin: 0 auto;
-}
-
-.marquee.centered .foreground,
-.marquee.centered .action-area {
-    justify-content: center;
 }
 
 .marquee .background.has-video {
