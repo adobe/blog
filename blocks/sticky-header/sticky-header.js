@@ -4,4 +4,5 @@ export default function decorate($block) {
 
   const $a = $block.querySelector('a');
   $a.classList.add('button');
+  $a.setAttribute('target', '_blank')
 }
