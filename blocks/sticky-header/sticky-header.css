@@ -27,6 +27,11 @@
     font-weight: normal;
     font-size: 14px;
     user-select: none;
+    background-color: #FF0000;
+}
+
+.block.sticky-header .button:hover {
+  background-color: #ec0000;
 }
 
 .sticky-header-close {

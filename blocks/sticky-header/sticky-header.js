@@ -13,7 +13,7 @@ export default function decorate($block) {
 
   // Should these go at the top?
   const $close = createTag('a', { class: 'sticky-header-close' });
-  const $closeIcon = createTag('img', { class: 'newsletter-modal-close-icon', src: '/blocks/sticky-header/close.svg' });
+  const $closeIcon = createTag('img', { class: 'sticky-header-close-icon', src: '/blocks/sticky-header/close.svg' });
 
   $close.addEventListener('click', (e) => {
     $stickyHeader.remove()
