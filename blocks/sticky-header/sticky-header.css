@@ -28,3 +28,7 @@
     font-size: 14px;
     user-select: none;
 }
+
+.sticky-header-close {
+  cursor: pointer;
+}
