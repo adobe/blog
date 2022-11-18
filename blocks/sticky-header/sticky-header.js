@@ -2,23 +2,20 @@ import { createTag } from '../block-helpers.js';
 
 export default function decorate($block) {
   const $header = document.querySelector('header');
-  const $stickyHeader = document.querySelector('.sticky-header.block')
-  const $stickyHeaderContents = document.querySelector('.sticky-header div')
-
-  $header.parentNode.insertBefore($block, $header.nextSibling);
-
+  const $div = $block.firstChild;
   const $a = $block.querySelector('a');
-  $a.classList.add('button');
-  $a.target = '_blank';
-
-  // Should these go at the top?
   const $close = createTag('a', { class: 'sticky-header-close' });
   const $closeIcon = createTag('img', { class: 'sticky-header-close-icon', src: '/blocks/sticky-header/close.svg' });
 
-  $close.addEventListener('click', (e) => {
-    $stickyHeader.remove()
-  })
+  $header.parentNode.insertBefore($block, $header.nextSibling);
 
-  $stickyHeaderContents.append($close)
-  $close.append($closeIcon)
+  $a.classList.add('button');
+  $a.target = '_blank';
+
+  $close.addEventListener('click', () => {
+    $block.remove();
+  });
+
+  $div.append($close);
+  $close.append($closeIcon);
 }
