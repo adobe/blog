@@ -1409,6 +1409,10 @@ async function loadLazy() {
   loadCSS('/styles/lazy-styles.css');
   addFavIcon('/styles/favicon.svg');
 
+  sampleRUM('lazy');
+  sampleRUM.observe(document.querySelectorAll('main picture > img'));
+  sampleRUM.observe(main.querySelectorAll('div[data-block-name]'));
+
   if (window.location.pathname.endsWith('/')) {
     // homepage, add query index to publish dependencies
     const limit = 500;
