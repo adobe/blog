@@ -578,7 +578,7 @@ export function decorateBlock(block) {
   if (!blockName) return;
   const section = block.closest('.section-wrapper');
   if (section) {
-    section.classList.add(`${blockName}-container`.replace(/--/g, '-'));
+    section.classList.add(`${classes.join('-')}-container`);
   }
   const trimDashes = (str) => str.replace(/(^\s*-)|(-\s*$)/g, '');
   const blockWithVariants = blockName.split('--');
