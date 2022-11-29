@@ -160,7 +160,7 @@ const loadEmbed = (block) => {
     return;
   }
 
-  const figure = buildFigure(block.firstChild.firstChild);
+  const figure = buildFigure(block.firstElementChild.firstElementChild);
   const a = figure.querySelector('a');
 
   if (a) {

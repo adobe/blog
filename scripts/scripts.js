@@ -668,7 +668,7 @@ function buildImageBlocks(mainEl) {
       lastImagesBlock = imagesBlockEl;
     } else {
       // same parent, add image to last images block
-      lastImagesBlock.firstChild.append(imagesBlockEl.firstChild.firstChild);
+      lastImagesBlock.firstElementChild.append(imagesBlockEl.firstElementChild.firstElementChild);
     }
   });
 }
@@ -770,10 +770,10 @@ function buildTagsBlock(mainEl) {
     ]);
     const recBlock = mainEl.querySelector('.recommended-articles-container');
     if (recBlock) {
-      recBlock.previousElementSibling.firstChild.append(tagsBlock);
-    } else if (mainEl.lastElementChild.firstChild) {
+      recBlock.previousElementSibling.firstElementChild.append(tagsBlock);
+    } else if (mainEl.lastElementChild.firstElementChild) {
       // insert in div of the last element
-      mainEl.lastElementChild.firstChild.append(tagsBlock);
+      mainEl.lastElementChild.firstElementChild.append(tagsBlock);
     }
     decorateBlock(tagsBlock);
   }
