@@ -636,7 +636,7 @@ function removeStylingFromImages(mainEl) {
   styledImgEls.forEach((imgEl) => {
     const parentEl = imgEl.closest('p');
     parentEl.prepend(imgEl);
-    parentEl.lastChild.remove();
+    parentEl.lastElementChild.remove();
   });
 }
 
@@ -838,7 +838,7 @@ function unwrapBlock(block) {
   const els = [...section.children];
   const blockSection = document.createElement('div');
   const postBlockSection = document.createElement('div');
-  const nextSection = section.nextSibling;
+  const nextSection = section.nextElementSibling;
   section.parentNode.insertBefore(blockSection, nextSection);
   section.parentNode.insertBefore(postBlockSection, nextSection);
 
@@ -896,7 +896,7 @@ export function buildCaption(pEl) {
 export function buildFigure(blockEl) {
   const figEl = document.createElement('figure');
   figEl.classList.add('figure');
-  blockEl.childNodes.forEach((child) => {
+  Array.from(blockEl.children).forEach((child) => {
     const clone = child.cloneNode(true);
     // picture, video, or embed link is NOT wrapped in P tag
     if (clone.nodeName === 'PICTURE' || clone.nodeName === 'VIDEO' || clone.nodeName === 'A') {

@@ -150,7 +150,7 @@ export default async function decorateArticleHeader(blockEl, blockName, document
   const authorName = author.textContent;
   author.classList.add('article-author');
   // publication date
-  const date = bylineContainer.firstElementChild.lastChild;
+  const date = bylineContainer.firstElementChild.lastElementChild;
   date.classList.add('article-date');
   validateDate(date);
   // author img
@@ -168,5 +168,5 @@ export default async function decorateArticleHeader(blockEl, blockName, document
   const featureFigEl = buildFigure(featureImgContainer.firstElementChild);
   featureFigEl.classList.add('figure-feature');
   featureImgContainer.prepend(featureFigEl);
-  featureImgContainer.lastChild.remove();
+  featureImgContainer.lastElementChild.remove();
 }
