@@ -142,15 +142,15 @@ export default async function decorateArticleHeader(blockEl, blockName, document
   // byline
   const bylineContainer = childrenEls[2];
   bylineContainer.classList.add('article-byline');
-  bylineContainer.firstChild.classList.add('article-byline-info');
+  bylineContainer.firstElementChild.classList.add('article-byline-info');
   // author
-  const author = bylineContainer.firstChild.firstChild;
+  const author = bylineContainer.firstElementChild.firstElementChild;
   const authorLink = author.querySelector('a');
   const authorURL = authorLink.href;
   const authorName = author.textContent;
   author.classList.add('article-author');
   // publication date
-  const date = bylineContainer.firstChild.lastChild;
+  const date = bylineContainer.firstElementChild.lastElementChild;
   date.classList.add('article-date');
   validateDate(date);
   // author img
@@ -165,8 +165,8 @@ export default async function decorateArticleHeader(blockEl, blockName, document
   // feature img
   const featureImgContainer = childrenEls[3];
   featureImgContainer.classList.add('article-feature-image');
-  const featureFigEl = buildFigure(featureImgContainer.firstChild);
+  const featureFigEl = buildFigure(featureImgContainer.firstElementChild);
   featureFigEl.classList.add('figure-feature');
   featureImgContainer.prepend(featureFigEl);
-  featureImgContainer.lastChild.remove();
+  featureImgContainer.lastElementChild.remove();
 }
