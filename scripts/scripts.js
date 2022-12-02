@@ -702,13 +702,19 @@ function buildArticleHeader(mainEl) {
 
 function buildTagHeader(mainEl) {
   const div = mainEl.querySelector('div');
-  const heading = mainEl.querySelector('h1, h2');
-  const picture = mainEl.querySelector('picture');
-  const tagHeaderBlockEl = buildBlock('tag-header', [
-    [heading],
-    [{ elems: [picture.closest('p')] }],
-  ]);
-  div.prepend(tagHeaderBlockEl);
+
+  if (div) {
+    const heading = div.querySelector('h1, h2');
+    const picture = div.querySelector('picture');
+
+    if (picture) {
+      const tagHeaderBlockEl = buildBlock('tag-header', [
+        [heading],
+        [{ elems: [picture.closest('p')] }],
+      ]);
+      div.prepend(tagHeaderBlockEl);
+    }
+  }
 }
 
 function buildAuthorHeader(mainEl) {
@@ -1402,6 +1408,10 @@ async function loadLazy() {
   loadBlocks(main);
   loadCSS('/styles/lazy-styles.css');
   addFavIcon('/styles/favicon.svg');
+
+  sampleRUM('lazy');
+  sampleRUM.observe(document.querySelectorAll('main picture > img'));
+  sampleRUM.observe(main.querySelectorAll('div[data-block-name]'));
 
   if (window.location.pathname.endsWith('/')) {
     // homepage, add query index to publish dependencies
