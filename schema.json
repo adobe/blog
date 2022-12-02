@@ -1,0 +1,177 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Adobe Blog Headless Schema",
+  "$defs": {
+    "sheets": {
+      "/en/query-index.json": {
+        "data": {
+          "type": "object",
+          "description": "A blog post",
+          "properties": {
+            "date": {
+              "type": "string",
+              "format": "date",
+              "description": "Publish date of the blog post"
+            },
+            "image": {
+              "type": "string",
+              "format": "uri-reference",
+              "description": "Hero image of the blog post, to be used in listings and social media previews"
+            },
+            "path": {
+              "type": "string",
+              "format": "uri-reference",
+              "description": "Path of the blog post"
+            },
+            "title": {
+              "type": "string",
+              "description": "Title of the blog post"
+            },
+            "author": {
+              "$ref": "#/$defs/pages/metadata",
+              "meta:key": "og:title"
+            },
+            "description": {
+              "type": "string",
+              "description": "Description of the blog post"
+            },
+            "tags": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Tags of the blog post"
+            },
+            "imageAlt": {
+              "type": "string",
+              "description": "Alt text for the hero image of the blog post"
+            },
+            "robots": {
+              "type": "boolean",
+              "description": "Whether the blog post should be indexed by search engines"
+            },
+            "lastModified": {
+              "type": "string",
+              "format": "date-time",
+              "description": "Last modified date of the blog post"
+            }
+          }
+        }
+      }
+    },
+    "pages": {
+      "article-feed": {
+        "type": "object",
+        "description": "Data extracted from the article-feed block",
+        "properties": {
+          "author": {
+            "type": "string",
+            "description": "Author of the article"
+          },
+          "url": {
+            "description": "the URL where the block was found",
+            "$ref": "#/$defs/pages/metadata"
+          }
+        }
+      },
+      "metadata": {
+        "type": "object",
+        "description": "Metadata properties common to all pages",
+        "properties": {
+          "url": {
+            "type": "string",
+            "format": "uri-reference",
+            "description": "URL of the page"
+          },
+          "description": {
+            "type": "string",
+            "description": "Description of the page"
+          },
+          "og:title": {
+            "type": "string",
+            "description": "Title of the page, to be used in social media previews"
+          },
+          "og:description": {
+            "type": "string",
+            "description": "Description of the page, to be used in social media previews"
+          },
+          "og:url": {
+            "type": "string",
+            "format": "uri-reference",
+            "description": "URL of the page, to be used in social media previews"
+          },
+          "og:image": {
+            "type": "string",
+            "format": "uri-reference",
+            "description": "Image of the page, to be used in social media previews"
+          },
+          "og:image_secure_url": {
+            "type": "string",
+            "format": "uri-reference",
+            "description": "Secure URL of the image of the page, to be used in social media previews"
+          },
+          "twitter:card": {
+            "type": "string",
+            "description": "Twitter card type of the page, to be used in social media previews"
+          },
+          "twitter:title": {
+            "type": "string",
+            "description": "Title of the page, to be used in social media previews"
+          },
+          "twitter:description": {
+            "type": "string",
+            "description": "Description of the page, to be used in social media previews"
+          },
+          "twitter:image": {
+            "type": "string",
+            "format": "uri-reference",
+            "description": "Image of the page, to be used in social media previews"
+          },
+          "viewport": {
+            "type": "string",
+            "description": "Viewport of the page"
+          },
+          "google-site-verification": {
+            "type": "string",
+            "description": "Google site verification code of the page"
+          },
+          "article:publisher": {
+            "type": "string",
+            "description": "Facebook page of the page, to be used in social media previews"
+          },
+          "og:type": {
+            "type": "string",
+            "description": "Type of the page, to be used in social media previews"
+          },
+          "og:site_name": {
+            "type": "string",
+            "description": "Site name of the page, to be used in social media previews"
+          },
+          "twitter:creator": {
+            "type": "string",
+            "description": "Twitter handle of the page, to be used in social media previews"
+          },
+          "serp_content_type": {
+            "type": "string",
+            "description": "Type of the page, to be used in search engine previews"
+          }
+        }
+      }
+    }
+  },
+  "type": "object",
+  "properties": {
+    "posts": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/sheets/~1en~1query-index.json/data"
+      }
+    },
+    "pages": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/pages/metadata"
+      }
+    }
+  }
+}
