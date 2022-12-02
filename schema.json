@@ -176,7 +176,7 @@
     "feeds": {
       "type": "array",
       "items": {
-        "$ref": "#/$defs/pages/author-feed"
+        "$ref": "#/$defs/pages/article-feed"
       }
     }
   }
