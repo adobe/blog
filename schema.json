@@ -172,6 +172,12 @@
       "items": {
         "$ref": "#/$defs/pages/metadata"
       }
+    },
+    "feeds": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/pages/author-feed"
+      }
     }
   }
 }
