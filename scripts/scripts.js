@@ -704,8 +704,8 @@ function buildTagHeader(mainEl) {
   const div = mainEl.querySelector('div');
 
   if (div) {
-    const heading = div.querySelector('h1, h2');
-    const picture = div.querySelector('picture');
+    const heading = div.querySelector(':scope > h1, div > h2');
+    const picture = div.querySelector(':scope > p > picture');
 
     if (picture) {
       const tagHeaderBlockEl = buildBlock('tag-header', [
