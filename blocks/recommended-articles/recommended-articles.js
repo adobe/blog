@@ -32,7 +32,7 @@ async function decorateRecommendedArticles(recommendedArticlesEl, paths) {
       console.warn(`Recommended article does not exist or is missing in index: ${origin}${articlePath}`);
     }
   }
-  if (!articleCardsContainer.hasChildNodes()) {
+  if (articleCardsContainer.childElementCount === 0) {
     recommendedArticlesEl.parentNode.parentNode.remove();
   }
 }

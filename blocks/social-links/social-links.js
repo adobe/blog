@@ -60,7 +60,7 @@ export default async function decorateSocialLinks(blockEl) {
     linkEl.className = className;
   });
   const ul = blockEl.querySelector('ul');
-  if (ul.hasChildNodes()) {
+  if (ul.childElementCount !== 0) {
     // add language specific text
     const parent = ul.parentNode;
     const placeholders = await fetchPlaceholders();
