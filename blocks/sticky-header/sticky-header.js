@@ -2,12 +2,12 @@ import { createTag } from '../block-helpers.js';
 
 export default function decorate($block) {
   const $header = document.querySelector('header');
-  const $div = $block.firstChild;
+  const $div = $block.firstElementChild;
   const $a = $block.querySelector('a');
   const $close = createTag('a', { class: 'sticky-header-close' });
   const $closeIcon = createTag('img', { class: 'sticky-header-close-icon', src: '/blocks/sticky-header/close.svg' });
 
-  $header.parentNode.insertBefore($block, $header.nextSibling);
+  $header.parentNode.insertBefore($block, $header.nextElementSibling);
 
   $a.classList.add('button');
   $a.target = '_blank';

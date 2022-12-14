@@ -114,6 +114,11 @@ body {
   padding: 0;
 }
 
+img {
+  height: auto;
+  width: auto;
+}
+
 /* buttons */
 
 a.button:any-link {

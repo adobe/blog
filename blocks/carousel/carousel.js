@@ -179,10 +179,10 @@ export default function decorate($block) {
     let $caption = null;
     let nextElement = $picture.nextElementSibling;
     if (nextElement && !nextElement.tagName.toLowerCase() !== 'picture') {
-      while (nextElement && nextElement.tagName.toLowerCase() !== 'picture' && (nextElement.childNodes.length === 0 || nextElement.textContent === '')) {
+      while (nextElement && nextElement.tagName.toLowerCase() !== 'picture' && (nextElement.childElementCount === 0 || nextElement.textContent === '')) {
         nextElement = nextElement.nextElementSibling;
       }
-      if (nextElement && nextElement.childNodes.length !== 0 && nextElement.textContent !== '') $caption = nextElement;
+      if (nextElement && nextElement.childElementCount !== 0 && nextElement.textContent !== '') $caption = nextElement;
     }
     $imgSlides.push({ img: $picture, caption: $caption });
     // Find the aspect ratio of the shortest image

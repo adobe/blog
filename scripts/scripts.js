@@ -578,7 +578,7 @@ export function decorateBlock(block) {
   if (!blockName) return;
   const section = block.closest('.section-wrapper');
   if (section) {
-    section.classList.add(`${blockName}-container`.replace(/--/g, '-'));
+    section.classList.add(`${classes.join('-')}-container`);
   }
   const trimDashes = (str) => str.replace(/(^\s*-)|(-\s*$)/g, '');
   const blockWithVariants = blockName.split('--');
@@ -636,7 +636,7 @@ function removeStylingFromImages(mainEl) {
   styledImgEls.forEach((imgEl) => {
     const parentEl = imgEl.closest('p');
     parentEl.prepend(imgEl);
-    parentEl.lastChild.remove();
+    parentEl.lastElementChild.remove();
   });
 }
 
@@ -668,7 +668,7 @@ function buildImageBlocks(mainEl) {
       lastImagesBlock = imagesBlockEl;
     } else {
       // same parent, add image to last images block
-      lastImagesBlock.firstChild.append(imagesBlockEl.firstChild.firstChild);
+      lastImagesBlock.firstElementChild.append(imagesBlockEl.firstElementChild.firstElementChild);
     }
   });
 }
@@ -770,10 +770,10 @@ function buildTagsBlock(mainEl) {
     ]);
     const recBlock = mainEl.querySelector('.recommended-articles-container');
     if (recBlock) {
-      recBlock.previousElementSibling.firstChild.append(tagsBlock);
-    } else if (mainEl.lastElementChild.firstChild) {
+      recBlock.previousElementSibling.firstElementChild.append(tagsBlock);
+    } else if (mainEl.lastElementChild.firstElementChild) {
       // insert in div of the last element
-      mainEl.lastElementChild.firstChild.append(tagsBlock);
+      mainEl.lastElementChild.firstElementChild.append(tagsBlock);
     }
     decorateBlock(tagsBlock);
   }
@@ -838,7 +838,7 @@ function unwrapBlock(block) {
   const els = [...section.children];
   const blockSection = document.createElement('div');
   const postBlockSection = document.createElement('div');
-  const nextSection = section.nextSibling;
+  const nextSection = section.nextElementSibling;
   section.parentNode.insertBefore(blockSection, nextSection);
   section.parentNode.insertBefore(postBlockSection, nextSection);
 
@@ -850,13 +850,13 @@ function unwrapBlock(block) {
       appendTo = postBlockSection;
     }
   });
-  if (!section.hasChildNodes()) {
+  if (section.childElementCount === 0) {
     section.remove();
   }
-  if (!blockSection.hasChildNodes()) {
+  if (blockSection.childElementCount === 0) {
     blockSection.remove();
   }
-  if (!postBlockSection.hasChildNodes()) {
+  if (postBlockSection.childElementCount === 0) {
     postBlockSection.remove();
   }
 }
@@ -871,8 +871,10 @@ function splitSections() {
 }
 
 function removeEmptySections() {
-  document.querySelectorAll('main > div:empty').forEach((div) => {
-    div.remove();
+  document.querySelectorAll('main > div').forEach((div) => {
+    if (div.innerHTML.trim() === '') {
+      div.remove();
+    }
   });
 }
 
@@ -896,7 +898,7 @@ export function buildCaption(pEl) {
 export function buildFigure(blockEl) {
   const figEl = document.createElement('figure');
   figEl.classList.add('figure');
-  blockEl.childNodes.forEach((child) => {
+  Array.from(blockEl.children).forEach((child) => {
     const clone = child.cloneNode(true);
     // picture, video, or embed link is NOT wrapped in P tag
     if (clone.nodeName === 'PICTURE' || clone.nodeName === 'VIDEO' || clone.nodeName === 'A') {
