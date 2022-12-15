@@ -2,7 +2,7 @@
     position: sticky;
     top: 65px;
     left: 0;
-    z-index: 50;
+    z-index: 1;
     background-color: white;
     border-bottom: 1px #EEEEEE solid;
     padding: 8px 0;
