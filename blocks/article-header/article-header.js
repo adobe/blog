@@ -9,7 +9,7 @@ import {
   createSVG,
 } from '../block-helpers.js';
 
-async function populateAuthorInfo(authorLink, imgContainer, url, name, eager = false) {
+async function populateAuthorInfo(authorLink, imgContainer, url, name) {
   const resp = await fetch(`${url}.plain.html`);
   if (resp.ok) {
     const text = await resp.text();
@@ -18,7 +18,7 @@ async function populateAuthorInfo(authorLink, imgContainer, url, name, eager = f
     const placeholderImg = placeholder.querySelector('img');
     if (placeholderImg) {
       const src = new URL(placeholderImg.getAttribute('src'), new URL(url));
-      const picture = createOptimizedPicture(src, name, eager, [{ width: 200 }]);
+      const picture = createOptimizedPicture(src, name, false, [{ width: 200 }]);
       imgContainer.append(picture);
       const img = picture.querySelector('img');
       if (!img.complete) {
@@ -131,7 +131,7 @@ function validateDate(date) {
   }
 }
 
-export default async function decorateArticleHeader(blockEl, blockName, document, eager) {
+export default async function decorateArticleHeader(blockEl, blockName, document) {
   const childrenEls = Array.from(blockEl.children);
   // category
   const categoryContainer = childrenEls[0];
@@ -158,7 +158,7 @@ export default async function decorateArticleHeader(blockEl, blockName, document
   authorImg.classList = 'article-author-image';
   authorImg.style.backgroundImage = 'url(/blocks/article-header/adobe-logo.svg)';
   bylineContainer.prepend(authorImg);
-  populateAuthorInfo(authorLink, authorImg, authorURL, authorName, eager);
+  populateAuthorInfo(authorLink, authorImg, authorURL, authorName);
   // sharing
   const shareBlock = await buildSharing();
   bylineContainer.append(shareBlock);

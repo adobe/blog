@@ -112,6 +112,11 @@ body {
   color: var(--body-color);
   margin: 0;
   padding: 0;
+  display: none;
+}
+
+body.appear {
+  display: unset;
 }
 
 img {

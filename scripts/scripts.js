@@ -1175,7 +1175,7 @@ function decoratePictures(main) {
  */
 export function decorateMain(main) {
   // forward compatible pictures redecoration
-  decoratePictures(main);
+  // decoratePictures(main);
   makeLinksRelative(main);
   buildAutoBlocks(main);
   splitSections();
@@ -1359,9 +1359,9 @@ async function loadEager() {
     const block = document.querySelector('.block');
     const hasLCPBlock = (block && lcpBlocks.includes(block.getAttribute('data-block-name')));
     if (hasLCPBlock) await loadBlock(block, true);
-    document.querySelector('body').classList.add('appear');
     const lcpCandidate = document.querySelector('main img');
     await new Promise((resolve) => {
+      if (lcpCandidate) lcpCandidate.loading = 'eager';
       if (lcpCandidate && !lcpCandidate.complete) {
         lcpCandidate.addEventListener('load', () => resolve());
         lcpCandidate.addEventListener('error', () => resolve());
@@ -1369,6 +1369,7 @@ async function loadEager() {
         resolve();
       }
     });
+    document.querySelector('body').classList.add('appear');
     loadPrivacy();
   }
   if (document.querySelector('helix-sidekick')) {
@@ -1492,46 +1493,12 @@ function displayEnv() {
   }
 }
 displayEnv();
-/*
- * lighthouse performance instrumentation helper
- * (needs a refactor)
- */
 
-export function stamp(message) {
-  if (window.name.includes('performance')) {
-    debug(`${new Date() - performance.timing.navigationStart}:${message}`);
-  }
+const params = new URLSearchParams(window.location.search);
+if (params.get('performance')) {
+  window.hlx.performance = true;
+  import('./lib-franklin-performance.js').then((mod) => {
+    if (mod.default) mod.default();
+  });
 }
 
-stamp('start');
-
-function registerPerformanceLogger() {
-  try {
-    const polcp = new PerformanceObserver((entryList) => {
-      const entries = entryList.getEntries();
-      stamp(JSON.stringify(entries));
-      debug(entries[0].element);
-    });
-    polcp.observe({ type: 'largest-contentful-paint', buffered: true });
-
-    const pols = new PerformanceObserver((entryList) => {
-      const entries = entryList.getEntries();
-      stamp(JSON.stringify(entries));
-      debug(entries[0].sources[0].node);
-    });
-    pols.observe({ type: 'layout-shift', buffered: true });
-
-    const pores = new PerformanceObserver((entryList) => {
-      const entries = entryList.getEntries();
-      entries.forEach((entry) => {
-        stamp(`resource loaded: ${entry.name} - [${Math.round(entry.startTime + entry.duration)}]`);
-      });
-    });
-
-    pores.observe({ type: 'resource', buffered: true });
-  } catch (e) {
-    // no output
-  }
-}
-
-if (window.name.includes('performance')) registerPerformanceLogger();
