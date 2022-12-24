@@ -5,7 +5,6 @@ import {
   fetchPlaceholders,
   getArticleTaxonomy,
   getTaxonomy,
-  stamp,
   sampleRUM,
 } from '../../scripts/scripts.js';
 
@@ -321,7 +320,6 @@ async function filterArticles(config, feed, limit, offset) {
       });
       return (matchedAll && !result.includes(article) && !isCardOnPage(article));
     });
-    stamp(`chunk measurements - loading: ${beforeFiltering - beforeLoading}ms filtering: ${new Date() - beforeFiltering}ms`);
     feed.cursor = index.data.length;
     feed.complete = index.complete;
     feed.data = [...feed.data, ...feedChunk];

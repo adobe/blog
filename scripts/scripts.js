@@ -1309,6 +1309,9 @@ export async function loadLibs() {
       const libStore = milolibs || 'main';
       domain = libStore === 'local' ? 'http://localhost:6456' : `https://${libStore}.milo.pink`;
     }
+    if (new URLSearchParams(window.location.search).has('milolibscurrenthost')) {
+      domain = '';
+    };
     window.milo.libs = { base: `${domain}/libs` };
     try {
       const { default: list } = await import(`${window.milo.libs.base}/blocks/list.js`);
