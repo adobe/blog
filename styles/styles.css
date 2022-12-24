@@ -2,19 +2,9 @@
 
 /* Size adjust to better match Adobe Clean */
 @font-face {
-  font-family: 'Trebuchet MS';
-  size-adjust: 95%;
-  src: local('Trebuchet MS'),
-       local('TrebuchetMS');
-       font-weight: 700;
-}
-
-@font-face {
-  font-family: 'Trebuchet MS';
-  size-adjust: 87%;
-  src: local('Trebuchet MS'),
-       local('TrebuchetMS');
-       font-weight: 400;
+  font-family: adobe-clean-fallback;
+  size-adjust: 90%;
+  src: local('Arial');
 }
 
 /* default content */
@@ -39,7 +29,7 @@
   /* body */
   --body-background-color: var(--color-white);
   --body-alt-background-color: var(--color-gray-600);
-  --body-font-family: 'adobe-clean', 'Trebuchet MS', sans-serif;
+  --body-font-family: 'adobe-clean', 'adobe-clean-fallback', sans-serif;
   --body-font-weight: 300;
   --body-color: var(--color-black);
   --body-line-height: 1.5;
@@ -436,14 +426,6 @@ main .featured-article-container div h1 {
 
 main .article-feed {
   min-height: 900px;
-}
-
-body {
-  visibility: hidden;
-}
-
-body.appear {
-  visibility: unset;
 }
 
 main .block[data-block-status='loading'], main .block[data-block-status='initialized'] {

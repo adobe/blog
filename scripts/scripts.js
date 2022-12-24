@@ -1362,7 +1362,7 @@ async function loadEager() {
     const block = document.querySelector('.block');
     const hasLCPBlock = (block && lcpBlocks.includes(block.getAttribute('data-block-name')));
     if (hasLCPBlock) await loadBlock(block, true);
-    const lcpCandidate = document.querySelector('main img');
+    const lcpCandidate = document.querySelector('main .article-feature-image img, main .featured-article img');
     await new Promise((resolve) => {
       if (lcpCandidate) lcpCandidate.loading = 'eager';
       if (lcpCandidate && !lcpCandidate.complete) {

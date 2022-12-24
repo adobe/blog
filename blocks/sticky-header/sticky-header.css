@@ -10,11 +10,13 @@
 }
 
 .block.sticky-header > div {
+    position: relative;
     display: flex;
     gap: 20px;
     align-items: center;
     justify-content: center;
     padding: 0 24px;
+    flex-direction: column;
 }
 
 .block.sticky-header img {
@@ -78,5 +80,22 @@
 }
 
 .sticky-header-close {
+    position: absolute;
+    top: 5px;
+    right: 15px;
+    height: 12px;
+    width: 12px;
   cursor: pointer;
+}
+
+
+@media (min-width: 600px) {
+    .block.sticky-header > div {
+        flex-direction: unset;
+    }
+    .sticky-header-close {
+        top: 0;
+        right: 0;
+        position: relative;
+    }
 }

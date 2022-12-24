@@ -20,11 +20,15 @@ main .section-wrapper .article-header {
   }
 }
 
-main .article-header .article-category,
-main .article-header .article-title,
 main .article-feature-image .caption {
   margin-left: 32px;
   margin-right: 32px;
+}
+
+main .article-header .article-title,
+main .article-header .article-category {
+  margin-left: 0;
+  margin-right: 0;
 }
 
 @media (min-width: 700px) {
@@ -43,8 +47,8 @@ main .article-header .article-category p,
 main .article-header .article-category a {
   margin: 0;
   margin-bottom: 16px;
-  padding-left: 2rem;
-  padding-right: 2rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
   font-weight: var(--detail-font-weight);
   color: var(--detail-color);
   font-size: var(--detail-font-size-s);
@@ -129,6 +133,7 @@ main .article-byline .article-byline-sharing {
   justify-content: space-around;
   flex: 0 1 100%;
   margin-top: 16px;
+  min-height: 29px;
 }
 
 @media (min-width: 600px) {
