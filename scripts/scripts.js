@@ -1358,7 +1358,7 @@ async function loadEager() {
   if (main) {
     await loadLibs();
     decorateMain(main);
-    const lcpBlocks = ['featured-article', 'article-header'];
+    const lcpBlocks = ['featured-article'];
     const block = document.querySelector('.block');
     const hasLCPBlock = (block && lcpBlocks.includes(block.getAttribute('data-block-name')));
     if (hasLCPBlock) await loadBlock(block, true);
