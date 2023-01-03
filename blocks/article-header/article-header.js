@@ -158,10 +158,10 @@ export default async function decorateArticleHeader(blockEl, blockName, document
   authorImg.classList = 'article-author-image';
   authorImg.style.backgroundImage = 'url(/blocks/article-header/adobe-logo.svg)';
   bylineContainer.prepend(authorImg);
-  populateAuthorInfo(authorLink, authorImg, authorURL, authorName);
+  //populateAuthorInfo(authorLink, authorImg, authorURL, authorName);
   // sharing
-  const shareBlock = await buildSharing();
-  bylineContainer.append(shareBlock);
+  // const shareBlock = await buildSharing();
+  // bylineContainer.append(shareBlock);
   // feature img
   const featureImgContainer = childrenEls[3];
   featureImgContainer.classList.add('article-feature-image');

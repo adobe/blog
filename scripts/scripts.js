@@ -1363,6 +1363,7 @@ async function loadEager() {
     const hasLCPBlock = (block && lcpBlocks.includes(block.getAttribute('data-block-name')));
     if (hasLCPBlock) await loadBlock(block, true);
     const lcpCandidate = document.querySelector('main .article-feature-image img, main .featured-article img');
+    console.log(lcpCandidate);
     await new Promise((resolve) => {
       if (lcpCandidate) lcpCandidate.loading = 'eager';
       if (lcpCandidate && !lcpCandidate.complete) {
@@ -1373,7 +1374,6 @@ async function loadEager() {
       }
     });
     document.querySelector('body').classList.add('appear');
-    loadPrivacy();
   }
   if (document.querySelector('helix-sidekick')) {
     import('../tools/sidekick/plugins.js');
@@ -1388,6 +1388,7 @@ async function loadEager() {
  * loads everything that doesn't need to be delayed.
  */
 async function loadLazy() {
+  loadPrivacy();
   const main = document.querySelector('main');
 
   // post LCP actions go here
