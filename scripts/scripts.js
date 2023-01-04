@@ -1358,7 +1358,7 @@ async function loadEager() {
   if (main) {
     await loadLibs();
     decorateMain(main);
-    const lcpBlocks = ['featured-article'];
+    const lcpBlocks = ['featured-article', 'article-header'];
     const block = document.querySelector('.block');
     const hasLCPBlock = (block && lcpBlocks.includes(block.getAttribute('data-block-name')));
     if (hasLCPBlock) await loadBlock(block, true);
@@ -1388,7 +1388,7 @@ async function loadEager() {
  * loads everything that doesn't need to be delayed.
  */
 async function loadLazy() {
-  loadPrivacy();
+    loadPrivacy();
   const main = document.querySelector('main');
 
   // post LCP actions go here
