@@ -1348,6 +1348,36 @@ function loadPrivacy() {
 }
 
 /**
+ * Searches for Japanese text in headings and applies a smart word-breaking algorithm by inserting
+ * <wbr> between semantic blocks. This allows browsers to break japanese sentences correctly.
+ */
+async function wordBreakJapanese() {
+  if (getLocale(window.location) !== 'ja_JP') {
+    return;
+  }
+  const { loadDefaultJapaneseParser } = await import('./budoux-index-ja.min.js');
+  const parser = loadDefaultJapaneseParser();
+  document.querySelectorAll('h1, h2, h3, h4, h5').forEach((el) => {
+    parser.applyElement(el, { wordSegThres: 8 });
+  });
+
+  const BalancedWordWrapper = (await import('./bw2.min.js')).default;
+  const bw2 = new BalancedWordWrapper();
+  document.querySelectorAll('h1, h2, h3, h4, h5').forEach((el) => {
+    // apply balanced word wrap to headings
+    if (typeof window.requestIdleCallback === 'function') {
+      window.requestIdleCallback(() => {
+        bw2.applyElement(el);
+      });
+    } else {
+      window.setTimeout(() => {
+        bw2.applyElement(el);
+      }, 1000);
+    }
+  });
+}
+
+/**
  * Loads everything needed to get to LCP.
  */
 async function loadEager() {
@@ -1370,6 +1400,8 @@ async function loadEager() {
       }
     });
     loadPrivacy();
+    // Word-wrap for Japanese content
+    wordBreakJapanese();
   }
   if (document.querySelector('helix-sidekick')) {
     import('../tools/sidekick/plugins.js');
