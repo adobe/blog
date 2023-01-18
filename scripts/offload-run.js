@@ -24,7 +24,7 @@ function setDigitalData() {
   const getPageFilterInfo = () => {
     let pageFilterInfo = '';
     const tags = getTags();
-    const { taxonomy } = window;
+    const taxonomy = window.getTaxonomy();
     const categories = [];
     const products = [];
     tags.forEach((t) => {
@@ -51,7 +51,7 @@ function setDigitalData() {
   };
 
   const langMap = { en: 'en-US' };
-  let lang = window.language;
+  let lang = window.getLanguage();
   if (langMap[lang]) lang = langMap[lang];
   digitalData._set('page.pageInfo.language', lang);
   digitalData._set('page.pageInfo.siteSection', 'blog.adobe.com');

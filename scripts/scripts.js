@@ -12,12 +12,15 @@
 import {
   LANG,
   LANG_LOCALE,
+  debug,
+  offload,
   getHelixEnv,
   getLanguage,
   getMetadata,
+  computeTaxonomyFromTopics,
+  loadTaxonomy,
+  getTaxonomy,
 } from './lib.js';
-
-import offload from './offload.js';
 
 /**
  * log RUM if part of the sample.
@@ -187,15 +190,6 @@ export function getRootPath() {
   return `/${loc}`;
 }
 
-export function debug(message, ...args) {
-  const { hostname } = window.location;
-  const env = getHelixEnv();
-  if (env.name !== 'prod' || hostname === 'localhost') {
-    // eslint-disable-next-line no-console
-    console.log(message, ...args);
-  }
-}
-
 /**
  * forward looking *.metadata.json experiment
  * fetches metadata.json of page
@@ -231,115 +225,6 @@ async function getMetadataJson(path) {
   return null;
 }
 
-let taxonomy;
-
-/**
- * For the given list of topics, returns the corresponding computed taxonomy:
- * - category: main topic
- * - topics: tags as an array
- * - visibleTopics: list of visible topics, including parents
- * - allTopics: list of all topics, including parents
- * @param {Array} topics List of topics
- * @returns {Object} Taxonomy object
- */
-function computeTaxonomyFromTopics(topics, path) {
-  // no topics: default to a randomly choosen category
-  const category = topics?.length > 0 ? topics[0] : 'news';
-
-  if (taxonomy) {
-    const allTopics = [];
-    const visibleTopics = [];
-    // if taxonomy loaded, we can compute more
-    topics.forEach((tag) => {
-      const tax = taxonomy.get(tag);
-      if (tax) {
-        if (!allTopics.includes(tag) && !tax.skipMeta) {
-          allTopics.push(tag);
-          if (tax.isUFT) visibleTopics.push(tag);
-          const parents = taxonomy.getParents(tag);
-          if (parents) {
-            parents.forEach((parent) => {
-              const ptax = taxonomy.get(parent);
-              if (!allTopics.includes(parent)) {
-                allTopics.push(parent);
-                if (ptax.isUFT) visibleTopics.push(parent);
-              }
-            });
-          }
-        }
-      } else {
-        debug(`Unknown topic in tags list: ${tag} ${path ? `on page ${path}` : '(current page)'}`);
-      }
-    });
-    return {
-      category, topics, visibleTopics, allTopics,
-    };
-  }
-  return {
-    category, topics,
-  };
-}
-
-// eslint-disable-next-line no-unused-vars
-async function loadTaxonomy() {
-  const mod = await import('./taxonomy.js');
-  taxonomy = await mod.default(getLanguage());
-  window.taxonomy = taxonomy;
-  if (taxonomy) {
-    // taxonomy loaded, post loading adjustments
-    // fix the links which have been created before the taxonomy has been loaded
-    // (pre lcp or in lcp block).
-    document.querySelectorAll('[data-topic-link]').forEach((a) => {
-      const topic = a.dataset.topicLink;
-      const tax = taxonomy.get(topic);
-      if (tax) {
-        a.href = tax.link;
-      } else {
-        // eslint-disable-next-line no-console
-        debug(`Trying to get a link for an unknown topic: ${topic} (current page)`);
-        a.href = '#';
-      }
-      delete a.dataset.topicLink;
-    });
-
-    // adjust meta article:tag
-
-    const currentTags = getMetadata('article:tag', true);
-    const articleTax = computeTaxonomyFromTopics(currentTags);
-
-    const allTopics = articleTax.allTopics || [];
-    allTopics.forEach((topic) => {
-      if (!currentTags.includes(topic)) {
-        // computed topic (parent...) is not in meta -> add it
-        const newMetaTag = document.createElement('meta');
-        newMetaTag.setAttribute('property', 'article:tag');
-        newMetaTag.setAttribute('content', topic);
-        document.head.append(newMetaTag);
-      }
-    });
-
-    currentTags.forEach((tag) => {
-      const tax = taxonomy.get(tag);
-      if (tax && tax.skipMeta) {
-        // if skipMeta, remove from meta "article:tag"
-        const meta = document.querySelector(`[property="article:tag"][content="${tag}"]`);
-        if (meta) {
-          meta.remove();
-        }
-        // but add as meta with name
-        const newMetaTag = document.createElement('meta');
-        newMetaTag.setAttribute('name', tag);
-        newMetaTag.setAttribute('content', 'true');
-        document.head.append(newMetaTag);
-      }
-    });
-  }
-}
-
-export function getTaxonomy() {
-  return taxonomy;
-}
-
 /**
  * Returns a link tag with the proper href for the given topic.
  * If the taxonomy is not yet available, the tag is decorated with the topicLink
@@ -353,6 +238,7 @@ export function getLinkForTopic(topic, path) {
     'Transformation digitale': 'Transformation numérique',
   };
   let catLink;
+  const taxonomy = getTaxonomy();
   if (taxonomy) {
     const tax = taxonomy.get(topic);
     if (tax) {
@@ -664,7 +550,7 @@ function buildArticleFeed(mainEl, type) {
 
 function buildTagsBlock(mainEl) {
   const topics = getMetadata('article:tag', true);
-  if (taxonomy && topics.length > 0) {
+  if (getTaxonomy() && topics.length > 0) {
     const articleTax = computeTaxonomyFromTopics(topics);
     const tagsForBlock = articleTax.visibleTopics.map((topic) => getLinkForTopic(topic));
 
