@@ -1,4 +1,4 @@
-import { getLanguage, getTags, getTaxonomy } from './scripts.js';
+const { getLanguage, getTags, getTaxonomy } = require('./scripts.js');
 
 /* globals digitalData _satellite */
 

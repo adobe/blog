@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import { getHelixEnv, getTags } from './scripts.js';
+const { getHelixEnv, getTags } = require('./scripts.js');
 
 function checkDX(tag) {
   const dxtags = [
