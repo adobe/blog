@@ -9,12 +9,19 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
+import offload from './offload.js';
 
 /**
  * log RUM if part of the sample.
  * @param {string} checkpoint identifies the checkpoint in funnel
  * @param {Object} data additional data for RUM sample
  */
+window.hlx = window.hlx || {};
+window.hlx.alloy = window.hlx.alloy || {};
+
+window.hlx.alloy.enable = true;
+window.hlx.offload.scripts = [];
+window.hlx.offload.forward = [];
 
 window.RUM_GENERATION = 'blog-gen-8-adaptiverate';
 window.RUM_LOW_SAMPLE_RATE = 10;
@@ -1384,6 +1391,9 @@ async function loadEager() {
  * loads everything that doesn't need to be delayed.
  */
 async function loadLazy() {
+  // offload alloy and 3rd party scripts to web-worker via partytown
+  offload();
+
   const main = document.querySelector('main');
 
   // post LCP actions go here
