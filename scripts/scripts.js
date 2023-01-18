@@ -22,6 +22,9 @@ import {
   getTaxonomy,
 } from './lib.js';
 
+window.getLanguage = () => getLanguage();
+window.getTaxonomy = () => getTaxonomy();
+
 /**
  * log RUM if part of the sample.
  * @param {string} checkpoint identifies the checkpoint in funnel

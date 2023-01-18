@@ -1,10 +1,13 @@
 import {
+  getTaxonomy,
+} from '../../scripts/lib.js';
+
+import {
   readBlockConfig,
   buildArticleCard,
   fetchBlogArticleIndex,
   fetchPlaceholders,
   getArticleTaxonomy,
-  getTaxonomy,
   stamp,
   sampleRUM,
 } from '../../scripts/scripts.js';

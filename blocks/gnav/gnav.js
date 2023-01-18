@@ -1,7 +1,6 @@
-import { getHelixEnv } from '../../scripts/lib.js';
+import { getHelixEnv, debug } from '../../scripts/lib.js';
 import {
   loadScript,
-  debug,
   makeLinksRelative,
   getLocale,
 } from '../../scripts/scripts.js';

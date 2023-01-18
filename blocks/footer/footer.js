@@ -1,6 +1,8 @@
 import {
-  fetchPlaceholders,
   debug,
+} from '../../scripts/lib.js';
+import {
+  fetchPlaceholders,
   makeLinksRelative,
 } from '../../scripts/scripts.js';
 import { createTag } from '../block-helpers.js';

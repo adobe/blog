@@ -266,6 +266,9 @@ const checkDX = (tag) => {
 };
 
 const configure = () => {
+  window.getLanguage = () => getLanguage();
+  window.getTaxonomy = () => getTaxonomy();
+
   const { target, name } = getHelixEnv();
 
   let isDX = false;
@@ -309,10 +312,14 @@ const configure = () => {
  */
 export function offload() {
   configure();
-  window.getLanguage = getLanguage;
-  window.getTaxonomy = () => getTaxonomy();
   window.partytown = {
-    forward: ['getTaxonomy', 'getLanguage'],
+    logCalls: true,
+    logGetters: true,
+    logSetters: true,
+    logStackTraces: false,
+    logScriptExecution: true,
+    mainWindowAccessors: ['getTaxonomy', 'getLanguage'],
+    debug: true,
     lib: '/scripts/',
   };
 
