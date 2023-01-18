@@ -83,6 +83,7 @@ export default function offload() {
   configure();
 
   window.partytown = {
+    forward: ['taxonomy', 'language'],
     lib: '/scripts/',
   };
 
