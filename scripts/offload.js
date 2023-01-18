@@ -12,7 +12,7 @@
 
 const SCRIPT_TYPE_PARTYTOWN = 'text/partytown';
 
-const createScriptElement = (src, type) => {
+const createScriptElement = (src, type, attributes = {}) => {
   const script = document.createElement('script');
   script.src = src;
   if (type) {
@@ -20,69 +20,31 @@ const createScriptElement = (src, type) => {
   }
   document.head.appendChild(script);
 
+  Object.keys(attributes).forEach((key) => {
+    script.setAttribute(key, attributes[key]);
+  });
+
   return script;
 };
 
 /**
- * Checks whether alloy or other 3rd party scripts should be offloaded via partytown.
- * If so, initializes partytown and creates the necessary script tags for alloy/3rd party scripts.
- *
- * Checks for two conditions:
- * - Is alloy enabled via window.hlx.alloy.enable = true?
- * - Are any scripts configured to be offloaded via party-town
- *   by adding to window.hlx.offload.scripts?
- *
- * If either is true, the partytown library is added to the <head>
- * and partytown configured to offload the relevant scripts.
+ * Initializes partytown and creates the necessary script tags for martech tracking.
+ * The partytown library is added to the <head> and partytown configured to offload
+ * the relevant scripts.
  */
 export default function offload() {
-  window.hlx.offload = window.hlx.offload || {};
-
-  const { offload: config, alloy } = window.hlx;
-
-  const hasScripts = Array.isArray(config.scripts) && config.scripts.length > 0;
-
-  // neither alloy nor 3rd party scripts are requested to be offloaded -> exit
-  if (!alloy.enable && !hasScripts) {
-    return;
-  }
-
-  // if alloy is enabled, configure partytown with the window.* forwards
-  // required by alloy. this needs to happen before partytown initialization
-  if (alloy.enable) {
-    window.hlx.offload.forward = window.hlx.offload.forward.concat([
-      '__alloyMonitors',
-      '__alloyNS',
-      'alloy',
-      'alloy_all',
-      'alloy_click',
-      'alloy_last_event',
-      'alloy_load',
-      'alloy_unload',
-      'adobe',
-    ]);
-  }
-
   window.partytown = {
     lib: '/scripts/',
-    forward: window.hlx.offload.forward || [],
   };
 
   // general init of partytown
   import('./partytown.js');
 
-  // if alloy is enabled, add the scripts required by alloy
-  // to the offloading
-  if (alloy.enable) {
-    createScriptElement('/scripts/alloy-init.js', SCRIPT_TYPE_PARTYTOWN);
-    createScriptElement('/scripts/alloy.min.js', SCRIPT_TYPE_PARTYTOWN);
-    createScriptElement('/scripts/alloy-config.js', SCRIPT_TYPE_PARTYTOWN);
-  }
-
-  // add any additional 3rd party scripts to be offloaded
-  if (hasScripts) {
-    config.scripts.forEach((script) => {
-      createScriptElement(script, SCRIPT_TYPE_PARTYTOWN);
-    });
-  }
+  createScriptElement('/scripts/offload-init.js', SCRIPT_TYPE_PARTYTOWN);
+  createScriptElement(
+    '/scripts/martech.min.js',
+    SCRIPT_TYPE_PARTYTOWN,
+    { 'data-seed-adobelaunch': 'true' },
+  );
+  createScriptElement('/scripts/offload-run.js', SCRIPT_TYPE_PARTYTOWN);
 }

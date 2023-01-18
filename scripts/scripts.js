@@ -16,13 +16,6 @@ import offload from './offload.js';
  * @param {string} checkpoint identifies the checkpoint in funnel
  * @param {Object} data additional data for RUM sample
  */
-window.hlx = window.hlx || {};
-window.hlx.alloy = window.hlx.alloy || {};
-
-window.hlx.alloy.enable = true;
-window.hlx.offload.scripts = [];
-window.hlx.offload.forward = [];
-
 window.RUM_GENERATION = 'blog-gen-8-adaptiverate';
 window.RUM_LOW_SAMPLE_RATE = 10;
 window.RUM_HIGH_SAMPLE_RATE = 10;
@@ -1269,6 +1262,10 @@ export async function getBlogArticle(path) {
   return null;
 }
 
+export function getTags() {
+  return getMetadata('article:tag', true);
+}
+
 /**
  * fetches the string variables.
  * @returns {object} localized variables
@@ -1391,7 +1388,7 @@ async function loadEager() {
  * loads everything that doesn't need to be delayed.
  */
 async function loadLazy() {
-  // offload alloy and 3rd party scripts to web-worker via partytown
+  // offload martech scripts to web-worker via partytown
   offload();
 
   const main = document.querySelector('main');
