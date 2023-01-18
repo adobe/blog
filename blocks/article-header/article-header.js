@@ -1,7 +1,8 @@
+import { getMetadata } from '../../scripts/lib.js';
+
 import {
   buildFigure,
   createOptimizedPicture,
-  getMetadata,
   fetchPlaceholders,
 } from '../../scripts/scripts.js';
 

@@ -1,4 +1,18 @@
-const { getLanguage, getTags, getTaxonomy } = require('./scripts.js');
+/**
+ * Retrieves the content of a metadata tag. Multivalued metadata are returned
+ * as a comma-separated list (or as an array of string if asArray is true).
+ * @param {string} name The metadata name (or property)
+ * @param {boolean} asArray Return an array instead of a comma-separated string
+ * @returns {string|Array} The metadata value
+ */
+const getMetadata = (name, asArray = false) => {
+  const attr = name && name.includes(':') ? 'property' : 'name';
+  const meta = [...document.head.querySelectorAll(`meta[${attr}="${name}"]`)].map((el) => el.content);
+
+  return asArray ? meta : meta.join(', ');
+};
+
+const getTags = () => getMetadata('article:tag', true);
 
 /* globals digitalData _satellite */
 
@@ -10,7 +24,7 @@ function setDigitalData() {
   const getPageFilterInfo = () => {
     let pageFilterInfo = '';
     const tags = getTags();
-    const taxonomy = getTaxonomy();
+    const { taxonomy } = window;
     const categories = [];
     const products = [];
     tags.forEach((t) => {
@@ -37,7 +51,7 @@ function setDigitalData() {
   };
 
   const langMap = { en: 'en-US' };
-  let lang = getLanguage();
+  let lang = window.language;
   if (langMap[lang]) lang = langMap[lang];
   digitalData._set('page.pageInfo.language', lang);
   digitalData._set('page.pageInfo.siteSection', 'blog.adobe.com');

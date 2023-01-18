@@ -9,6 +9,14 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
+import {
+  LANG,
+  LANG_LOCALE,
+  getHelixEnv,
+  getLanguage,
+  getMetadata,
+} from './lib.js';
+
 import offload from './offload.js';
 
 /**
@@ -147,46 +155,6 @@ export function makeLinksRelative(main) {
   });
 }
 
-const LANG = {
-  EN: 'en',
-  DE: 'de',
-  FR: 'fr',
-  KO: 'ko',
-  ES: 'es',
-  IT: 'it',
-  JP: 'jp',
-  BR: 'br',
-};
-
-const LANG_LOCALE = {
-  en: 'en_US',
-  de: 'de_DE',
-  fr: 'fr_FR',
-  ko: 'ko_KR',
-  es: 'es_ES',
-  it: 'it_IT',
-  jp: 'ja_JP',
-  br: 'pt_BR',
-};
-
-let language;
-
-export function getLanguage() {
-  if (language) return language;
-  language = LANG.EN;
-  const segs = window.location.pathname.split('/');
-  if (segs && segs.length > 0) {
-    // eslint-disable-next-line no-restricted-syntax
-    for (const [, value] of Object.entries(LANG)) {
-      if (value === segs[1]) {
-        language = value;
-        break;
-      }
-    }
-  }
-  return language;
-}
-
 export function getLocale() {
   const lang = getLanguage();
   return LANG_LOCALE[lang];
@@ -217,72 +185,6 @@ function getDateLocale() {
 export function getRootPath() {
   const loc = getLanguage();
   return `/${loc}`;
-}
-
-/**
- * Retrieves the content of a metadata tag. Multivalued metadata are returned
- * as a comma-separated list (or as an array of string if asArray is true).
- * @param {string} name The metadata name (or property)
- * @param {boolean} asArray Return an array instead of a comma-separated string
- * @returns {string|Array} The metadata value
- */
-export function getMetadata(name, asArray = false) {
-  const attr = name && name.includes(':') ? 'property' : 'name';
-  const meta = [...document.head.querySelectorAll(`meta[${attr}="${name}"]`)].map((el) => el.content);
-
-  return asArray ? meta : meta.join(', ');
-}
-
-/**
- * Get the current Helix environment
- * @returns {Object} the env object
- */
-export function getHelixEnv() {
-  let envName = sessionStorage.getItem('helix-env');
-  if (!envName) envName = 'prod';
-  const envs = {
-    dev: {
-      ims: 'stg1',
-      subdomain: 'dev02.',
-      adobeIO: 'cc-collab-stage.adobe.io',
-      adminconsole: 'stage.adminconsole.adobe.com',
-      account: 'stage.account.adobe.com',
-      target: false,
-    },
-    stage: {
-      ims: 'stg1',
-      subdomain: 'stage.',
-      adobeIO: 'cc-collab-stage.adobe.io',
-      adminconsole: 'stage.adminconsole.adobe.com',
-      account: 'stage.account.adobe.com',
-      target: false,
-    },
-    prod: {
-      ims: 'prod',
-      subdomain: '',
-      adobeIO: 'cc-collab.adobe.io',
-      adminconsole: 'adminconsole.adobe.com',
-      account: 'account.adobe.com',
-      target: true,
-    },
-  };
-  const env = envs[envName];
-
-  const overrideItem = sessionStorage.getItem('helix-env-overrides');
-  if (overrideItem) {
-    const overrides = JSON.parse(overrideItem);
-    const keys = Object.keys(overrides);
-    env.overrides = keys;
-
-    keys.forEach((value) => {
-      env[value] = overrides[value];
-    });
-  }
-
-  if (env) {
-    env.name = envName;
-  }
-  return env;
 }
 
 export function debug(message, ...args) {
@@ -382,6 +284,7 @@ function computeTaxonomyFromTopics(topics, path) {
 async function loadTaxonomy() {
   const mod = await import('./taxonomy.js');
   taxonomy = await mod.default(getLanguage());
+  window.taxonomy = taxonomy;
   if (taxonomy) {
     // taxonomy loaded, post loading adjustments
     // fix the links which have been created before the taxonomy has been loaded
@@ -1262,10 +1165,6 @@ export async function getBlogArticle(path) {
   return null;
 }
 
-export function getTags() {
-  return getMetadata('article:tag', true);
-}
-
 /**
  * fetches the string variables.
  * @returns {object} localized variables
@@ -1388,9 +1287,6 @@ async function loadEager() {
  * loads everything that doesn't need to be delayed.
  */
 async function loadLazy() {
-  // offload martech scripts to web-worker via partytown
-  offload();
-
   const main = document.querySelector('main');
 
   // post LCP actions go here
@@ -1417,6 +1313,9 @@ async function loadLazy() {
   loadBlocks(main);
   loadCSS('/styles/lazy-styles.css');
   addFavIcon('/styles/favicon.svg');
+
+  // offload martech scripts to web-worker via partytown
+  offload();
 
   sampleRUM('lazy');
   sampleRUM.observe(document.querySelectorAll('main picture > img'));
