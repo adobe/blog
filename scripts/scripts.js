@@ -1355,10 +1355,13 @@ async function wordBreakJapanese() {
   if (getLocale(window.location) !== 'ja_JP') {
     return;
   }
+  // The thresould value to control word break granularity for long semantic blocks.
+  const WORD_SEG_THRES = 8;
   const { loadDefaultJapaneseParser } = await import('./budoux-index-ja.min.js');
   const parser = loadDefaultJapaneseParser();
   document.querySelectorAll('h1, h2, h3, h4, h5').forEach((el) => {
-    parser.applyElement(el, { wordSegThres: 8 });
+    // apply budoux to headings
+    parser.applyElement(el, { wordSegThres: WORD_SEG_THRES });
   });
 
   const BalancedWordWrapper = (await import('./bw2.min.js')).default;
