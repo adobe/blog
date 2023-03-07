@@ -10,6 +10,10 @@ main .container {
     margin: 0 auto;
 }
 
+main .marquee {
+    margin: 0 -2rem;
+}
+
 main .marquee a {
     color: var(--link-color);
     text-decoration: none;
@@ -94,11 +98,6 @@ main .marquee.dark .con-button.outline:hover {
 
 main .dark a:any-link {
     color: #FFF;
-}
-
-main .section-wrapper .marquee-wrapper {
-    max-width: none;
-    padding: 0;
 }
 
 .marquee {
@@ -324,6 +323,14 @@ main .section-wrapper .marquee-wrapper {
 }
 
 @media screen and (min-width: 600px) {
+    main .section-wrapper .marquee-wrapper {
+        max-width: none;
+        padding: 0;
+    }
+
+    main .marquee {
+        margin: initial;
+    }
 
     .marquee .background .mobileOnly,
     .marquee .background .desktopOnly {
