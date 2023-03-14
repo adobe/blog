@@ -8,7 +8,6 @@
     --tabs-bg-color: #f1f1f1;
     --tabs-active-bg-color: #ffffff;
     --tabs-list-bg-gradient: linear-gradient(rgba(255,255,255,0) 60%, rgba(245,245,245,.8));
-    --grid-container-width: 83.4%;
 }
 
 :root .dark {
@@ -20,23 +19,15 @@
     --tabs-list-bg-gradient: linear-gradient(rgba(0,0,0,0) 60%, rgba(0,0,0,.8));
 }
 
+main .tabs .section-wrapper:first-of-type {
+    margin-top: 0;
+}
+
 .tabs {
     position: relative;
     margin: 0;
     color: var(--tabs-active-text-color);
-}
-
-.tabs .section-wrapper > div {
-    max-width: 800px;
-}
-
-.tabs-wrapper {
-    max-width: none!important;
-    padding: 0!important;
-}
-
-.tabs .section-wrapper:first-of-type {
-    margin-top: 0;
+    background-color: var(--tabs-active-bg-color);
 }
 
 .tabs.xxl-spacing {
@@ -122,16 +113,28 @@
 }
 
 .tabs .tabContent {
-    padding: 0;
-    border-bottom: 1px solid var(--tabs-border-color)
+    padding: var(--spacing-s) 0;
+    border-bottom: 1px solid var(--tabs-border-color);
+}
+
+.tabContent [role='tabpanel'] .section {
+    position: relative;
+}
+
+.tabContent [role='tabpanel'] .section picture.section-background {
+    z-index: 0;
+}
+
+.tabContent [role='tabpanel'] .section > .content {
+    z-index: 1;
+    position: relative;
 }
 
 /* contained tabs content */
 .tabs.contained .tabContent .tabContent-container,
-[role='tabpanel'] > .section-wrapper > div {
+[role='tabpanel'] > .section > .content {
     width: var(--grid-container-width);
     margin: 0 auto;
-    overflow: auto;
 }
 
 .tabs div[role="tablist"] button {
