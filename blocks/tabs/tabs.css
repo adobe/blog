@@ -23,6 +23,15 @@ main .tabs .section-wrapper:first-of-type {
     margin-top: 0;
 }
 
+.tabs .section-wrapper > div {
+    max-width: 800px;
+}
+
+.tabs-wrapper {
+    max-width: none!important;
+    padding: 0!important;
+}
+
 .tabs {
     position: relative;
     margin: 0;
