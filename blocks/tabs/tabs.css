@@ -126,22 +126,22 @@ main .tabs .section-wrapper:first-of-type {
     border-bottom: 1px solid var(--tabs-border-color);
 }
 
-.tabContent [role='tabpanel'] .section {
+.tabContent [role='tabpanel'] .section-wrapper {
     position: relative;
 }
 
-.tabContent [role='tabpanel'] .section picture.section-background {
+.tabContent [role='tabpanel'] .section-wrapper picture.section-background {
     z-index: 0;
 }
 
-.tabContent [role='tabpanel'] .section > .content {
+.tabContent [role='tabpanel'] .section-wrapper > div {
     z-index: 1;
     position: relative;
 }
 
 /* contained tabs content */
 .tabs.contained .tabContent .tabContent-container,
-[role='tabpanel'] > .section > .content {
+[role='tabpanel'] > .section-wrapper > div {
     width: var(--grid-container-width);
     margin: 0 auto;
 }
