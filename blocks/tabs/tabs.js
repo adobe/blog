@@ -135,7 +135,8 @@ export default function decorate(block) {
   configRows.splice(0, 1);
   if (configRows) {
     configRows.forEach((row) => {
-      const rowKey = getStringKeyName(row.children[0].textContent);
+      let rowKey = getStringKeyName(row.children[0].textContent);
+      if (rowKey === 'activetab') rowKey = 'active-tab';
       config[rowKey] = row.children[1].textContent.trim();
       row.remove();
     });
