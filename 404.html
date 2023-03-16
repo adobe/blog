@@ -88,6 +88,13 @@
         });
     </script>
     <script src="/scripts/scripts.js" type="module" crossorigin="use-credentials"></script>
+    <script type="module">
+      import { sampleRUM } from '/scripts/scripts.js';
+
+      window.addEventListener('load', () => {
+        sampleRUM('404', { source: document.referrer, target: window.location.href });
+      });
+    </script>
     <style>
         .error {
           position: relative;
