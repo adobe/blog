@@ -1218,7 +1218,7 @@ export async function fetchBlogArticleIndex() {
   };
   if (window.blogIndex.complete) return (window.blogIndex);
   const index = window.blogIndex;
-  const resp = await fetch(`${getRootPath()}/query-index.json?limit=${pageSize}&offset=${index.offset}`);
+  const resp = await fetch(`${getRootPath()}/query-index.json?limit=${pageSize}&offset=${index.offset}&cb=true`);
   const json = await resp.json();
   const complete = (json.limit + json.offset) === json.total;
   json.data.forEach((post) => {
