@@ -26,7 +26,7 @@ function decorateProfileMenu(blockEl, profileEl, profiles, toggle) {
   const { avatar } = user;
 
   const displayEmail = decorateEmail(email);
-  const avatarImg = createTag('img', { class: 'gnav-profile-img', src: avatar });
+  const avatarImg = createTag('img', { class: 'gnav-profile-img', src: avatar, alt:'' });
   const accountLink = blockEl.querySelector('div > div > p:nth-child(2) a');
 
   const profileButton = createTag(
